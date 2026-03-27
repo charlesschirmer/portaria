@@ -3,138 +3,302 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>PortalGuard — Controle de Portaria</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<title>PortalGuard</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/tesseract.js/5.0.4/tesseract.min.js"></script>
 <style>
-:root {
-  --bg:#0a0c10; --surface:#111318; --surface2:#181c24;
-  --border:#252a35; --accent:#00e5ff; --success:#00c896;
-  --warn:#ffb020; --danger:#ff4444; --text:#e8eaf0; --muted:#6b7280;
-  --font-head:'Syne',sans-serif; --font-mono:'JetBrains Mono',monospace; --font-body:'Inter',sans-serif;
+:root{
+  --bg:#0d0f14; --s1:#141720; --s2:#1c2030; --s3:#242840;
+  --border:#2a2f42; --accent:#00d4ff; --green:#00c896;
+  --warn:#ffb020; --red:#ff4455; --text:#f0f2f8; --muted:#7b829a;
+  --f:'Inter',sans-serif; --fm:'JetBrains Mono',monospace;
 }
-*{margin:0;padding:0;box-sizing:border-box;}
-body{background:var(--bg);color:var(--text);font-family:var(--font-body);min-height:100vh;overflow-x:hidden;}
-header{background:var(--surface);border-bottom:1px solid var(--border);padding:0 16px;display:flex;align-items:center;justify-content:space-between;height:54px;position:sticky;top:0;z-index:100;}
-.logo{font-family:var(--font-head);font-weight:800;font-size:1.15rem;display:flex;align-items:center;gap:8px;}
-.logo-icon{width:26px;height:26px;background:var(--accent);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;}
-.logo span{color:var(--accent);}
-.header-time{font-family:var(--font-mono);font-size:0.7rem;color:var(--muted);text-align:right;line-height:1.5;}
-nav{background:var(--surface);border-bottom:1px solid var(--border);display:flex;overflow-x:auto;scrollbar-width:none;}
-nav::-webkit-scrollbar{display:none;}
-.nav-btn{flex-shrink:0;background:none;border:none;color:var(--muted);font-family:var(--font-body);font-size:0.78rem;font-weight:500;padding:11px 18px;cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;white-space:nowrap;}
-.nav-btn.active{color:var(--accent);border-bottom-color:var(--accent);}
-main{padding:14px;max-width:580px;margin:0 auto;}
-.panel{display:none;}.panel.active{display:block;}
-.section-title{font-family:var(--font-head);font-weight:700;font-size:1.05rem;margin-bottom:14px;display:flex;align-items:center;gap:8px;}
-.badge{font-family:var(--font-mono);font-size:0.62rem;font-weight:700;padding:2px 7px;border-radius:4px;}
-.badge-in{background:var(--success);color:#000;}.badge-out{background:var(--danger);color:#fff;}
-.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:12px;}
-.card-title{font-family:var(--font-mono);font-size:0.68rem;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;}
-label{display:block;font-size:0.76rem;color:var(--muted);margin-bottom:4px;font-weight:500;}
-input[type=text],textarea,select{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:10px 12px;color:var(--text);font-family:var(--font-body);font-size:0.88rem;outline:none;transition:border-color .2s;margin-bottom:10px;}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f);overflow-x:hidden;}
+
+/* ── HEADER ── */
+.hdr{
+  background:var(--s1);border-bottom:2px solid var(--border);
+  height:60px;display:flex;align-items:center;justify-content:space-between;
+  padding:0 16px;position:sticky;top:0;z-index:100;
+}
+.hdr-logo{display:flex;align-items:center;gap:10px;font-weight:900;font-size:1.25rem;letter-spacing:-0.5px;}
+.hdr-dot{width:10px;height:10px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.hdr-time{font-family:var(--fm);font-size:0.85rem;color:var(--muted);}
+
+/* ── BOTTOM NAV ── */
+.bnav{
+  position:fixed;bottom:0;left:0;right:0;
+  background:var(--s1);border-top:2px solid var(--border);
+  display:grid;grid-template-columns:repeat(4,1fr);
+  height:68px;z-index:100;
+}
+.bnav-btn{
+  background:none;border:none;color:var(--muted);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:4px;cursor:pointer;transition:color .15s;font-family:var(--f);
+  font-size:0.62rem;font-weight:600;text-transform:uppercase;letter-spacing:.5px;
+  border-top:3px solid transparent;
+}
+.bnav-btn .ico{font-size:1.5rem;line-height:1;}
+.bnav-btn.active{color:var(--accent);border-top-color:var(--accent);}
+
+/* ── PANELS ── */
+.panel{display:none;padding:16px 14px 90px;max-width:600px;margin:0 auto;}
+.panel.active{display:block;}
+
+/* ── WIZARD STEPS ── */
+.steps{display:flex;align-items:center;gap:0;margin-bottom:20px;}
+.step{
+  display:flex;align-items:center;gap:8px;
+  font-size:0.78rem;font-weight:700;color:var(--muted);flex:1;
+}
+.step-num{
+  width:32px;height:32px;border-radius:50%;background:var(--s2);
+  border:2px solid var(--border);display:flex;align-items:center;justify-content:center;
+  font-weight:800;font-size:0.85rem;flex-shrink:0;transition:all .3s;
+}
+.step.active .step-num{background:var(--accent);border-color:var(--accent);color:#000;}
+.step.done .step-num{background:var(--green);border-color:var(--green);color:#000;}
+.step.active{color:var(--text);}
+.step.done{color:var(--green);}
+.step-line{flex:1;height:2px;background:var(--border);margin:0 4px;}
+.step-line.done{background:var(--green);}
+.step-label{display:none;}
+@media(min-width:380px){.step-label{display:block;}}
+
+/* ── WIZARD PAGES ── */
+.wpage{display:none;}.wpage.active{display:block;animation:fadeUp .2s ease;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+/* ── BIG SECTION LABEL ── */
+.sec-label{
+  font-size:1rem;font-weight:800;margin-bottom:14px;
+  display:flex;align-items:center;gap:10px;color:var(--text);
+}
+.sec-num{
+  width:36px;height:36px;background:var(--accent);color:#000;
+  border-radius:10px;display:flex;align-items:center;justify-content:center;
+  font-weight:900;font-size:1.1rem;flex-shrink:0;
+}
+
+/* ── FIELDS ── */
+.field{margin-bottom:16px;}
+.field-label{
+  font-size:0.95rem;font-weight:700;color:var(--muted);
+  margin-bottom:8px;display:flex;align-items:center;gap:6px;
+}
+.field-label span{font-size:1rem;}
+input[type=text],textarea,select{
+  width:100%;background:var(--s2);border:2px solid var(--border);
+  border-radius:12px;padding:16px;color:var(--text);font-family:var(--f);
+  font-size:1.05rem;font-weight:600;outline:none;transition:border-color .2s;
+}
 input:focus,textarea:focus,select:focus{border-color:var(--accent);}
-.plate-input{font-family:var(--font-mono)!important;font-size:1.3rem!important;font-weight:700!important;letter-spacing:4px!important;text-align:center!important;text-transform:uppercase!important;border-color:var(--warn)!important;color:var(--warn)!important;}
-.plate-input:focus{border-color:var(--accent)!important;color:var(--accent)!important;}
-.hint{font-size:0.7rem;color:var(--muted);margin-top:-7px;margin-bottom:10px;}
-.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+select{appearance:none;}
+.plate-field{
+  font-family:var(--fm)!important;font-size:1.8rem!important;
+  font-weight:700!important;letter-spacing:6px!important;
+  text-align:center!important;text-transform:uppercase!important;
+  border-color:var(--warn)!important;color:var(--warn)!important;
+  padding:18px!important;
+}
+.plate-field:focus{border-color:var(--accent)!important;color:var(--accent)!important;}
 input[type=file]{display:none;}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:10px 14px;border-radius:8px;border:none;font-family:var(--font-body);font-size:0.83rem;font-weight:600;cursor:pointer;transition:all .2s;}
-.btn-primary{background:var(--accent);color:#000;width:100%;padding:13px;font-size:0.92rem;border-radius:10px;}
-.btn-primary:active{opacity:.85;}
-.btn-exit{background:var(--danger);color:#fff;width:100%;padding:13px;font-size:0.92rem;border-radius:10px;}
-.btn-secondary{background:var(--surface2);color:var(--text);border:1px solid var(--border);}
-.btn-cam{background:var(--surface2);color:var(--accent);border:1px solid var(--accent);width:100%;margin-bottom:8px;}
-.btn-sm{font-size:0.75rem;padding:6px 12px;}
-.btn-danger{background:rgba(255,68,68,.1);color:var(--danger);border:1px solid rgba(255,68,68,.3);}
-.photo-area{width:100%;aspect-ratio:4/3;background:var(--bg);border:2px dashed var(--border);border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;margin-bottom:8px;overflow:hidden;position:relative;cursor:pointer;}
-.photo-area img{width:100%;height:100%;object-fit:cover;}
-.photo-area-label{font-size:0.72rem;color:var(--muted);text-align:center;padding:0 12px;}
-.photo-icon{font-size:2rem;}
-.photo-btns{display:flex;gap:8px;margin-bottom:10px;}
-.photo-btns .btn{flex:1;font-size:0.76rem;}
-/* OCR */
-.ocr-status{display:none;align-items:center;gap:10px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 12px;margin-bottom:10px;font-size:0.8rem;}
-.ocr-status.show{display:flex;}
-.ocr-spinner{width:16px;height:16px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0;}
-@keyframes spin{to{transform:rotate(360deg);}}
-.ocr-text{flex:1;color:var(--muted);}
-.ocr-pct{font-family:var(--font-mono);font-size:0.72rem;color:var(--accent);font-weight:700;}
-.plate-found{display:none;align-items:center;gap:10px;background:rgba(0,229,255,.07);border:1px solid rgba(0,229,255,.3);border-radius:8px;padding:10px 14px;margin-bottom:10px;}
+
+/* ── PHOTO BLOCK ── */
+.photo-block{
+  border-radius:14px;overflow:hidden;background:var(--s2);
+  border:2px dashed var(--border);margin-bottom:12px;
+  aspect-ratio:16/9;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:8px;
+  cursor:pointer;position:relative;transition:border-color .2s;
+}
+.photo-block:active{border-color:var(--accent);}
+.photo-block img{width:100%;height:100%;object-fit:cover;}
+.photo-block-icon{font-size:3rem;}
+.photo-block-label{font-size:0.9rem;color:var(--muted);font-weight:600;}
+.photo-block-sub{font-size:0.75rem;color:var(--muted);}
+
+/* ── PHOTO BUTTONS ── */
+.photo-btns{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;}
+.pbtn{
+  background:var(--s2);border:2px solid var(--border);border-radius:12px;
+  color:var(--text);font-family:var(--f);font-weight:700;font-size:1rem;
+  padding:16px 12px;cursor:pointer;display:flex;align-items:center;
+  justify-content:center;gap:8px;transition:all .2s;
+}
+.pbtn-cam{border-color:var(--accent);color:var(--accent);}
+.pbtn:active{opacity:.8;transform:scale(.97);}
+
+/* ── OCR STATUS ── */
+.ocr-bar{
+  display:none;background:var(--s2);border:2px solid var(--border);
+  border-radius:12px;padding:14px 16px;margin-bottom:12px;
+  align-items:center;gap:12px;
+}
+.ocr-bar.show{display:flex;}
+.spin{width:20px;height:20px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .6s linear infinite;flex-shrink:0;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.ocr-bar-txt{flex:1;font-size:0.95rem;font-weight:600;color:var(--muted);}
+.ocr-bar-pct{font-family:var(--fm);font-size:1rem;font-weight:700;color:var(--accent);}
+
+/* ── PLATE FOUND ── */
+.plate-found{
+  display:none;background:rgba(0,212,255,.08);border:2px solid rgba(0,212,255,.4);
+  border-radius:12px;padding:14px 16px;margin-bottom:12px;
+  align-items:center;gap:12px;
+}
 .plate-found.show{display:flex;}
-.plate-val{font-family:var(--font-mono);font-weight:700;font-size:1.15rem;color:var(--accent);letter-spacing:3px;}
-.plate-conf{font-size:0.7rem;color:var(--muted);}
-/* Autocomplete */
+.pf-icon{font-size:1.4rem;}
+.pf-val{font-family:var(--fm);font-size:1.6rem;font-weight:700;color:var(--accent);letter-spacing:5px;}
+.pf-conf{font-size:0.78rem;color:var(--muted);}
+
+/* ── AUTOCOMPLETE ── */
 .ac-wrap{position:relative;}
-.ac-list{position:absolute;top:100%;left:0;right:0;background:var(--surface2);border:1px solid var(--border);border-radius:8px;z-index:50;max-height:180px;overflow-y:auto;display:none;margin-top:-8px;box-shadow:0 8px 24px rgba(0,0,0,.5);}
+.ac-list{
+  position:absolute;top:calc(100% + 4px);left:0;right:0;
+  background:var(--s2);border:2px solid var(--accent);border-radius:12px;
+  z-index:80;max-height:220px;overflow-y:auto;display:none;
+  box-shadow:0 12px 32px rgba(0,0,0,.6);
+}
 .ac-list.show{display:block;}
-.ac-item{padding:9px 12px;cursor:pointer;border-bottom:1px solid var(--border);font-size:0.83rem;}
+.ac-item{
+  padding:14px 16px;cursor:pointer;border-bottom:1px solid var(--border);
+  font-size:1rem;font-weight:600;transition:background .15s;
+}
 .ac-item:last-child{border-bottom:none;}
-.ac-item:hover,.ac-item:active{background:var(--surface);}
-.ac-item small{display:block;font-size:0.7rem;color:var(--muted);}
-/* Camera modal */
-.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:200;flex-direction:column;align-items:center;justify-content:center;}
-.modal-overlay.open{display:flex;}
-.modal-box{background:var(--surface);border:1px solid var(--border);border-radius:16px;width:calc(100% - 28px);max-width:500px;overflow:hidden;}
-.modal-box.scrollable{max-height:90vh;overflow-y:auto;}
-.modal-header{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;font-family:var(--font-head);font-weight:700;font-size:0.92rem;position:sticky;top:0;background:var(--surface);z-index:1;}
-.modal-body{padding:14px;}
-.cam-preview{width:100%;aspect-ratio:4/3;background:#000;border-radius:10px;overflow:hidden;position:relative;margin-bottom:10px;}
-.cam-preview video{width:100%;height:100%;object-fit:cover;display:block;}
-.plate-guide-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;}
-.plate-guide-box{border:2.5px solid var(--warn);border-radius:6px;width:72%;height:22%;box-shadow:0 0 0 9999px rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;}
-.plate-guide-label{font-family:var(--font-mono);font-size:0.6rem;color:var(--warn);font-weight:700;}
-.cam-btns{display:flex;gap:8px;}
+.ac-item:active,.ac-item:hover{background:var(--s3);}
+.ac-item small{display:block;font-size:0.8rem;color:var(--muted);font-weight:500;margin-top:2px;}
+
+/* ── BIG BUTTONS ── */
+.big-btn{
+  width:100%;padding:20px;border-radius:16px;border:none;
+  font-family:var(--f);font-size:1.15rem;font-weight:800;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  gap:10px;transition:all .15s;letter-spacing:.2px;
+}
+.big-btn:active{transform:scale(.97);opacity:.9;}
+.big-btn-green{background:var(--green);color:#000;}
+.big-btn-red{background:var(--red);color:#fff;}
+.big-btn-accent{background:var(--accent);color:#000;}
+.big-btn-gray{background:var(--s2);color:var(--text);border:2px solid var(--border);}
+.big-btn-wa{background:#25D366;color:#fff;}
+.big-btn + .big-btn{margin-top:10px;}
+
+/* ── NAV BUTTONS ROW ── */
+.nav-row{display:grid;grid-template-columns:1fr 2fr;gap:10px;margin-top:6px;}
+.nav-row-3{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px;}
+
+/* ── CARDS ── */
+.card{background:var(--s1);border:2px solid var(--border);border-radius:16px;padding:16px;margin-bottom:12px;}
+
+/* ── ENTRY CARD ── */
+.ecard{
+  background:var(--s1);border:2px solid var(--border);border-radius:16px;
+  padding:14px;margin-bottom:12px;display:flex;gap:14px;
+  cursor:pointer;transition:border-color .2s;animation:fadeUp .2s ease;
+}
+.ecard:active{border-color:var(--accent);}
+.ecard-thumb{
+  width:64px;height:64px;border-radius:12px;flex-shrink:0;
+  background:var(--s2);border:2px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.8rem;overflow:hidden;
+}
+.ecard-thumb img{width:100%;height:100%;object-fit:cover;}
+.ecard-info{flex:1;min-width:0;}
+.ecard-name{font-size:1.05rem;font-weight:800;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.ecard-plate{font-family:var(--fm);font-size:1rem;color:var(--warn);font-weight:700;letter-spacing:3px;margin-bottom:3px;}
+.ecard-meta{font-size:0.8rem;color:var(--muted);font-weight:500;}
+.ecard-right{flex-shrink:0;display:flex;flex-direction:column;align-items:flex-end;gap:6px;}
+.tag{font-family:var(--fm);font-size:0.65rem;padding:4px 9px;border-radius:6px;font-weight:700;text-transform:uppercase;}
+.tag-in{background:rgba(0,200,150,.18);color:var(--green);}
+.tag-out{background:rgba(255,68,85,.18);color:var(--red);}
+.tag-inside{background:rgba(255,176,32,.18);color:var(--warn);}
+
+/* ── SAIDA EXIT BUTTON ── */
+.exit-btn{
+  background:var(--red);color:#fff;border:none;border-radius:10px;
+  padding:10px 14px;font-family:var(--f);font-size:0.85rem;font-weight:800;
+  cursor:pointer;white-space:nowrap;
+}
+.exit-btn:active{opacity:.8;}
+
+/* ── SEARCH ── */
+.search-wrap{position:relative;margin-bottom:14px;}
+.search-wrap input{padding-left:48px;font-size:1rem;}
+.search-ico{position:absolute;left:15px;top:50%;transform:translateY(-50%);font-size:1.1rem;}
+
+/* ── FILTER CHIPS ── */
+.chips{display:flex;gap:8px;margin-bottom:16px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px;}
+.chips::-webkit-scrollbar{display:none;}
+.chip{
+  flex-shrink:0;background:var(--s1);border:2px solid var(--border);
+  color:var(--muted);font-size:0.82rem;font-weight:700;
+  padding:8px 16px;border-radius:30px;cursor:pointer;transition:all .2s;
+}
+.chip.active{background:rgba(0,212,255,.12);border-color:var(--accent);color:var(--accent);}
+
+/* ── STATS ── */
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;}
+.stat{background:var(--s1);border:2px solid var(--border);border-radius:16px;padding:18px 14px;text-align:center;}
+.stat-n{font-size:2.6rem;font-weight:900;color:var(--accent);line-height:1;margin-bottom:6px;}
+.stat-l{font-size:0.8rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.5px;}
+
+/* ── INSIDE HEADER ── */
+.inside-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.inside-cnt{font-family:var(--fm);font-size:1rem;color:var(--warn);font-weight:700;}
+
+/* ── MODAL ── */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:200;align-items:flex-end;justify-content:center;}
+.modal-bg.open{display:flex;}
+.modal{background:var(--s1);border:2px solid var(--border);border-radius:24px 24px 0 0;width:100%;max-width:600px;max-height:92vh;overflow-y:auto;}
+.modal-hdr{padding:18px 18px 14px;display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid var(--border);position:sticky;top:0;background:var(--s1);z-index:1;}
+.modal-title{font-size:1.1rem;font-weight:800;}
+.modal-close{background:var(--s2);border:2px solid var(--border);color:var(--text);border-radius:10px;padding:8px 14px;font-family:var(--f);font-size:0.85rem;font-weight:700;cursor:pointer;}
+.modal-body{padding:18px;}
+
+/* Camera */
+.cam-wrap{width:100%;aspect-ratio:4/3;background:#000;border-radius:14px;overflow:hidden;position:relative;margin-bottom:12px;}
+.cam-wrap video{width:100%;height:100%;object-fit:cover;display:block;}
+.cam-guide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;}
+.cam-guide-box{border:3px solid var(--warn);border-radius:8px;width:75%;height:24%;box-shadow:0 0 0 9999px rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;}
+.cam-guide-label{font-family:var(--fm);font-size:0.7rem;color:var(--warn);font-weight:700;}
 canvas{display:none;}
-/* Entry cards */
-.entry-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:13px;margin-bottom:10px;display:flex;gap:11px;align-items:flex-start;cursor:pointer;animation:fadeIn .25s ease;}
-.entry-card:hover,.entry-card:active{border-color:var(--accent);}
-@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
-.entry-thumb{width:50px;height:50px;border-radius:8px;background:var(--surface2);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:1.3rem;border:1px solid var(--border);overflow:hidden;}
-.entry-thumb img{width:100%;height:100%;object-fit:cover;}
-.entry-info{flex:1;min-width:0;}
-.entry-name{font-family:var(--font-head);font-weight:700;font-size:0.92rem;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.entry-plate{font-family:var(--font-mono);font-size:0.83rem;color:var(--warn);font-weight:700;letter-spacing:2px;}
-.entry-meta{font-size:0.7rem;color:var(--muted);margin-top:3px;}
-.entry-status{flex-shrink:0;display:flex;flex-direction:column;align-items:flex-end;gap:5px;}
-.tag{font-family:var(--font-mono);font-size:0.6rem;padding:3px 7px;border-radius:4px;font-weight:700;text-transform:uppercase;white-space:nowrap;}
-.tag-in{background:rgba(0,200,150,.15);color:var(--success);}
-.tag-out{background:rgba(255,68,68,.15);color:var(--danger);}
-.tag-inside{background:rgba(255,176,32,.15);color:var(--warn);}
-/* Search */
-.search-bar{position:relative;margin-bottom:12px;}
-.search-bar input{padding-left:36px;margin-bottom:0;}
-.search-icon{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:0.82rem;}
-.filter-row{display:flex;gap:7px;margin-bottom:12px;flex-wrap:wrap;}
-.filter-chip{background:var(--surface);border:1px solid var(--border);color:var(--muted);font-size:0.73rem;padding:5px 11px;border-radius:20px;cursor:pointer;transition:all .2s;font-weight:500;}
-.filter-chip.active{background:rgba(0,229,255,.1);border-color:var(--accent);color:var(--accent);}
-/* Stats */
-.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
-.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px;text-align:center;}
-.stat-num{font-family:var(--font-head);font-size:2rem;font-weight:800;color:var(--accent);line-height:1;margin-bottom:4px;}
-.stat-label{font-size:0.7rem;color:var(--muted);font-weight:500;}
+
 /* Detail */
-.detail-photos{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;}
-.detail-photo-box{aspect-ratio:4/3;border-radius:8px;overflow:hidden;background:var(--bg);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:2rem;}
-.detail-photo-box img{width:100%;height:100%;object-fit:cover;}
-.detail-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);font-size:0.83rem;}
-.detail-row:last-of-type{border-bottom:none;}
-.detail-row label{color:var(--muted);margin-bottom:0;font-size:0.76rem;flex-shrink:0;}
-.detail-row span{font-weight:500;text-align:right;margin-left:8px;}
-.detail-actions{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;}
-.detail-actions .btn{flex:1;min-width:90px;}
-/* Inside */
-.inside-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
-.inside-count{font-family:var(--font-mono);font-size:0.78rem;color:var(--warn);font-weight:700;}
-/* Toast */
-.toast{position:fixed;bottom:16px;left:50%;transform:translateX(-50%) translateY(80px);font-weight:600;font-size:0.83rem;padding:11px 18px;border-radius:10px;z-index:999;transition:transform .3s ease;white-space:nowrap;display:flex;align-items:center;gap:7px;pointer-events:none;}
-.toast.show{transform:translateX(-50%) translateY(0);}
+.dphotos{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
+.dphoto{aspect-ratio:4/3;border-radius:12px;background:var(--s2);border:2px solid var(--border);overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:2.5rem;}
+.dphoto img{width:100%;height:100%;object-fit:cover;}
+.drow{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--border);font-size:0.92rem;}
+.drow:last-of-type{border-bottom:none;}
+.drow label{color:var(--muted);font-weight:600;font-size:0.82rem;margin:0;}
+.drow span{font-weight:700;text-align:right;max-width:60%;}
+
+/* Success / WA */
+.success-icon{font-size:4rem;text-align:center;margin:8px 0 10px;}
+.success-name{font-size:1.3rem;font-weight:900;text-align:center;margin-bottom:4px;}
+.success-plate{font-family:var(--fm);font-size:1.8rem;font-weight:700;color:var(--warn);letter-spacing:6px;text-align:center;margin:6px 0;}
+.success-sub{font-size:0.88rem;color:var(--muted);text-align:center;margin-bottom:18px;}
+.divider{height:2px;background:var(--border);margin:16px 0;}
+.wa-label{font-size:0.78rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px;}
+.wa-preview{background:var(--bg);border:2px solid var(--border);border-radius:12px;padding:14px;margin-bottom:14px;font-size:0.85rem;color:var(--muted);line-height:1.8;white-space:pre-wrap;font-family:var(--fm);}
+.wa-ico{width:22px;height:22px;flex-shrink:0;}
+
+/* Confirm exit */
+.conf-plate{font-family:var(--fm);font-size:2rem;font-weight:700;color:var(--warn);letter-spacing:6px;text-align:center;margin:10px 0;}
+.conf-name{font-size:1.2rem;font-weight:800;text-align:center;}
+.conf-sub{font-size:0.88rem;color:var(--muted);text-align:center;margin-bottom:18px;}
+.conf-time{font-size:1rem;color:var(--text);font-weight:700;text-align:center;margin:6px 0 16px;}
+
 /* Empty */
-.empty{text-align:center;padding:40px 20px;color:var(--muted);}
-.empty-icon{font-size:2.8rem;margin-bottom:10px;}
-.empty h3{font-family:var(--font-head);font-size:0.95rem;margin-bottom:5px;color:var(--text);}
-.empty p{font-size:0.8rem;}
+.empty{text-align:center;padding:48px 20px;color:var(--muted);}
+.empty-ico{font-size:3.5rem;margin-bottom:12px;}
+.empty h3{font-size:1.1rem;font-weight:800;color:var(--text);margin-bottom:6px;}
+.empty p{font-size:0.88rem;}
+
 ::-webkit-scrollbar{width:4px;}
 ::-webkit-scrollbar-track{background:var(--bg);}
 ::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px;}
@@ -142,228 +306,366 @@ canvas{display:none;}
 </head>
 <body>
 
-<header>
-  <div class="logo"><div class="logo-icon">🛡</div>Portal<span>Guard</span></div>
-  <div class="header-time" id="headerTime"></div>
-</header>
-
-<nav>
-  <button class="nav-btn active" onclick="showPanel('registro')" id="nav-registro">➕ Registrar</button>
-  <button class="nav-btn" onclick="showPanel('saida')" id="nav-saida">🚪 Saída</button>
-  <button class="nav-btn" onclick="showPanel('consulta')" id="nav-consulta">🔍 Consultar</button>
-  <button class="nav-btn" onclick="showPanel('dashboard')" id="nav-dashboard">📊 Dashboard</button>
-</nav>
-
-<main>
-
-<!-- REGISTRO -->
-<div class="panel active" id="panel-registro">
-  <div class="section-title">📋 Registrar Entrada <span class="badge badge-in">ENTRADA</span></div>
-
-  <div class="card">
-    <div class="card-title">👤 Motorista</div>
-    <div class="ac-wrap">
-      <label>Nome do Motorista *</label>
-      <input type="text" id="inputNome" placeholder="Nome completo..." autocomplete="off"
-        oninput="acMotorista(this.value)" onfocus="acMotorista(this.value)">
-      <div class="ac-list" id="acNomeList"></div>
-    </div>
-    <div class="ac-wrap">
-      <label>Empresa / Procedência *</label>
-      <input type="text" id="inputEmpresa" placeholder="De onde vem..." autocomplete="off"
-        oninput="acEmpresa(this.value)" onfocus="acEmpresa(this.value)">
-      <div class="ac-list" id="acEmpresaList"></div>
-    </div>
-    <label>Foto do Motorista ou Documento</label>
-    <div class="photo-area" id="fotoMotoArea" onclick="openCam('motorista')">
-      <div class="photo-icon">🤳</div>
-      <div class="photo-area-label">Toque para fotografar</div>
-    </div>
-    <div class="photo-btns">
-      <button class="btn btn-cam" onclick="openCam('motorista')">📷 Câmera</button>
-      <button class="btn btn-secondary" onclick="document.getElementById('fileMotorista').click()">🖼 Galeria</button>
-    </div>
-    <input type="file" id="fileMotorista" accept="image/*" onchange="fileSelected(this,'motorista')">
+<!-- HEADER -->
+<div class="hdr">
+  <div class="hdr-logo">
+    <div class="hdr-dot"></div>
+    PortalGuard
   </div>
-
-  <div class="card">
-    <div class="card-title">🚗 Veículo</div>
-    <label>Foto do Veículo com a Placa Visível</label>
-    <div class="photo-area" id="fotoVeicArea" onclick="openCam('veiculo')">
-      <div class="photo-icon">🚗</div>
-      <div class="photo-area-label">A placa será lida automaticamente pelo OCR</div>
-    </div>
-    <div class="photo-btns">
-      <button class="btn btn-cam" onclick="openCam('veiculo')">📷 Câmera (traseira)</button>
-      <button class="btn btn-secondary" onclick="document.getElementById('fileVeiculo').click()">🖼 Galeria</button>
-    </div>
-    <input type="file" id="fileVeiculo" accept="image/*" onchange="fileSelected(this,'veiculo')">
-
-    <div class="ocr-status" id="ocrStatus">
-      <div class="ocr-spinner"></div>
-      <div class="ocr-text" id="ocrText">Lendo placa...</div>
-      <div class="ocr-pct" id="ocrPct">0%</div>
-    </div>
-
-    <div class="plate-found" id="plateFound">
-      <span style="font-size:1.3rem">🔍</span>
-      <div>
-        <div class="plate-val" id="plateVal"></div>
-        <div class="plate-conf" id="plateConf"></div>
-      </div>
-    </div>
-
-    <label>Placa do Veículo *</label>
-    <input type="text" id="inputPlaca" class="plate-input" placeholder="ABC-1234" maxlength="8" oninput="formatPlate(this)">
-    <div class="hint">Preenchida automaticamente · Corrija se necessário</div>
-
-    <div class="row2">
-      <div>
-        <label>Tipo</label>
-        <select id="inputTipo">
-          <option>Carro</option><option>Caminhão</option><option>Van</option>
-          <option>Moto</option><option>Ônibus</option><option>Outro</option>
-        </select>
-      </div>
-      <div>
-        <label>Vigilante</label>
-        <input type="text" id="inputVigilante" placeholder="Nome...">
-      </div>
-    </div>
-    <label>Observações</label>
-    <textarea id="inputObs" rows="2" placeholder="Motivo da visita, destino interno..."></textarea>
-  </div>
-
-  <button class="btn btn-primary" onclick="registrar()">✅ REGISTRAR ENTRADA</button>
-  <div style="height:20px"></div>
+  <div class="hdr-time" id="hdrTime"></div>
 </div>
 
-<!-- SAÍDA -->
-<div class="panel" id="panel-saida">
-  <div class="section-title">🚪 Registrar Saída <span class="badge badge-out">SAÍDA</span></div>
-  <div class="card">
-    <div class="card-title">🔍 Buscar veículo no pátio</div>
-    <div class="search-bar">
-      <span class="search-icon">🔍</span>
-      <input type="text" id="searchSaida" placeholder="Placa, motorista ou empresa..." oninput="renderSaida()">
+<!-- ════════════════════════════════
+     PANEL: REGISTRO (WIZARD)
+════════════════════════════════ -->
+<div class="panel active" id="panel-reg">
+
+  <!-- Steps indicator -->
+  <div class="steps" id="stepsBar">
+    <div class="step active" id="s1"><div class="step-num">1</div><span class="step-label">Motorista</span></div>
+    <div class="step-line" id="sl1"></div>
+    <div class="step" id="s2"><div class="step-num">2</div><span class="step-label">Veículo</span></div>
+    <div class="step-line" id="sl2"></div>
+    <div class="step" id="s3"><div class="step-num">3</div><span class="step-label">Confirmar</span></div>
+  </div>
+
+  <!-- STEP 1: MOTORISTA -->
+  <div class="wpage active" id="wp1">
+    <div class="sec-label"><div class="sec-num">1</div>Dados do Motorista</div>
+
+    <div class="field ac-wrap">
+      <div class="field-label"><span>👤</span> Nome do Motorista *</div>
+      <input type="text" id="inputNome" placeholder="Digite o nome..." autocomplete="off"
+        oninput="acMotorista(this.value)" onfocus="acMotorista(this.value)" style="font-size:1.1rem;">
+      <div class="ac-list" id="acNomeList"></div>
+    </div>
+
+    <div class="field ac-wrap">
+      <div class="field-label"><span>🏢</span> Empresa / Procedência *</div>
+      <input type="text" id="inputEmpresa" placeholder="De onde vem..." autocomplete="off"
+        oninput="acEmpresa(this.value)" onfocus="acEmpresa(this.value)" style="font-size:1.1rem;">
+      <div class="ac-list" id="acEmpresaList"></div>
+    </div>
+
+    <div class="field">
+      <div class="field-label"><span>📸</span> Foto do Motorista ou RG</div>
+      <div class="photo-block" id="fotoMotoBlock" onclick="openCam('motorista')">
+        <div class="photo-block-icon">🤳</div>
+        <div class="photo-block-label">Toque para fotografar</div>
+        <div class="photo-block-sub">Motorista ou documento de identidade</div>
+      </div>
+      <div class="photo-btns">
+        <button class="pbtn pbtn-cam" onclick="openCam('motorista')">📷 Câmera</button>
+        <button class="pbtn" onclick="document.getElementById('fileMoto').click()">🖼 Galeria</button>
+      </div>
+      <input type="file" id="fileMoto" accept="image/*" onchange="fileSelected(this,'motorista')">
+    </div>
+
+    <button class="big-btn big-btn-accent" onclick="goStep2()">
+      Próximo: Veículo →
+    </button>
+  </div>
+
+  <!-- STEP 2: VEÍCULO -->
+  <div class="wpage" id="wp2">
+    <div class="sec-label"><div class="sec-num">2</div>Dados do Veículo</div>
+
+    <div class="field">
+      <div class="field-label"><span>🚗</span> Foto do Veículo com a Placa</div>
+      <div class="photo-block" id="fotoVeicBlock" onclick="openCam('veiculo')">
+        <div class="photo-block-icon">🚗</div>
+        <div class="photo-block-label">Toque para fotografar</div>
+        <div class="photo-block-sub">Mantenha a placa visível — OCR automático</div>
+      </div>
+      <div class="photo-btns">
+        <button class="pbtn pbtn-cam" onclick="openCam('veiculo')">📷 Câmera Traseira</button>
+        <button class="pbtn" onclick="document.getElementById('fileVeic').click()">🖼 Galeria</button>
+      </div>
+      <input type="file" id="fileVeic" accept="image/*" onchange="fileSelected(this,'veiculo')">
+    </div>
+
+    <!-- OCR -->
+    <div class="ocr-bar" id="ocrBar">
+      <div class="spin"></div>
+      <div class="ocr-bar-txt" id="ocrTxt">Lendo placa...</div>
+      <div class="ocr-bar-pct" id="ocrPct">0%</div>
+    </div>
+    <div class="plate-found" id="plateFound">
+      <div class="pf-icon">🔍</div>
+      <div><div class="pf-val" id="pfVal"></div><div class="pf-conf" id="pfConf"></div></div>
+    </div>
+
+    <div class="field">
+      <div class="field-label"><span>🔢</span> Placa do Veículo *</div>
+      <input type="text" id="inputPlaca" class="plate-field" placeholder="ABC-1234"
+        maxlength="8" oninput="formatPlate(this)">
+    </div>
+
+    <div class="field">
+      <div class="field-label"><span>🚙</span> Tipo do Veículo</div>
+      <select id="inputTipo" style="font-size:1.05rem;padding:16px;">
+        <option>Carro</option><option>Caminhão</option><option>Van</option>
+        <option>Moto</option><option>Ônibus</option><option>Outro</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <div class="field-label"><span>📝</span> Observações</div>
+      <textarea id="inputObs" rows="2" placeholder="Motivo da visita, destino interno..." style="font-size:1rem;padding:14px;resize:none;"></textarea>
+    </div>
+
+    <div class="nav-row">
+      <button class="big-btn big-btn-gray" onclick="goStep1()" style="font-size:1rem;">← Voltar</button>
+      <button class="big-btn big-btn-accent" onclick="goStep3()">Revisar →</button>
     </div>
   </div>
-  <div class="inside-header">
-    <div style="font-size:0.8rem;color:var(--muted)">Veículos no pátio agora</div>
-    <div class="inside-count" id="insideCount">— veículos</div>
+
+  <!-- STEP 3: CONFIRMAR -->
+  <div class="wpage" id="wp3">
+    <div class="sec-label"><div class="sec-num">3</div>Confirmar Entrada</div>
+
+    <div class="dphotos" id="reviewPhotos"></div>
+
+    <div class="card" id="reviewData" style="margin-bottom:16px;"></div>
+
+    <button class="big-btn big-btn-green" onclick="registrar()">
+      ✅ CONFIRMAR ENTRADA
+    </button>
+    <div style="margin-top:10px">
+      <button class="big-btn big-btn-gray" onclick="goStep2(true)" style="font-size:1rem;">← Editar</button>
+    </div>
   </div>
+
+</div>
+
+<!-- ════════════════════════════════
+     PANEL: SAÍDA
+════════════════════════════════ -->
+<div class="panel" id="panel-saida">
+  <div class="inside-hdr">
+    <div style="font-size:1.1rem;font-weight:800;">🏁 Veículos no Pátio</div>
+    <div class="inside-cnt" id="insideCnt">— veículos</div>
+  </div>
+
+  <div class="search-wrap">
+    <span class="search-ico">🔍</span>
+    <input type="text" id="searchSaida" placeholder="Placa, nome ou empresa..." oninput="renderSaida()">
+  </div>
+
   <div id="saidaList"></div>
 </div>
 
-<!-- CONSULTA -->
+<!-- ════════════════════════════════
+     PANEL: CONSULTA
+════════════════════════════════ -->
 <div class="panel" id="panel-consulta">
-  <div class="section-title">🔍 Consultar Registros</div>
-  <div class="search-bar">
-    <span class="search-icon">🔍</span>
-    <input type="text" id="searchInput" placeholder="Placa, motorista ou empresa..." oninput="renderConsulta()">
+  <div style="font-size:1.1rem;font-weight:800;margin-bottom:14px;">🔍 Consultar Registros</div>
+
+  <div class="search-wrap">
+    <span class="search-ico">🔍</span>
+    <input type="text" id="searchInput" placeholder="Placa, nome ou empresa..." oninput="renderConsulta()">
   </div>
-  <div class="filter-row">
-    <div class="filter-chip active" onclick="setFilter('todos',this)">Todos</div>
-    <div class="filter-chip" onclick="setFilter('hoje',this)">Hoje</div>
-    <div class="filter-chip" onclick="setFilter('semana',this)">Esta semana</div>
-    <div class="filter-chip" onclick="setFilter('dentro',this)">No pátio</div>
-    <div class="filter-chip" onclick="setFilter('saiu',this)">Saídas</div>
+
+  <div class="chips">
+    <div class="chip active" onclick="setFilter('todos',this)">Todos</div>
+    <div class="chip" onclick="setFilter('hoje',this)">Hoje</div>
+    <div class="chip" onclick="setFilter('semana',this)">Esta semana</div>
+    <div class="chip" onclick="setFilter('dentro',this)">No pátio</div>
+    <div class="chip" onclick="setFilter('saiu',this)">Saídas</div>
   </div>
+
   <div id="consultaList"></div>
 </div>
 
-<!-- DASHBOARD -->
-<div class="panel" id="panel-dashboard">
-  <div class="section-title">📊 Dashboard</div>
-  <div class="stats-grid" id="statsGrid"></div>
+<!-- ════════════════════════════════
+     PANEL: DASHBOARD
+════════════════════════════════ -->
+<div class="panel" id="panel-dash">
+  <div style="font-size:1.1rem;font-weight:800;margin-bottom:14px;">📊 Dashboard</div>
+  <div class="stats" id="statsGrid"></div>
   <div class="card">
-    <div class="card-title">🕐 Últimas Movimentações</div>
+    <div style="font-size:0.72rem;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;">🕐 Últimas Movimentações</div>
     <div id="recentList"></div>
   </div>
   <div class="card" style="margin-top:12px">
-    <div class="card-title">🏢 Top Empresas</div>
+    <div style="font-size:0.72rem;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;">🏢 Top Empresas</div>
     <div id="topEmpresas"></div>
   </div>
 </div>
 
-</main>
+<!-- BOTTOM NAV -->
+<div class="bnav">
+  <button class="bnav-btn active" id="nav-reg" onclick="showPanel('reg')">
+    <div class="ico">➕</div>Entrada
+  </button>
+  <button class="bnav-btn" id="nav-saida" onclick="showPanel('saida')">
+    <div class="ico">🚪</div>Saída
+  </button>
+  <button class="bnav-btn" id="nav-consulta" onclick="showPanel('consulta')">
+    <div class="ico">🔍</div>Consulta
+  </button>
+  <button class="bnav-btn" id="nav-dash" onclick="showPanel('dash')">
+    <div class="ico">📊</div>Dashboard
+  </button>
+</div>
 
-<!-- MODAL CÂMERA -->
-<div class="modal-overlay" id="camModal">
-  <div class="modal-box">
-    <div class="modal-header">
-      <span id="camTitle">📷 Câmera</span>
-      <button class="btn btn-secondary btn-sm" onclick="closeCam()">✕ Fechar</button>
+<!-- ═══ MODAL: CÂMERA ═══ -->
+<div class="modal-bg" id="camModal">
+  <div class="modal">
+    <div class="modal-hdr">
+      <div class="modal-title" id="camTitle">📷 Câmera</div>
+      <button class="modal-close" onclick="closeCam()">✕ Fechar</button>
     </div>
     <div class="modal-body">
-      <div class="cam-preview">
+      <div class="cam-wrap">
         <video id="camVideo" autoplay playsinline muted></video>
-        <div class="plate-guide-overlay" id="plateGuide" style="display:none">
-          <div class="plate-guide-box"><div class="plate-guide-label">▶ CENTRALIZAR A PLACA ◀</div></div>
+        <div class="cam-guide" id="camGuide" style="display:none">
+          <div class="cam-guide-box"><div class="cam-guide-label">▶ CENTRALIZAR A PLACA ◀</div></div>
         </div>
       </div>
       <canvas id="camCanvas"></canvas>
-      <div class="cam-btns">
-        <button class="btn btn-primary" onclick="capturarFoto()">📸 Capturar</button>
-        <button class="btn btn-secondary" onclick="flipCam()">🔄 Virar</button>
+      <div style="display:grid;grid-template-columns:1fr auto;gap:10px">
+        <button class="big-btn big-btn-accent" onclick="capturarFoto()">📸 Capturar Foto</button>
+        <button class="big-btn big-btn-gray" onclick="flipCam()" style="width:64px;padding:0;">🔄</button>
       </div>
     </div>
   </div>
 </div>
 
-<!-- MODAL DETALHE -->
-<div class="modal-overlay" id="detailModal">
-  <div class="modal-box scrollable">
-    <div class="modal-header">
-      <span id="detailTitle">📄 Registro</span>
-      <button class="btn btn-secondary btn-sm" onclick="closeDetail()">✕</button>
+<!-- ═══ MODAL: DETALHE ═══ -->
+<div class="modal-bg" id="detailModal">
+  <div class="modal">
+    <div class="modal-hdr">
+      <div class="modal-title" id="detailTitle">Registro</div>
+      <button class="modal-close" onclick="closeDetail()">✕</button>
     </div>
     <div class="modal-body" id="detailBody"></div>
   </div>
 </div>
 
-<!-- MODAL CONFIRMAR SAÍDA -->
-<div class="modal-overlay" id="saidaModal">
-  <div class="modal-box">
-    <div class="modal-header">
-      <span>🚪 Confirmar Saída</span>
-      <button class="btn btn-secondary btn-sm" onclick="closeSaidaModal()">✕</button>
+<!-- ═══ MODAL: CONFIRMAR SAÍDA ═══ -->
+<div class="modal-bg" id="saidaModal">
+  <div class="modal">
+    <div class="modal-hdr">
+      <div class="modal-title">🚪 Confirmar Saída</div>
+      <button class="modal-close" onclick="closeSaidaModal()">✕</button>
     </div>
     <div class="modal-body" id="saidaModalBody"></div>
   </div>
 </div>
 
-<div class="toast" id="toast"></div>
+<!-- ═══ MODAL: SUCESSO ENTRADA ═══ -->
+<div class="modal-bg" id="successModal">
+  <div class="modal">
+    <div class="modal-hdr">
+      <div class="modal-title">✅ Entrada Registrada!</div>
+      <button class="modal-close" onclick="closeSuccessModal()">✕</button>
+    </div>
+    <div class="modal-body" id="successBody"></div>
+  </div>
+</div>
+
+<!-- ═══ MODAL: SUCESSO SAÍDA ═══ -->
+<div class="modal-bg" id="saidaSuccessModal">
+  <div class="modal">
+    <div class="modal-hdr">
+      <div class="modal-title">🚪 Saída Registrada!</div>
+      <button class="modal-close" onclick="closeSaidaSuccessModal()">✕</button>
+    </div>
+    <div class="modal-body" id="saidaSuccessBody"></div>
+  </div>
+</div>
 
 <script>
-// ═══ STATE ═══
-let DB = JSON.parse(localStorage.getItem('pg_db_v3') || 'null');
-if(!DB) DB = [];
-let photoMotorista = null, photoVeiculo = null;
+// ══════════════════════════════════
+//  STATE
+// ══════════════════════════════════
+let DB = JSON.parse(localStorage.getItem('pg_v4') || 'null') || [];
+let photoMoto = null, photoVeic = null;
 let camStream = null, camTarget = null, camFacing = 'environment';
 let filterMode = 'todos';
+function saveDB(){ localStorage.setItem('pg_v4', JSON.stringify(DB)); }
 
-function saveDB(){ localStorage.setItem('pg_db_v3', JSON.stringify(DB)); }
-
-// ═══ CLOCK ═══
-setInterval(()=>{
+// ══ CLOCK ══
+function tick(){
   const n=new Date();
-  document.getElementById('headerTime').innerHTML=n.toLocaleDateString('pt-BR')+'<br>'+n.toLocaleTimeString('pt-BR');
-},1000);
-(()=>{const n=new Date();document.getElementById('headerTime').innerHTML=n.toLocaleDateString('pt-BR')+'<br>'+n.toLocaleTimeString('pt-BR');})();
+  document.getElementById('hdrTime').textContent=
+    n.toLocaleDateString('pt-BR')+' '+n.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+}
+setInterval(tick,1000); tick();
 
-// ═══ PANELS ═══
+// ══ PANELS ══
 function showPanel(id){
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.bnav-btn').forEach(b=>b.classList.remove('active'));
   document.getElementById('panel-'+id).classList.add('active');
   document.getElementById('nav-'+id).classList.add('active');
   if(id==='consulta') renderConsulta();
-  if(id==='dashboard') renderDashboard();
+  if(id==='dash') renderDashboard();
   if(id==='saida') renderSaida();
 }
 
-// ═══ AUTOCOMPLETE ═══
+// ══ WIZARD ══
+let currentStep = 1;
+
+function setStep(n){
+  currentStep=n;
+  [1,2,3].forEach(i=>{
+    document.getElementById('wp'+i).classList.toggle('active',i===n);
+    const s=document.getElementById('s'+i);
+    s.classList.remove('active','done');
+    if(i===n) s.classList.add('active');
+    else if(i<n) s.classList.add('done');
+  });
+  [1,2].forEach(i=>{
+    document.getElementById('sl'+i).classList.toggle('done',i<n);
+  });
+  window.scrollTo(0,0);
+}
+
+function goStep2(){
+  const nome=document.getElementById('inputNome').value.trim();
+  const empresa=document.getElementById('inputEmpresa').value.trim();
+  if(!nome){alert('Informe o nome do motorista.');return;}
+  if(!empresa){alert('Informe a empresa/procedência.');return;}
+  setStep(2);
+}
+
+function goStep1(){ setStep(1); }
+
+function goStep3(back){
+  if(!back){
+    const placa=document.getElementById('inputPlaca').value.trim();
+    if(placa.replace('-','').length<7){alert('Informe a placa do veículo.');return;}
+  }
+  // Build review
+  const nome=document.getElementById('inputNome').value.trim();
+  const empresa=document.getElementById('inputEmpresa').value.trim();
+  const placa=document.getElementById('inputPlaca').value.trim().toUpperCase();
+  const tipo=document.getElementById('inputTipo').value;
+  const obs=document.getElementById('inputObs').value.trim();
+
+  document.getElementById('reviewPhotos').innerHTML=`
+    <div>
+      <div style="font-size:0.72rem;color:var(--muted);font-weight:700;margin-bottom:6px;">MOTORISTA / DOC</div>
+      <div class="dphoto">${photoMoto?`<img src="${photoMoto}">`:'🤳'}</div>
+    </div>
+    <div>
+      <div style="font-size:0.72rem;color:var(--muted);font-weight:700;margin-bottom:6px;">VEÍCULO / PLACA</div>
+      <div class="dphoto">${photoVeic?`<img src="${photoVeic}">`:'🚗'}</div>
+    </div>`;
+
+  document.getElementById('reviewData').innerHTML=`
+    <div class="drow"><label>👤 Motorista</label><span>${nome}</span></div>
+    <div class="drow"><label>🏢 Empresa</label><span>${empresa}</span></div>
+    <div class="drow"><label>🚗 Placa</label><span style="font-family:var(--fm);color:var(--warn);letter-spacing:3px;font-size:1.1rem;">${placa}</span></div>
+    <div class="drow"><label>🚙 Tipo</label><span>${tipo}</span></div>
+    ${obs?`<div class="drow"><label>📝 Obs.</label><span>${obs}</span></div>`:''}`;
+
+  setStep(3);
+}
+
+// ══ AUTOCOMPLETE ══
 function getMotoristas(){
   const m={};
   DB.forEach(r=>{if(!m[r.nome])m[r.nome]={nome:r.nome,empresa:r.empresa,c:0};m[r.nome].c++;});
@@ -379,7 +681,7 @@ function acMotorista(q){
   if(!q||q.length<2){list.classList.remove('show');return;}
   const hits=getMotoristas().filter(x=>x.nome.toLowerCase().includes(q.toLowerCase())).slice(0,5);
   if(!hits.length){list.classList.remove('show');return;}
-  list.innerHTML=hits.map(x=>`<div class="ac-item" onclick="selectMotorista('${esc(x.nome)}','${esc(x.empresa)}')">${x.nome}<small>🏢 ${x.empresa} · ${x.c} visita(s)</small></div>`).join('');
+  list.innerHTML=hits.map(x=>`<div class="ac-item" onclick="selMoto('${esc(x.nome)}','${esc(x.empresa)}')">${x.nome}<small>🏢 ${x.empresa} · ${x.c} visita(s)</small></div>`).join('');
   list.classList.add('show');
 }
 function acEmpresa(q){
@@ -387,44 +689,40 @@ function acEmpresa(q){
   if(!q||q.length<1){list.classList.remove('show');return;}
   const hits=getEmpresas().filter(e=>e.toLowerCase().includes(q.toLowerCase())).slice(0,5);
   if(!hits.length){list.classList.remove('show');return;}
-  list.innerHTML=hits.map(e=>`<div class="ac-item" onclick="selectEmpresa('${esc(e)}')">${e}</div>`).join('');
+  list.innerHTML=hits.map(e=>`<div class="ac-item" onclick="selEmp('${esc(e)}')">${e}</div>`).join('');
   list.classList.add('show');
 }
-function selectMotorista(nome,empresa){
+function selMoto(nome,empresa){
   document.getElementById('inputNome').value=nome;
   document.getElementById('inputEmpresa').value=empresa;
   document.querySelectorAll('.ac-list').forEach(l=>l.classList.remove('show'));
 }
-function selectEmpresa(e){
+function selEmp(e){
   document.getElementById('inputEmpresa').value=e;
   document.getElementById('acEmpresaList').classList.remove('show');
 }
 document.addEventListener('click',e=>{if(!e.target.closest('.ac-wrap'))document.querySelectorAll('.ac-list').forEach(l=>l.classList.remove('show'));});
 
-// ═══ CAMERA ═══
+// ══ CAMERA ══
 async function openCam(target){
   camTarget=target;
   const isPlate=target==='veiculo';
-  document.getElementById('camTitle').textContent=isPlate?'📷 Fotografar Placa (Câmera Traseira)':'📷 Fotografar Motorista / Documento';
-  document.getElementById('plateGuide').style.display=isPlate?'flex':'none';
+  document.getElementById('camTitle').textContent=isPlate?'📷 Câmera Traseira — Placa':'📷 Fotografar Motorista / Documento';
+  document.getElementById('camGuide').style.display=isPlate?'flex':'none';
   document.getElementById('camModal').classList.add('open');
   await startCam();
 }
 async function startCam(){
   stopCam();
   try{
-    // Always prefer rear camera
-    camStream=await navigator.mediaDevices.getUserMedia({
-      video:{facingMode:{ideal:camFacing},width:{ideal:1920},height:{ideal:1080}}
-    });
+    camStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'},width:{ideal:1920},height:{ideal:1080}}});
     document.getElementById('camVideo').srcObject=camStream;
-  }catch(err){
-    // fallback: no constraints
+  }catch{
     try{
       camStream=await navigator.mediaDevices.getUserMedia({video:true});
       document.getElementById('camVideo').srcObject=camStream;
-    }catch(e){
-      alert('Câmera não acessível. Verifique as permissões do navegador e tente novamente, ou use "Galeria".');
+    }catch{
+      alert('Câmera não acessível.\n\nVerifique as permissões ou use a opção "Galeria".\n\nNota: a câmera só funciona via HTTPS (GitHub Pages). Arquivos locais não têm acesso à câmera.');
       closeCam();
     }
   }
@@ -439,92 +737,70 @@ function capturarFoto(){
   canvas.width=video.videoWidth||1280;
   canvas.height=video.videoHeight||960;
   canvas.getContext('2d').drawImage(video,0,0);
-  const dataUrl=canvas.toDataURL('image/jpeg',0.85);
+  const url=canvas.toDataURL('image/jpeg',.85);
   closeCam();
-  applyPhoto(dataUrl,camTarget);
-  if(camTarget==='veiculo') runOCR(dataUrl);
+  applyPhoto(url,camTarget);
+  if(camTarget==='veiculo') runOCR(url);
 }
-
 function fileSelected(input,target){
   const file=input.files[0];if(!file)return;
-  const reader=new FileReader();
-  reader.onload=e=>{applyPhoto(e.target.result,target);if(target==='veiculo')runOCR(e.target.result);};
-  reader.readAsDataURL(file);
-  input.value='';
+  const r=new FileReader();
+  r.onload=e=>{applyPhoto(e.target.result,target);if(target==='veiculo')runOCR(e.target.result);};
+  r.readAsDataURL(file);input.value='';
 }
-
-function applyPhoto(dataUrl,target){
+function applyPhoto(url,target){
   if(target==='motorista'){
-    photoMotorista=dataUrl;
-    document.getElementById('fotoMotoArea').innerHTML=`<img src="${dataUrl}">`;
-    toast('📸 Foto do motorista capturada!');
+    photoMoto=url;
+    document.getElementById('fotoMotoBlock').innerHTML=`<img src="${url}" style="width:100%;height:100%;object-fit:cover;">`;
   }else{
-    photoVeiculo=dataUrl;
-    document.getElementById('fotoVeicArea').innerHTML=`<img src="${dataUrl}">`;
-    toast('📸 Foto do veículo capturada! Lendo placa...');
+    photoVeic=url;
+    document.getElementById('fotoVeicBlock').innerHTML=`<img src="${url}" style="width:100%;height:100%;object-fit:cover;">`;
   }
 }
 
-// ═══ OCR ═══
+// ══ OCR ══
 async function runOCR(imgData){
-  setOCR(true,'Inicializando OCR...',0);
+  showOCR(true,'Inicializando OCR...',0);
   document.getElementById('plateFound').classList.remove('show');
   document.getElementById('inputPlaca').value='';
-
   try{
     const worker=await Tesseract.createWorker('eng',1,{
-      logger:m=>{
-        if(m.status==='recognizing text'){
-          setOCR(true,'Analisando imagem...',Math.round(m.progress*100));
-        }
-      }
+      logger:m=>{if(m.status==='recognizing text')showOCR(true,'Analisando imagem...',Math.round(m.progress*100));}
     });
-    await worker.setParameters({
-      tessedit_char_whitelist:'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789',
-      tessedit_pageseg_mode:'6',
-    });
-    const {data}=await worker.recognize(imgData);
+    await worker.setParameters({tessedit_char_whitelist:'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789',tessedit_pageseg_mode:'6'});
+    const{data}=await worker.recognize(imgData);
     await worker.terminate();
-    setOCR(false);
-
+    showOCR(false);
     const raw=data.text.toUpperCase().replace(/[^A-Z0-9]/g,'');
     const plate=extractPlate(raw);
     const conf=Math.round(data.confidence);
-
     if(plate){
-      document.getElementById('plateVal').textContent=plate;
-      document.getElementById('plateConf').textContent=`Confiança OCR: ${conf}%`;
+      document.getElementById('pfVal').textContent=plate;
+      document.getElementById('pfConf').textContent='Confiança OCR: '+conf+'%';
       document.getElementById('plateFound').classList.add('show');
       document.getElementById('inputPlaca').value=plate;
-      toast(`✅ Placa lida: ${plate} (${conf}%)`, 'success');
     }else{
-      toast('⚠️ Placa não identificada. Digite manualmente.','warn');
+      alert('Placa não identificada automaticamente.\nDigite a placa manualmente no campo abaixo.');
     }
   }catch(err){
-    setOCR(false);
-    toast('⚠️ Erro no OCR. Digite a placa manualmente.','warn');
+    showOCR(false);
     console.warn(err);
   }
 }
-
 function extractPlate(raw){
-  // Mercosul: ABC1D23 | Old: ABC1234
   const pats=[/[A-Z]{3}[0-9]{1}[A-Z]{1}[0-9]{2}/,/[A-Z]{3}[0-9]{4}/];
   for(let i=0;i<=raw.length-7;i++){
     const sub=raw.slice(i,i+7);
     for(const p of pats){if(p.test(sub))return sub.slice(0,3)+'-'+sub.slice(3);}
   }
-  if(raw.length>=7){const c=raw.slice(0,7);return c.slice(0,3)+'-'+c.slice(3);}
+  if(raw.length>=7)return raw.slice(0,3)+'-'+raw.slice(3,7);
   return null;
 }
-
-function setOCR(show,text='',pct=0){
-  const el=document.getElementById('ocrStatus');
-  if(show){el.classList.add('show');document.getElementById('ocrText').textContent=text;document.getElementById('ocrPct').textContent=pct+'%';}
+function showOCR(show,txt='',pct=0){
+  const el=document.getElementById('ocrBar');
+  if(show){el.classList.add('show');document.getElementById('ocrTxt').textContent=txt;document.getElementById('ocrPct').textContent=pct+'%';}
   else el.classList.remove('show');
 }
-
-// ═══ PLATE FORMAT ═══
 function formatPlate(input){
   let v=input.value.toUpperCase().replace(/[^A-Z0-9]/g,'');
   if(v.length>3)v=v.slice(0,3)+'-'+v.slice(3);
@@ -532,63 +808,61 @@ function formatPlate(input){
   input.value=v;
 }
 
-// ═══ REGISTRAR ENTRADA ═══
+// ══ REGISTRAR ══
 function registrar(){
   const nome=document.getElementById('inputNome').value.trim();
   const empresa=document.getElementById('inputEmpresa').value.trim();
   const placa=document.getElementById('inputPlaca').value.trim().toUpperCase();
-  if(!nome){alert('Informe o nome do motorista.');return;}
-  if(!empresa){alert('Informe a empresa/procedência.');return;}
-  if(placa.replace('-','').length<7){alert('Informe a placa do veículo (mínimo 7 caracteres).');return;}
-
-  DB.unshift({
+  const entry={
     id:Date.now(),nome,empresa,placa,
     tipo:document.getElementById('inputTipo').value,
-    vigilante:document.getElementById('inputVigilante').value.trim(),
     obs:document.getElementById('inputObs').value.trim(),
-    fotoMotorista:photoMotorista,fotoVeiculo:photoVeiculo,
+    fotoMotorista:photoMoto,fotoVeiculo:photoVeic,
     tsEntrada:new Date().toISOString(),tsSaida:null,status:'dentro'
-  });
+  };
+  DB.unshift(entry);
   saveDB();
   resetForm();
-  toast('✅ Entrada registrada com sucesso!');
+  showSuccessModal(entry);
 }
 
 function resetForm(){
-  ['inputNome','inputEmpresa','inputPlaca','inputObs','inputVigilante'].forEach(id=>document.getElementById(id).value='');
+  ['inputNome','inputEmpresa','inputPlaca','inputObs'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('inputTipo').value='Carro';
-  document.getElementById('fotoMotoArea').innerHTML='<div class="photo-icon">🤳</div><div class="photo-area-label">Toque para fotografar</div>';
-  document.getElementById('fotoVeicArea').innerHTML='<div class="photo-icon">🚗</div><div class="photo-area-label">A placa será lida automaticamente pelo OCR</div>';
+  document.getElementById('fotoMotoBlock').innerHTML='<div class="photo-block-icon">🤳</div><div class="photo-block-label">Toque para fotografar</div><div class="photo-block-sub">Motorista ou documento de identidade</div>';
+  document.getElementById('fotoVeicBlock').innerHTML='<div class="photo-block-icon">🚗</div><div class="photo-block-label">Toque para fotografar</div><div class="photo-block-sub">Mantenha a placa visível — OCR automático</div>';
   document.getElementById('plateFound').classList.remove('show');
-  setOCR(false);
-  photoMotorista=null;photoVeiculo=null;
+  showOCR(false);
+  photoMoto=null;photoVeic=null;
+  setStep(1);
 }
 
-// ═══ SAÍDA ═══
+// ══ SAÍDA ══
 function renderSaida(){
   const q=(document.getElementById('searchSaida').value||'').toLowerCase();
   let data=DB.filter(r=>r.status==='dentro');
-  document.getElementById('insideCount').textContent=data.length+' veículo(s)';
+  document.getElementById('insideCnt').textContent=data.length+' veículo(s)';
   if(q)data=data.filter(r=>r.nome.toLowerCase().includes(q)||r.empresa.toLowerCase().includes(q)||r.placa.toLowerCase().includes(q));
   const el=document.getElementById('saidaList');
   if(!data.length){
-    el.innerHTML=`<div class="empty"><div class="empty-icon">${q?'🔍':'🏁'}</div><h3>${q?'Nenhum resultado':'Pátio vazio'}</h3><p>${q?'Tente outra busca':'Todos os veículos já saíram'}</p></div>`;
+    el.innerHTML=`<div class="empty"><div class="empty-ico">${q?'🔍':'🏁'}</div><h3>${q?'Nenhum resultado':'Pátio vazio'}</h3><p>${q?'Tente outra busca':'Todos os veículos já saíram'}</p></div>`;
     return;
   }
   el.innerHTML=data.map(r=>{
     const mins=Math.round((Date.now()-new Date(r.tsEntrada))/60000);
     const tempo=mins<60?mins+'min':Math.floor(mins/60)+'h'+String(mins%60).padStart(2,'0')+'m';
-    return `<div class="entry-card">
-      <div class="entry-thumb">${r.fotoVeiculo?`<img src="${r.fotoVeiculo}">`:'🚗'}</div>
-      <div class="entry-info">
-        <div class="entry-name">${r.nome}</div>
-        <div class="entry-plate">${r.placa}</div>
-        <div class="entry-meta">🏢 ${r.empresa}</div>
-        <div class="entry-meta">⏱ ${tempo} no pátio</div>
+    const thumb=r.fotoVeiculo?`<img src="${r.fotoVeiculo}">`:(r.fotoMotorista?`<img src="${r.fotoMotorista}">`:'🚗');
+    return `<div class="ecard">
+      <div class="ecard-thumb">${thumb}</div>
+      <div class="ecard-info">
+        <div class="ecard-name">${r.nome}</div>
+        <div class="ecard-plate">${r.placa}</div>
+        <div class="ecard-meta">🏢 ${r.empresa}</div>
+        <div class="ecard-meta">⏱ ${tempo} no pátio</div>
       </div>
-      <div class="entry-status">
+      <div class="ecard-right">
         <span class="tag tag-inside">PÁTIO</span>
-        <button class="btn btn-exit btn-sm" style="padding:6px 10px;font-size:0.72rem;margin-top:2px" onclick="event.stopPropagation();confirmarSaida(${r.id})">🚪 Saída</button>
+        <button class="exit-btn" onclick="event.stopPropagation();confirmarSaida(${r.id})">🚪 Saída</button>
       </div>
     </div>`;
   }).join('');
@@ -599,31 +873,29 @@ function confirmarSaida(id){
   const mins=Math.round((Date.now()-new Date(r.tsEntrada))/60000);
   const tempo=mins<60?mins+' min':Math.floor(mins/60)+'h '+String(mins%60).padStart(2,'0')+'min';
   document.getElementById('saidaModalBody').innerHTML=`
-    <div style="text-align:center;padding:8px 0 18px">
-      <div style="font-size:2.5rem;margin-bottom:10px">🚪</div>
-      <div style="font-family:var(--font-head);font-weight:700;font-size:1.1rem;margin-bottom:4px">${r.nome}</div>
-      <div style="font-family:var(--font-mono);color:var(--warn);font-size:1.1rem;letter-spacing:3px;margin-bottom:4px">${r.placa}</div>
-      <div style="font-size:0.82rem;color:var(--muted)">🏢 ${r.empresa}</div>
-      <div style="font-size:0.82rem;color:var(--muted);margin-top:6px">⏱ Permanência: <strong style="color:var(--text)">${tempo}</strong></div>
+    <div style="text-align:center;padding:8px 0">
+      <div style="font-size:3rem;margin-bottom:8px">🚪</div>
+      <div class="conf-name">${r.nome}</div>
+      <div class="conf-plate">${r.placa}</div>
+      <div class="conf-sub">🏢 ${r.empresa}</div>
+      <div class="conf-time">⏱ Tempo no pátio: ${tempo}</div>
     </div>
-    <div style="display:flex;gap:8px">
-      <button class="btn btn-exit" style="flex:1" onclick="registrarSaida(${id})">✅ Confirmar Saída</button>
-      <button class="btn btn-secondary" style="flex:1" onclick="closeSaidaModal()">Cancelar</button>
-    </div>`;
+    <button class="big-btn big-btn-red" onclick="registrarSaida(${id})">✅ CONFIRMAR SAÍDA</button>
+    <button class="big-btn big-btn-gray" onclick="closeSaidaModal()" style="margin-top:10px">Cancelar</button>`;
   document.getElementById('saidaModal').classList.add('open');
 }
 function registrarSaida(id){
   const r=DB.find(x=>x.id===id);if(!r)return;
   r.tsSaida=new Date().toISOString();r.status='saiu';
   saveDB();closeSaidaModal();renderSaida();
-  toast('🚪 Saída registrada!','danger');
+  showSaidaSuccessModal(r);
 }
 function closeSaidaModal(){document.getElementById('saidaModal').classList.remove('open');}
 
-// ═══ CONSULTA ═══
+// ══ CONSULTA ══
 function setFilter(mode,el){
   filterMode=mode;
-  document.querySelectorAll('.filter-chip').forEach(c=>c.classList.remove('active'));
+  document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
   el.classList.add('active');renderConsulta();
 }
 function renderConsulta(){
@@ -636,116 +908,151 @@ function renderConsulta(){
   else if(filterMode==='saiu')data=data.filter(r=>r.status==='saiu');
   if(q)data=data.filter(r=>r.nome.toLowerCase().includes(q)||r.empresa.toLowerCase().includes(q)||r.placa.toLowerCase().includes(q));
   const el=document.getElementById('consultaList');
-  if(!data.length){el.innerHTML=`<div class="empty"><div class="empty-icon">🔍</div><h3>Nenhum registro encontrado</h3><p>Tente outros termos</p></div>`;return;}
+  if(!data.length){el.innerHTML=`<div class="empty"><div class="empty-ico">🔍</div><h3>Nenhum registro</h3><p>Tente outros termos</p></div>`;return;}
   el.innerHTML=data.map(r=>{
     const dt=new Date(r.tsEntrada);
     const dtStr=dt.toLocaleDateString('pt-BR')+' '+dt.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
     const tag=r.status==='dentro'?'<span class="tag tag-inside">PÁTIO</span>':'<span class="tag tag-out">SAIU</span>';
     const thumb=r.fotoMotorista?`<img src="${r.fotoMotorista}">`:(r.fotoVeiculo?`<img src="${r.fotoVeiculo}">`:'👤');
-    return `<div class="entry-card" onclick="showDetail(${r.id})">
-      <div class="entry-thumb">${thumb}</div>
-      <div class="entry-info">
-        <div class="entry-name">${r.nome}</div>
-        <div class="entry-plate">${r.placa}</div>
-        <div class="entry-meta">🏢 ${r.empresa} · ${r.tipo}</div>
-        <div class="entry-meta">📅 ${dtStr}</div>
+    return `<div class="ecard" onclick="showDetail(${r.id})">
+      <div class="ecard-thumb">${thumb}</div>
+      <div class="ecard-info">
+        <div class="ecard-name">${r.nome}</div>
+        <div class="ecard-plate">${r.placa}</div>
+        <div class="ecard-meta">🏢 ${r.empresa} · ${r.tipo}</div>
+        <div class="ecard-meta">📅 ${dtStr}</div>
       </div>
-      <div class="entry-status">${tag}</div>
+      <div class="ecard-right">${tag}</div>
     </div>`;
   }).join('');
 }
 
-// ═══ DETALHE ═══
+// ══ DETALHE ══
 function showDetail(id){
   const r=DB.find(x=>x.id===id);if(!r)return;
   const dtE=new Date(r.tsEntrada);
   const dtEStr=dtE.toLocaleDateString('pt-BR')+' '+dtE.toLocaleTimeString('pt-BR');
-  let durStr='—';
-  if(r.tsSaida){
-    const mins=Math.round((new Date(r.tsSaida)-dtE)/60000);
-    durStr=mins<60?mins+' min':Math.floor(mins/60)+'h '+String(mins%60).padStart(2,'0')+'min';
-  }
-  const statusTag=r.status==='dentro'?'<span class="tag tag-inside">NO PÁTIO</span>':'<span class="tag tag-out">SAIU</span>';
+  let dur='—';
+  if(r.tsSaida){const m=Math.round((new Date(r.tsSaida)-dtE)/60000);dur=m<60?m+' min':Math.floor(m/60)+'h '+String(m%60).padStart(2,'0')+'min';}
+  const stag=r.status==='dentro'?'<span class="tag tag-inside">NO PÁTIO</span>':'<span class="tag tag-out">SAIU</span>';
   document.getElementById('detailTitle').textContent=r.nome;
   document.getElementById('detailBody').innerHTML=`
-    <div class="detail-photos">
-      <div><div style="font-size:0.68rem;color:var(--muted);margin-bottom:4px;font-weight:600">MOTORISTA / DOC</div>
-        <div class="detail-photo-box">${r.fotoMotorista?`<img src="${r.fotoMotorista}">`:'🤳'}</div></div>
-      <div><div style="font-size:0.68rem;color:var(--muted);margin-bottom:4px;font-weight:600">VEÍCULO / PLACA</div>
-        <div class="detail-photo-box">${r.fotoVeiculo?`<img src="${r.fotoVeiculo}">`:'🚗'}</div></div>
+    <div class="dphotos">
+      <div><div style="font-size:0.72rem;color:var(--muted);font-weight:700;margin-bottom:6px">MOTORISTA</div>
+        <div class="dphoto">${r.fotoMotorista?`<img src="${r.fotoMotorista}">`:'🤳'}</div></div>
+      <div><div style="font-size:0.72rem;color:var(--muted);font-weight:700;margin-bottom:6px">VEÍCULO</div>
+        <div class="dphoto">${r.fotoVeiculo?`<img src="${r.fotoVeiculo}">`:'🚗'}</div></div>
     </div>
-    <div class="detail-row"><label>Nome</label><span>${r.nome}</span></div>
-    <div class="detail-row"><label>Empresa</label><span>${r.empresa}</span></div>
-    <div class="detail-row"><label>Placa</label><span style="font-family:var(--font-mono);color:var(--warn);letter-spacing:2px;font-weight:700">${r.placa}</span></div>
-    <div class="detail-row"><label>Tipo</label><span>${r.tipo}</span></div>
-    <div class="detail-row"><label>Entrada</label><span>${dtEStr}</span></div>
-    ${r.tsSaida?`<div class="detail-row"><label>Saída</label><span>${new Date(r.tsSaida).toLocaleTimeString('pt-BR')}</span></div>`:''}
-    <div class="detail-row"><label>Permanência</label><span>${durStr}</span></div>
-    ${r.vigilante?`<div class="detail-row"><label>Vigilante</label><span>${r.vigilante}</span></div>`:''}
-    ${r.obs?`<div class="detail-row"><label>Obs.</label><span>${r.obs}</span></div>`:''}
-    <div class="detail-row"><label>Status</label><span>${statusTag}</span></div>
-    <div class="detail-actions">
-      ${r.status==='dentro'?`<button class="btn btn-exit" onclick="closeDetail();confirmarSaida(${r.id})">🚪 Registrar Saída</button>`:''}
-      <button class="btn btn-danger" onclick="deleteEntry(${r.id})">🗑 Excluir</button>
-      <button class="btn btn-secondary" onclick="closeDetail()">✕ Fechar</button>
+    <div class="drow"><label>Motorista</label><span>${r.nome}</span></div>
+    <div class="drow"><label>Empresa</label><span>${r.empresa}</span></div>
+    <div class="drow"><label>Placa</label><span style="font-family:var(--fm);color:var(--warn);letter-spacing:3px;font-size:1.1rem">${r.placa}</span></div>
+    <div class="drow"><label>Tipo</label><span>${r.tipo}</span></div>
+    <div class="drow"><label>Entrada</label><span>${dtEStr}</span></div>
+    ${r.tsSaida?`<div class="drow"><label>Saída</label><span>${new Date(r.tsSaida).toLocaleTimeString('pt-BR')}</span></div>`:''}
+    <div class="drow"><label>Permanência</label><span>${dur}</span></div>
+    ${r.obs?`<div class="drow"><label>Obs.</label><span>${r.obs}</span></div>`:''}
+    <div class="drow"><label>Status</label><span>${stag}</span></div>
+    <div style="display:grid;grid-template-columns:${r.status==='dentro'?'1fr 1fr':'1fr'};gap:10px;margin-top:16px">
+      ${r.status==='dentro'?`<button class="big-btn big-btn-red" onclick="closeDetail();confirmarSaida(${r.id})" style="font-size:0.95rem">🚪 Saída</button>`:''}
+      <button class="big-btn big-btn-gray" onclick="delEntry(${r.id})" style="font-size:0.9rem">🗑 Excluir</button>
     </div>`;
   document.getElementById('detailModal').classList.add('open');
 }
 function closeDetail(){document.getElementById('detailModal').classList.remove('open');}
-function deleteEntry(id){
-  if(!confirm('Excluir este registro permanentemente?'))return;
+function delEntry(id){
+  if(!confirm('Excluir este registro?'))return;
   DB=DB.filter(r=>r.id!==id);saveDB();closeDetail();
-  renderConsulta();renderSaida();renderDashboard();
-  toast('🗑 Excluído.','danger');
+  renderConsulta();renderSaida();
 }
 
-// ═══ DASHBOARD ═══
+// ══ DASHBOARD ══
 function renderDashboard(){
   const now=new Date();
   const dentro=DB.filter(r=>r.status==='dentro');
   const hoje=DB.filter(r=>new Date(r.tsEntrada).toDateString()===now.toDateString());
-  const semana=DB.filter(r=>new Date(r.tsEntrada)>=new Date(now-7*24*3600000));
+  const sem=DB.filter(r=>new Date(r.tsEntrada)>=new Date(now-7*24*3600000));
   document.getElementById('statsGrid').innerHTML=`
-    <div class="stat-card"><div class="stat-num" style="color:var(--warn)">${dentro.length}</div><div class="stat-label">No Pátio Agora</div></div>
-    <div class="stat-card"><div class="stat-num">${hoje.length}</div><div class="stat-label">Hoje</div></div>
-    <div class="stat-card"><div class="stat-num">${semana.length}</div><div class="stat-label">Esta Semana</div></div>
-    <div class="stat-card"><div class="stat-num">${DB.length}</div><div class="stat-label">Total Registros</div></div>`;
-  document.getElementById('recentList').innerHTML=DB.slice(0,6).map(r=>{
+    <div class="stat"><div class="stat-n" style="color:var(--warn)">${dentro.length}</div><div class="stat-l">No Pátio</div></div>
+    <div class="stat"><div class="stat-n">${hoje.length}</div><div class="stat-l">Hoje</div></div>
+    <div class="stat"><div class="stat-n">${sem.length}</div><div class="stat-l">Semana</div></div>
+    <div class="stat"><div class="stat-n">${DB.length}</div><div class="stat-l">Total</div></div>`;
+  document.getElementById('recentList').innerHTML=DB.slice(0,5).map(r=>{
     const dt=new Date(r.tsEntrada);
-    const tag=r.status==='dentro'?'<span class="tag tag-inside" style="font-size:0.58rem">PÁTIO</span>':'<span class="tag tag-out" style="font-size:0.58rem">SAIU</span>';
-    return `<div class="detail-row" onclick="showDetail(${r.id})" style="cursor:pointer">
-      <div><div style="font-weight:600;font-size:0.83rem">${r.nome}</div>
-      <div style="font-size:0.7rem;color:var(--muted);font-family:var(--font-mono)">${r.placa} · ${r.empresa}</div></div>
-      <div style="text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:3px">${tag}
-      <div style="font-size:0.68rem;color:var(--muted)">${dt.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}</div></div>
+    const tag=r.status==='dentro'?'<span class="tag tag-inside">PÁTIO</span>':'<span class="tag tag-out">SAIU</span>';
+    return `<div class="drow" onclick="showDetail(${r.id})" style="cursor:pointer">
+      <div><div style="font-weight:700">${r.nome}</div>
+      <div style="font-size:0.78rem;color:var(--muted);font-family:var(--fm)">${r.placa}</div></div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
+        ${tag}<div style="font-size:0.72rem;color:var(--muted)">${dt.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}</div></div>
     </div>`;
-  }).join('')||'<div style="color:var(--muted);font-size:0.8rem;padding:8px 0">Nenhum registro ainda.</div>';
-  const emp={};
-  DB.forEach(r=>{emp[r.empresa]=(emp[r.empresa]||0)+1;});
+  }).join('')||'<div style="color:var(--muted);padding:12px 0;font-size:0.9rem">Nenhum registro ainda.</div>';
+  const emp={};DB.forEach(r=>{emp[r.empresa]=(emp[r.empresa]||0)+1;});
   document.getElementById('topEmpresas').innerHTML=Object.entries(emp).sort((a,b)=>b[1]-a[1]).slice(0,5)
-    .map(([e,c])=>`<div class="detail-row"><span>🏢 ${e}</span><span style="color:var(--accent);font-family:var(--font-mono);font-weight:700">${c}</span></div>`).join('')
-    ||'<div style="color:var(--muted);font-size:0.8rem;padding:8px 0">Nenhuma empresa ainda.</div>';
+    .map(([e,c])=>`<div class="drow"><span style="font-weight:600">🏢 ${e}</span><span style="color:var(--accent);font-family:var(--fm);font-weight:700">${c}</span></div>`).join('')
+    ||'<div style="color:var(--muted);padding:12px 0;font-size:0.9rem">Nenhuma empresa ainda.</div>';
 }
 
-// ═══ UTILS ═══
-let toastTimer;
-function toast(msg,type='success'){
-  const el=document.getElementById('toast');el.textContent=msg;
-  const cols={success:['var(--success)','#fff'],danger:['var(--danger)','#fff'],warn:['var(--warn)','#000'],info:['var(--accent)','#000']};
-  const [bg,fg]=cols[type]||cols.success;
-  el.style.background=bg;el.style.color=fg;
-  el.classList.add('show');clearTimeout(toastTimer);
-  toastTimer=setTimeout(()=>el.classList.remove('show'),3200);
+// ══ WHATSAPP ══
+const WA_ICO=`<svg class="wa-ico" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>`;
+
+function buildWAEntrada(r){
+  const dt=new Date(r.tsEntrada);
+  const dtStr=dt.toLocaleDateString('pt-BR')+' às '+dt.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+  return `🛡 *PORTARIA — ENTRADA*\n━━━━━━━━━━━━━━━\n👤 *Motorista:* ${r.nome}\n🏢 *Empresa:* ${r.empresa}\n🚗 *Placa:* ${r.placa}\n🚙 *Tipo:* ${r.tipo}\n🕐 *Entrada:* ${dtStr}${r.obs?'\n📝 *Obs.:* '+r.obs:''}\n━━━━━━━━━━━━━━━`;
 }
+function buildWASaida(r){
+  const dtE=new Date(r.tsEntrada),dtS=new Date(r.tsSaida);
+  const m=Math.round((dtS-dtE)/60000);
+  const tempo=m<60?m+' min':Math.floor(m/60)+'h '+String(m%60).padStart(2,'0')+'min';
+  return `🛡 *PORTARIA — SAÍDA*\n━━━━━━━━━━━━━━━\n👤 *Motorista:* ${r.nome}\n🏢 *Empresa:* ${r.empresa}\n🚗 *Placa:* ${r.placa}\n🕐 *Entrada:* ${dtE.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}\n🚪 *Saída:* ${dtS.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}\n⏱ *Permanência:* ${tempo}\n━━━━━━━━━━━━━━━`;
+}
+function openWA(msg){window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank');}
+
+function showSuccessModal(r){
+  const dt=new Date(r.tsEntrada);
+  const msg=buildWAEntrada(r);
+  document.getElementById('successBody').innerHTML=`
+    <div class="success-icon">✅</div>
+    <div class="success-name">${r.nome}</div>
+    <div class="success-plate">${r.placa}</div>
+    <div class="success-sub">🏢 ${r.empresa} · ${dt.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}</div>
+    <div class="divider"></div>
+    <div class="wa-label">📤 Mensagem para WhatsApp</div>
+    <div class="wa-preview">${msg.replace(/\*/g,'')}</div>
+    <button class="big-btn big-btn-wa" onclick="openWA(${JSON.stringify(msg)})">${WA_ICO} Enviar pelo WhatsApp</button>
+    <button class="big-btn big-btn-gray" onclick="closeSuccessModal()" style="margin-top:10px">Fechar</button>`;
+  document.getElementById('successModal').classList.add('open');
+}
+function closeSuccessModal(){document.getElementById('successModal').classList.remove('open');}
+
+function showSaidaSuccessModal(r){
+  const msg=buildWASaida(r);
+  const m=Math.round((new Date(r.tsSaida)-new Date(r.tsEntrada))/60000);
+  const tempo=m<60?m+' min':Math.floor(m/60)+'h '+String(m%60).padStart(2,'0')+'min';
+  document.getElementById('saidaSuccessBody').innerHTML=`
+    <div class="success-icon">🚪</div>
+    <div class="success-name">${r.nome}</div>
+    <div class="success-plate">${r.placa}</div>
+    <div class="success-sub">🏢 ${r.empresa} · ⏱ ${tempo}</div>
+    <div class="divider"></div>
+    <div class="wa-label">📤 Mensagem para WhatsApp</div>
+    <div class="wa-preview">${msg.replace(/\*/g,'')}</div>
+    <button class="big-btn big-btn-wa" onclick="openWA(${JSON.stringify(msg)})">${WA_ICO} Enviar pelo WhatsApp</button>
+    <button class="big-btn big-btn-gray" onclick="closeSaidaSuccessModal()" style="margin-top:10px">Fechar</button>`;
+  document.getElementById('saidaSuccessModal').classList.add('open');
+}
+function closeSaidaSuccessModal(){document.getElementById('saidaSuccessModal').classList.remove('open');}
+
+// ══ UTILS ══
 function esc(s){return String(s).replace(/'/g,'&#39;').replace(/"/g,'&quot;');}
 
-// ═══ DEMO DATA ═══
+// ══ DEMO DATA ══
 if(!DB.length){
   const t=Date.now();
   DB=[
-    {id:t-3,nome:'Carlos Souza',empresa:'Distribuidora ABC',placa:'BRA-2E19',tipo:'Caminhão',vigilante:'João',obs:'Entrega de materiais',fotoMotorista:null,fotoVeiculo:null,tsEntrada:new Date(t-5400000).toISOString(),tsSaida:null,status:'dentro'},
-    {id:t-2,nome:'Maria Fernanda',empresa:'Correios',placa:'MNO-3456',tipo:'Van',vigilante:'João',obs:'',fotoMotorista:null,fotoVeiculo:null,tsEntrada:new Date(t-7200000).toISOString(),tsSaida:new Date(t-3600000).toISOString(),status:'saiu'},
-    {id:t-1,nome:'João Pereira',empresa:'Manutenção Técnica SP',placa:'DEF-7890',tipo:'Carro',vigilante:'Maria',obs:'Manutenção do ar-condicionado',fotoMotorista:null,fotoVeiculo:null,tsEntrada:new Date(t-86400000).toISOString(),tsSaida:new Date(t-82800000).toISOString(),status:'saiu'},
+    {id:t-3,nome:'Carlos Souza',empresa:'Distribuidora ABC',placa:'BRA-2E19',tipo:'Caminhão',obs:'Entrega de materiais',fotoMotorista:null,fotoVeiculo:null,tsEntrada:new Date(t-5400000).toISOString(),tsSaida:null,status:'dentro'},
+    {id:t-2,nome:'Maria Fernanda',empresa:'Correios',placa:'MNO-3456',tipo:'Van',obs:'',fotoMotorista:null,fotoVeiculo:null,tsEntrada:new Date(t-7200000).toISOString(),tsSaida:new Date(t-3600000).toISOString(),status:'saiu'},
+    {id:t-1,nome:'João Pereira',empresa:'Manutenção Técnica SP',placa:'DEF-7890',tipo:'Carro',obs:'Manutenção do ar-condicionado',fotoMotorista:null,fotoVeiculo:null,tsEntrada:new Date(t-86400000).toISOString(),tsSaida:new Date(t-82800000).toISOString(),status:'saiu'},
   ];
   saveDB();
 }
