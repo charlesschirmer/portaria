@@ -13,6 +13,13 @@
   --warn:#ffb020; --red:#ff4455; --text:#f0f2f8; --muted:#7b829a;
   --f:'Inter',sans-serif; --fm:'JetBrains Mono',monospace;
 }
+
+/* ── TEMA DIA ── */
+body.tema-dia{
+  --bg:#f0f4f8; --s1:#ffffff; --s2:#e8edf5; --s3:#d8e0ec;
+  --border:#c5cfe0; --accent:#0077cc; --green:#00966e;
+  --warn:#d4850a; --red:#d63040; --text:#0f1420; --muted:#5a6480;
+}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f);overflow-x:hidden;}
 
@@ -312,7 +319,10 @@ canvas{display:none;}
     <div class="hdr-dot" id="hdrDot" title="Verificando conexão..."></div>
     PortalGuard
   </div>
-  <div class="hdr-time" id="hdrTime"></div>
+  <div style="display:flex;align-items:center;gap:12px;">
+    <div id="hdrTema" style="font-size:1.1rem;cursor:pointer;" onclick="toggleTema()" title="Alternar tema">🌙</div>
+    <div class="hdr-time" id="hdrTime"></div>
+  </div>
 </div>
 
 <!-- ════════════════════════════════
@@ -500,6 +510,58 @@ canvas{display:none;}
   <div style="font-size:1.1rem;font-weight:800;margin-bottom:6px;">⚙️ Configurações</div>
   <div style="font-size:0.85rem;color:var(--muted);margin-bottom:20px;">Sincronização via GitHub Gist</div>
 
+  <!-- TEMA -->
+  <div class="card" style="margin-bottom:14px;">
+    <div style="font-size:0.72rem;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:14px;">🎨 Aparência</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+
+      <div id="btnTemaNight" onclick="setTema('noite')" style="cursor:pointer;border-radius:14px;overflow:hidden;border:3px solid var(--accent);transition:all .2s;">
+        <div style="background:#0d0f14;padding:14px 12px;">
+          <div style="display:flex;gap:5px;margin-bottom:10px;">
+            <div style="width:7px;height:7px;border-radius:50%;background:#ff4455;"></div>
+            <div style="width:7px;height:7px;border-radius:50%;background:#ffb020;"></div>
+            <div style="width:7px;height:7px;border-radius:50%;background:#00c896;"></div>
+          </div>
+          <div style="background:#141720;border-radius:6px;padding:6px 8px;margin-bottom:6px;">
+            <div style="height:6px;border-radius:3px;background:#00d4ff;width:60%;margin-bottom:4px;"></div>
+            <div style="height:5px;border-radius:3px;background:#2a2f42;width:80%;margin-bottom:3px;"></div>
+            <div style="height:5px;border-radius:3px;background:#2a2f42;width:55%;"></div>
+          </div>
+          <div style="background:#00d4ff;border-radius:6px;padding:5px 8px;text-align:center;">
+            <div style="height:5px;border-radius:3px;background:#0d0f14;width:70%;margin:0 auto;"></div>
+          </div>
+        </div>
+        <div style="background:#141720;padding:8px;text-align:center;">
+          <div style="font-size:0.82rem;font-weight:700;color:#f0f2f8;">🌙 Tema Noite</div>
+          <div style="font-size:0.68rem;color:#7b829a;margin-top:2px;">Ambientes escuros</div>
+        </div>
+      </div>
+
+      <div id="btnTemaDia" onclick="setTema('dia')" style="cursor:pointer;border-radius:14px;overflow:hidden;border:3px solid transparent;transition:all .2s;">
+        <div style="background:#f0f4f8;padding:14px 12px;">
+          <div style="display:flex;gap:5px;margin-bottom:10px;">
+            <div style="width:7px;height:7px;border-radius:50%;background:#d63040;"></div>
+            <div style="width:7px;height:7px;border-radius:50%;background:#d4850a;"></div>
+            <div style="width:7px;height:7px;border-radius:50%;background:#00966e;"></div>
+          </div>
+          <div style="background:#ffffff;border-radius:6px;padding:6px 8px;margin-bottom:6px;border:1px solid #c5cfe0;">
+            <div style="height:6px;border-radius:3px;background:#0077cc;width:60%;margin-bottom:4px;"></div>
+            <div style="height:5px;border-radius:3px;background:#c5cfe0;width:80%;margin-bottom:3px;"></div>
+            <div style="height:5px;border-radius:3px;background:#c5cfe0;width:55%;"></div>
+          </div>
+          <div style="background:#0077cc;border-radius:6px;padding:5px 8px;text-align:center;">
+            <div style="height:5px;border-radius:3px;background:#ffffff;width:70%;margin:0 auto;"></div>
+          </div>
+        </div>
+        <div style="background:#ffffff;padding:8px;text-align:center;border-top:1px solid #c5cfe0;">
+          <div style="font-size:0.82rem;font-weight:700;color:#0f1420;">☀️ Tema Dia</div>
+          <div style="font-size:0.68rem;color:#5a6480;margin-top:2px;">Ambientes claros / sol</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
   <!-- STATUS -->
   <div class="card" style="margin-bottom:14px;">
     <div style="font-size:0.72rem;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">🔄 Status da Sincronização</div>
@@ -654,6 +716,27 @@ let isSyncing  = false;
 
 function saveLocal(){ localStorage.setItem('pg_v4', JSON.stringify(DB)); }
 
+// ══ TEMA ══
+function setTema(t){
+  const isDia = t === 'dia';
+  document.body.classList.toggle('tema-dia', isDia);
+  localStorage.setItem('pg_tema', t);
+  // update border highlight on selector cards
+  const night = document.getElementById('btnTemaNight');
+  const dia   = document.getElementById('btnTemaDia');
+  if(night && dia){
+    night.style.border = isDia ? '3px solid transparent' : '3px solid var(--accent)';
+    dia.style.border   = isDia ? '3px solid var(--accent)' : '3px solid transparent';
+  }
+  // update header indicator
+  document.getElementById('hdrTema').textContent = isDia ? '☀️' : '🌙';
+}
+
+function initTema(){
+  const saved = localStorage.getItem('pg_tema') || 'noite';
+  setTema(saved);
+}
+
 // ══ CLOCK ══
 function tick(){
   const n=new Date();
@@ -768,10 +851,23 @@ function saveDB(){
 }
 
 // ══ CONFIG PANEL ══
+function toggleTema(){
+  const current = localStorage.getItem('pg_tema') || 'noite';
+  setTema(current === 'noite' ? 'dia' : 'noite');
+}
+
 function renderConfig(){
-  document.getElementById('cfgGistId').value    = GIST_ID;
-  document.getElementById('cfgToken').value     = GIST_TOKEN;
+  document.getElementById('cfgGistId').value = GIST_ID;
+  document.getElementById('cfgToken').value  = GIST_TOKEN;
   renderSyncStatus();
+  // Refresh theme border highlight
+  const saved = localStorage.getItem('pg_tema') || 'noite';
+  const night = document.getElementById('btnTemaNight');
+  const dia   = document.getElementById('btnTemaDia');
+  if(night && dia){
+    night.style.border = saved==='dia' ? '3px solid transparent' : '3px solid var(--accent)';
+    dia.style.border   = saved==='dia' ? '3px solid var(--accent)' : '3px solid transparent';
+  }
 }
 
 function renderSyncStatus(){
@@ -1488,6 +1584,9 @@ if(!DB.length){
   ];
   saveLocal();
 }
+
+// Apply saved theme immediately
+initTema();
 
 // Pull from Gist on open (merge remote into local)
 if(GIST_ID && GIST_TOKEN){
