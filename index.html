@@ -7,13 +7,13 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/tesseract.js/5.0.4/tesseract.min.js"></script>
 <style>
+/* ── TEMA NOITE (padrão) ── */
 :root{
   --bg:#0d0f14; --s1:#141720; --s2:#1c2030; --s3:#242840;
   --border:#2a2f42; --accent:#00d4ff; --green:#00c896;
   --warn:#ffb020; --red:#ff4455; --text:#f0f2f8; --muted:#7b829a;
   --f:'Inter',sans-serif; --fm:'JetBrains Mono',monospace;
 }
-
 /* ── TEMA DIA ── */
 body.tema-dia{
   --bg:#f0f4f8; --s1:#ffffff; --s2:#e8edf5; --s3:#d8e0ec;
@@ -21,302 +21,213 @@ body.tema-dia{
   --warn:#d4850a; --red:#d63040; --text:#0f1420; --muted:#5a6480;
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
-html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f);overflow-x:hidden;}
+html,body{background:var(--bg);color:var(--text);font-family:var(--f);overflow-x:hidden;min-height:100%;}
 
 /* ── HEADER ── */
-.hdr{
-  background:var(--s1);border-bottom:2px solid var(--border);
-  height:60px;display:flex;align-items:center;justify-content:space-between;
-  padding:0 16px;position:sticky;top:0;z-index:100;
-}
-.hdr-logo{display:flex;align-items:center;gap:10px;font-weight:900;font-size:1.25rem;letter-spacing:-0.5px;}
-.hdr-dot{width:10px;height:10px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);animation:pulse 2s infinite;}
+.hdr{background:var(--s1);border-bottom:2px solid var(--border);height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;position:sticky;top:0;z-index:100;}
+.hdr-logo{display:flex;align-items:center;gap:10px;font-weight:900;font-size:1.2rem;letter-spacing:-.5px;}
+.hdr-dot{width:10px;height:10px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);animation:pulse 2s infinite;cursor:pointer;}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
-.hdr-time{font-family:var(--fm);font-size:0.85rem;color:var(--muted);}
+.hdr-right{display:flex;align-items:center;gap:12px;}
+.hdr-tema{font-size:1.1rem;cursor:pointer;}
+.hdr-time{font-family:var(--fm);font-size:0.75rem;color:var(--muted);}
 
 /* ── BOTTOM NAV ── */
-.bnav{
-  position:fixed;bottom:0;left:0;right:0;
-  background:var(--s1);border-top:2px solid var(--border);
-  display:grid;grid-template-columns:repeat(6,1fr);
-  height:68px;z-index:100;
-}
-.bnav-btn{
-  background:none;border:none;color:var(--muted);
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  gap:4px;cursor:pointer;transition:color .15s;font-family:var(--f);
-  font-size:0.62rem;font-weight:600;text-transform:uppercase;letter-spacing:.5px;
-  border-top:3px solid transparent;
-}
-.bnav-btn .ico{font-size:1.5rem;line-height:1;}
+.bnav{position:fixed;bottom:0;left:0;right:0;background:var(--s1);border-top:2px solid var(--border);display:grid;grid-template-columns:repeat(5,1fr);height:66px;z-index:100;}
+.bnav-btn{background:none;border:none;color:var(--muted);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;font-family:var(--f);font-size:0.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.4px;border-top:3px solid transparent;transition:color .15s;}
+.bnav-btn .ico{font-size:1.4rem;line-height:1;}
 .bnav-btn.active{color:var(--accent);border-top-color:var(--accent);}
 
 /* ── PANELS ── */
-.panel{display:none;padding:16px 14px 90px;max-width:600px;margin:0 auto;}
+.panel{display:none;padding:14px 14px 82px;max-width:600px;margin:0 auto;}
 .panel.active{display:block;}
 
+/* ── CARDS ── */
+.card{background:var(--s1);border:2px solid var(--border);border-radius:14px;padding:14px;margin-bottom:12px;}
+.card-title{font-size:0.68rem;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;}
+
+/* ── SECTION LABEL ── */
+.sec-label{font-size:1rem;font-weight:800;margin-bottom:14px;display:flex;align-items:center;gap:10px;}
+.sec-num{width:34px;height:34px;background:var(--accent);color:#000;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:1rem;flex-shrink:0;}
+
 /* ── WIZARD STEPS ── */
-.steps{display:flex;align-items:center;gap:0;margin-bottom:20px;}
-.step{
-  display:flex;align-items:center;gap:8px;
-  font-size:0.78rem;font-weight:700;color:var(--muted);flex:1;
-}
-.step-num{
-  width:32px;height:32px;border-radius:50%;background:var(--s2);
-  border:2px solid var(--border);display:flex;align-items:center;justify-content:center;
-  font-weight:800;font-size:0.85rem;flex-shrink:0;transition:all .3s;
-}
+.steps{display:flex;align-items:center;margin-bottom:18px;}
+.step{display:flex;align-items:center;gap:6px;font-size:0.75rem;font-weight:700;color:var(--muted);flex:1;}
+.step-num{width:30px;height:30px;border-radius:50%;background:var(--s2);border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:0.82rem;flex-shrink:0;transition:all .3s;}
 .step.active .step-num{background:var(--accent);border-color:var(--accent);color:#000;}
 .step.done .step-num{background:var(--green);border-color:var(--green);color:#000;}
 .step.active{color:var(--text);}
 .step.done{color:var(--green);}
 .step-line{flex:1;height:2px;background:var(--border);margin:0 4px;}
 .step-line.done{background:var(--green);}
-.step-label{display:none;}
-@media(min-width:380px){.step-label{display:block;}}
-
-/* ── WIZARD PAGES ── */
-.wpage{display:none;}.wpage.active{display:block;animation:fadeUp .2s ease;}
-@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
-
-/* ── BIG SECTION LABEL ── */
-.sec-label{
-  font-size:1rem;font-weight:800;margin-bottom:14px;
-  display:flex;align-items:center;gap:10px;color:var(--text);
-}
-.sec-num{
-  width:36px;height:36px;background:var(--accent);color:#000;
-  border-radius:10px;display:flex;align-items:center;justify-content:center;
-  font-weight:900;font-size:1.1rem;flex-shrink:0;
-}
+.step-lbl{display:none;}
+@media(min-width:360px){.step-lbl{display:block;}}
+.wpage{display:none;animation:fadeUp .2s ease;}
+.wpage.active{display:block;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 
 /* ── FIELDS ── */
-.field{margin-bottom:16px;}
-.field-label{
-  font-size:0.95rem;font-weight:700;color:var(--muted);
-  margin-bottom:8px;display:flex;align-items:center;gap:6px;
-}
-.field-label span{font-size:1rem;}
-input[type=text],textarea,select{
-  width:100%;background:var(--s2);border:2px solid var(--border);
-  border-radius:12px;padding:16px;color:var(--text);font-family:var(--f);
-  font-size:1.05rem;font-weight:600;outline:none;transition:border-color .2s;
+.field{margin-bottom:14px;}
+.field-label{font-size:0.88rem;font-weight:700;color:var(--muted);margin-bottom:7px;display:flex;align-items:center;gap:6px;}
+input[type=text],input[type=datetime-local],textarea,select{
+  width:100%;background:var(--s2);border:2px solid var(--border);border-radius:12px;
+  padding:14px;color:var(--text);font-family:var(--f);font-size:1rem;font-weight:600;
+  outline:none;transition:border-color .2s;
 }
 input:focus,textarea:focus,select:focus{border-color:var(--accent);}
+input[type=datetime-local]{color-scheme:dark;}
+body.tema-dia input[type=datetime-local]{color-scheme:light;}
 select{appearance:none;}
-.plate-field{
-  font-family:var(--fm)!important;font-size:1.8rem!important;
-  font-weight:700!important;letter-spacing:6px!important;
-  text-align:center!important;text-transform:uppercase!important;
-  border-color:var(--warn)!important;color:var(--warn)!important;
-  padding:18px!important;
-}
+.plate-field{font-family:var(--fm)!important;font-size:1.6rem!important;font-weight:700!important;letter-spacing:5px!important;text-align:center!important;text-transform:uppercase!important;border-color:var(--warn)!important;color:var(--warn)!important;padding:16px!important;}
 .plate-field:focus{border-color:var(--accent)!important;color:var(--accent)!important;}
 input[type=file]{display:none;}
 
 /* ── PHOTO BLOCK ── */
-.photo-block{
-  border-radius:14px;overflow:hidden;background:var(--s2);
-  border:2px dashed var(--border);margin-bottom:12px;
-  aspect-ratio:16/9;display:flex;flex-direction:column;
-  align-items:center;justify-content:center;gap:8px;
-  cursor:pointer;position:relative;transition:border-color .2s;
-}
+.photo-block{width:100%;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:var(--s2);border:2px dashed var(--border);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;cursor:pointer;margin-bottom:8px;transition:border-color .2s;}
 .photo-block:active{border-color:var(--accent);}
 .photo-block img{width:100%;height:100%;object-fit:cover;}
-.photo-block-icon{font-size:3rem;}
-.photo-block-label{font-size:0.9rem;color:var(--muted);font-weight:600;}
-.photo-block-sub{font-size:0.75rem;color:var(--muted);}
-
-/* ── PHOTO BUTTONS ── */
-.photo-btns{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;}
-.pbtn{
-  background:var(--s2);border:2px solid var(--border);border-radius:12px;
-  color:var(--text);font-family:var(--f);font-weight:700;font-size:1rem;
-  padding:16px 12px;cursor:pointer;display:flex;align-items:center;
-  justify-content:center;gap:8px;transition:all .2s;
-}
+.photo-block-icon{font-size:2.5rem;}
+.photo-block-lbl{font-size:0.85rem;color:var(--muted);font-weight:600;}
+.photo-block-sub{font-size:0.72rem;color:var(--muted);}
+.photo-btns{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;}
+.pbtn{background:var(--s2);border:2px solid var(--border);border-radius:10px;color:var(--text);font-family:var(--f);font-weight:700;font-size:0.9rem;padding:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;transition:all .2s;}
 .pbtn-cam{border-color:var(--accent);color:var(--accent);}
 .pbtn:active{opacity:.8;transform:scale(.97);}
 
-/* ── OCR STATUS ── */
-.ocr-bar{
-  display:none;background:var(--s2);border:2px solid var(--border);
-  border-radius:12px;padding:14px 16px;margin-bottom:12px;
-  align-items:center;gap:12px;
-}
+/* ── OCR ── */
+.ocr-bar{display:none;background:var(--s2);border:2px solid var(--border);border-radius:10px;padding:12px 14px;margin-bottom:10px;align-items:center;gap:10px;}
 .ocr-bar.show{display:flex;}
-.spin{width:20px;height:20px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .6s linear infinite;flex-shrink:0;}
+.spin{width:18px;height:18px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .6s linear infinite;flex-shrink:0;}
 @keyframes spin{to{transform:rotate(360deg)}}
-.ocr-bar-txt{flex:1;font-size:0.95rem;font-weight:600;color:var(--muted);}
-.ocr-bar-pct{font-family:var(--fm);font-size:1rem;font-weight:700;color:var(--accent);}
-
-/* ── PLATE FOUND ── */
-.plate-found{
-  display:none;background:rgba(0,212,255,.08);border:2px solid rgba(0,212,255,.4);
-  border-radius:12px;padding:14px 16px;margin-bottom:12px;
-  align-items:center;gap:12px;
-}
+.ocr-txt{flex:1;font-size:0.88rem;font-weight:600;color:var(--muted);}
+.ocr-pct{font-family:var(--fm);font-size:0.9rem;font-weight:700;color:var(--accent);}
+.plate-found{display:none;background:rgba(0,212,255,.08);border:2px solid rgba(0,212,255,.35);border-radius:10px;padding:12px 14px;margin-bottom:10px;align-items:center;gap:10px;}
 .plate-found.show{display:flex;}
-.pf-icon{font-size:1.4rem;}
-.pf-val{font-family:var(--fm);font-size:1.6rem;font-weight:700;color:var(--accent);letter-spacing:5px;}
-.pf-conf{font-size:0.78rem;color:var(--muted);}
+.pf-val{font-family:var(--fm);font-size:1.4rem;font-weight:700;color:var(--accent);letter-spacing:4px;}
+.pf-conf{font-size:0.72rem;color:var(--muted);}
 
 /* ── AUTOCOMPLETE ── */
 .ac-wrap{position:relative;}
-.ac-list{
-  position:absolute;top:calc(100% + 4px);left:0;right:0;
-  background:var(--s2);border:2px solid var(--accent);border-radius:12px;
-  z-index:80;max-height:220px;overflow-y:auto;display:none;
-  box-shadow:0 12px 32px rgba(0,0,0,.6);
-}
+.ac-list{position:absolute;top:calc(100% + 4px);left:0;right:0;background:var(--s2);border:2px solid var(--accent);border-radius:12px;z-index:80;max-height:200px;overflow-y:auto;display:none;box-shadow:0 10px 28px rgba(0,0,0,.5);}
 .ac-list.show{display:block;}
-.ac-item{
-  padding:14px 16px;cursor:pointer;border-bottom:1px solid var(--border);
-  font-size:1rem;font-weight:600;transition:background .15s;
-}
+.ac-item{padding:12px 14px;cursor:pointer;border-bottom:1px solid var(--border);font-size:0.95rem;font-weight:600;transition:background .15s;}
 .ac-item:last-child{border-bottom:none;}
 .ac-item:active,.ac-item:hover{background:var(--s3);}
-.ac-item small{display:block;font-size:0.8rem;color:var(--muted);font-weight:500;margin-top:2px;}
+.ac-item small{display:block;font-size:0.75rem;color:var(--muted);font-weight:500;margin-top:2px;}
 
 /* ── BIG BUTTONS ── */
-.big-btn{
-  width:100%;padding:20px;border-radius:16px;border:none;
-  font-family:var(--f);font-size:1.15rem;font-weight:800;
-  cursor:pointer;display:flex;align-items:center;justify-content:center;
-  gap:10px;transition:all .15s;letter-spacing:.2px;
-}
+.big-btn{width:100%;padding:18px;border-radius:14px;border:none;font-family:var(--f);font-size:1.05rem;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:9px;transition:all .15s;}
 .big-btn:active{transform:scale(.97);opacity:.9;}
-.big-btn-green{background:var(--green);color:#000;}
-.big-btn-red{background:var(--red);color:#fff;}
-.big-btn-accent{background:var(--accent);color:#000;}
-.big-btn-gray{background:var(--s2);color:var(--text);border:2px solid var(--border);}
-.big-btn-wa{background:#25D366;color:#fff;}
-.big-btn + .big-btn{margin-top:10px;}
+.big-btn+.big-btn{margin-top:9px;}
+.btn-green{background:var(--green);color:#000;}
+.btn-red{background:var(--red);color:#fff;}
+.btn-accent{background:var(--accent);color:#000;}
+.btn-warn{background:var(--warn);color:#000;}
+.btn-gray{background:var(--s2);color:var(--text);border:2px solid var(--border);}
+.btn-wa{background:#25D366;color:#fff;}
+.nav2{display:grid;grid-template-columns:1fr 2fr;gap:9px;margin-top:6px;}
 
-/* ── NAV BUTTONS ROW ── */
-.nav-row{display:grid;grid-template-columns:1fr 2fr;gap:10px;margin-top:6px;}
-.nav-row-3{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px;}
-
-/* ── CARDS ── */
-.card{background:var(--s1);border:2px solid var(--border);border-radius:16px;padding:16px;margin-bottom:12px;}
-
-/* ── ENTRY CARD ── */
-.ecard{
-  background:var(--s1);border:2px solid var(--border);border-radius:16px;
-  padding:14px;margin-bottom:12px;display:flex;gap:14px;
-  cursor:pointer;transition:border-color .2s;animation:fadeUp .2s ease;
-}
+/* ── ENTRY CARDS ── */
+.ecard{background:var(--s1);border:2px solid var(--border);border-radius:14px;padding:13px;margin-bottom:10px;display:flex;gap:12px;align-items:flex-start;cursor:pointer;animation:fadeUp .2s ease;}
 .ecard:active{border-color:var(--accent);}
-.ecard-thumb{
-  width:64px;height:64px;border-radius:12px;flex-shrink:0;
-  background:var(--s2);border:2px solid var(--border);
-  display:flex;align-items:center;justify-content:center;
-  font-size:1.8rem;overflow:hidden;
-}
+.ecard-thumb{width:56px;height:56px;border-radius:10px;background:var(--s2);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:1.6rem;border:2px solid var(--border);overflow:hidden;}
 .ecard-thumb img{width:100%;height:100%;object-fit:cover;}
 .ecard-info{flex:1;min-width:0;}
-.ecard-name{font-size:1.05rem;font-weight:800;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.ecard-plate{font-family:var(--fm);font-size:1rem;color:var(--warn);font-weight:700;letter-spacing:3px;margin-bottom:3px;}
-.ecard-meta{font-size:0.8rem;color:var(--muted);font-weight:500;}
-.ecard-right{flex-shrink:0;display:flex;flex-direction:column;align-items:flex-end;gap:6px;}
-.tag{font-family:var(--fm);font-size:0.65rem;padding:4px 9px;border-radius:6px;font-weight:700;text-transform:uppercase;}
-.tag-in{background:rgba(0,200,150,.18);color:var(--green);}
-.tag-out{background:rgba(255,68,85,.18);color:var(--red);}
-.tag-inside{background:rgba(255,176,32,.18);color:var(--warn);}
-
-/* ── GESTOR TABS ── */
-.gtab{flex:1;border:none;border-radius:9px;padding:11px 6px;font-family:var(--f);font-size:0.78rem;font-weight:700;cursor:pointer;background:transparent;color:var(--muted);transition:all .2s;}
-.gtab.active{background:var(--accent);color:#000;}
-.gpanel{display:none;}.gpanel.active{display:block;animation:fadeUp .2s ease;}
+.ecard-name{font-size:1rem;font-weight:800;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.ecard-plate{font-family:var(--fm);font-size:0.9rem;color:var(--warn);font-weight:700;letter-spacing:2px;margin-bottom:3px;}
+.ecard-meta{font-size:0.75rem;color:var(--muted);font-weight:500;}
+.ecard-right{flex-shrink:0;display:flex;flex-direction:column;align-items:flex-end;gap:5px;}
 
 /* ── STATUS TAGS ── */
-.tag-patio   {background:rgba(0,212,255,.15);color:var(--accent);}
-.tag-autorizado{background:rgba(255,176,32,.15);color:var(--warn);}
-.tag-fora    {background:rgba(255,68,85,.15);color:var(--red);}
-.tag-encerrado{background:rgba(0,200,150,.15);color:var(--green);}
+.tag{font-family:var(--fm);font-size:0.62rem;padding:3px 8px;border-radius:5px;font-weight:700;text-transform:uppercase;white-space:nowrap;}
+.tag-pendente{background:rgba(255,176,32,.18);color:var(--warn);}
+.tag-fora    {background:rgba(255,68,85,.18);color:var(--red);}
+.tag-retornou{background:rgba(0,200,150,.18);color:var(--green);}
+.tag-visitante{background:rgba(0,212,255,.18);color:var(--accent);}
 
-/* ── ACTION BUTTON inside card ── */
-.act-btn{border:none;border-radius:10px;padding:9px 14px;font-family:var(--f);font-size:0.82rem;font-weight:800;cursor:pointer;white-space:nowrap;transition:all .15s;}
+/* ── ACTION BUTTONS ── */
+.act-btn{border:none;border-radius:9px;padding:8px 13px;font-family:var(--f);font-size:0.8rem;font-weight:800;cursor:pointer;white-space:nowrap;transition:all .15s;}
 .act-btn:active{opacity:.8;transform:scale(.96);}
-.act-btn-warn{background:var(--warn);color:#000;}
-.act-btn-green{background:var(--green);color:#000;}
-.act-btn-red{background:var(--red);color:#fff;}
-.act-btn-gray{background:var(--s2);color:var(--text);border:2px solid var(--border);}
+.act-ok{background:var(--green);color:#000;}
+.act-ret{background:var(--accent);color:#000;}
+.act-cancel{background:rgba(255,68,85,.15);color:var(--red);border:1px solid rgba(255,68,85,.3);}
 
-/* ── SEARCH ── */
-.search-wrap{position:relative;margin-bottom:14px;}
-.search-wrap input{padding-left:48px;font-size:1rem;}
-.search-ico{position:absolute;left:15px;top:50%;transform:translateY(-50%);font-size:1.1rem;}
-
-/* ── FILTER CHIPS ── */
-.chips{display:flex;gap:8px;margin-bottom:16px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px;}
+/* ── SEARCH + CHIPS ── */
+.search-wrap{position:relative;margin-bottom:12px;}
+.search-wrap input{padding-left:42px;margin-bottom:0;}
+.search-ico{position:absolute;left:13px;top:50%;transform:translateY(-50%);font-size:1rem;}
+.chips{display:flex;gap:7px;margin-bottom:14px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px;}
 .chips::-webkit-scrollbar{display:none;}
-.chip{
-  flex-shrink:0;background:var(--s1);border:2px solid var(--border);
-  color:var(--muted);font-size:0.82rem;font-weight:700;
-  padding:8px 16px;border-radius:30px;cursor:pointer;transition:all .2s;
-}
+.chip{flex-shrink:0;background:var(--s1);border:2px solid var(--border);color:var(--muted);font-size:0.78rem;font-weight:700;padding:7px 14px;border-radius:24px;cursor:pointer;transition:all .2s;}
 .chip.active{background:rgba(0,212,255,.12);border-color:var(--accent);color:var(--accent);}
 
 /* ── STATS ── */
-.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;}
-.stat{background:var(--s1);border:2px solid var(--border);border-radius:16px;padding:18px 14px;text-align:center;}
-.stat-n{font-size:2.6rem;font-weight:900;color:var(--accent);line-height:1;margin-bottom:6px;}
-.stat-l{font-size:0.8rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.5px;}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
+.stat{background:var(--s1);border:2px solid var(--border);border-radius:14px;padding:16px 12px;text-align:center;}
+.stat-n{font-size:2.4rem;font-weight:900;color:var(--accent);line-height:1;margin-bottom:5px;}
+.stat-l{font-size:0.72rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.5px;}
 
 /* ── INSIDE HEADER ── */
-.inside-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
-.inside-cnt{font-family:var(--fm);font-size:1rem;color:var(--warn);font-weight:700;}
+.list-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.list-cnt{font-family:var(--fm);font-size:0.9rem;color:var(--warn);font-weight:700;}
 
-/* ── MODAL ── */
+/* ── MODALS ── */
 .modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:200;align-items:flex-end;justify-content:center;}
 .modal-bg.open{display:flex;}
-.modal{background:var(--s1);border:2px solid var(--border);border-radius:24px 24px 0 0;width:100%;max-width:600px;max-height:92vh;overflow-y:auto;}
-.modal-hdr{padding:18px 18px 14px;display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid var(--border);position:sticky;top:0;background:var(--s1);z-index:1;}
-.modal-title{font-size:1.1rem;font-weight:800;}
-.modal-close{background:var(--s2);border:2px solid var(--border);color:var(--text);border-radius:10px;padding:8px 14px;font-family:var(--f);font-size:0.85rem;font-weight:700;cursor:pointer;}
-.modal-body{padding:18px;}
+.modal{background:var(--s1);border:2px solid var(--border);border-radius:22px 22px 0 0;width:100%;max-width:600px;max-height:92vh;overflow-y:auto;}
+.modal-hdr{padding:16px 18px 12px;display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid var(--border);position:sticky;top:0;background:var(--s1);z-index:1;}
+.modal-title{font-size:1rem;font-weight:800;}
+.modal-close{background:var(--s2);border:2px solid var(--border);color:var(--text);border-radius:9px;padding:7px 13px;font-family:var(--f);font-size:0.82rem;font-weight:700;cursor:pointer;}
+.modal-body{padding:16px 18px;}
 
-/* Camera */
-.cam-wrap{width:100%;aspect-ratio:4/3;background:#000;border-radius:14px;overflow:hidden;position:relative;margin-bottom:12px;}
+/* ── CAM ── */
+.cam-wrap{width:100%;aspect-ratio:4/3;background:#000;border-radius:12px;overflow:hidden;position:relative;margin-bottom:10px;}
 .cam-wrap video{width:100%;height:100%;object-fit:cover;display:block;}
 .cam-guide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;}
-.cam-guide-box{border:3px solid var(--warn);border-radius:8px;width:75%;height:24%;box-shadow:0 0 0 9999px rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;}
-.cam-guide-label{font-family:var(--fm);font-size:0.7rem;color:var(--warn);font-weight:700;}
+.cam-guide-box{border:3px solid var(--warn);border-radius:7px;width:74%;height:24%;box-shadow:0 0 0 9999px rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;}
+.cam-guide-lbl{font-family:var(--fm);font-size:0.65rem;color:var(--warn);font-weight:700;}
 canvas{display:none;}
 
-/* Detail */
+/* ── DETAIL ── */
 .dphotos{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
-.dphoto{aspect-ratio:4/3;border-radius:12px;background:var(--s2);border:2px solid var(--border);overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:2.5rem;}
+.dphoto{aspect-ratio:4/3;border-radius:10px;background:var(--s2);border:2px solid var(--border);overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:2.2rem;}
 .dphoto img{width:100%;height:100%;object-fit:cover;}
-.drow{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--border);font-size:0.92rem;}
+.drow{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);font-size:0.88rem;}
 .drow:last-of-type{border-bottom:none;}
-.drow label{color:var(--muted);font-weight:600;font-size:0.82rem;margin:0;}
-.drow span{font-weight:700;text-align:right;max-width:60%;}
+.drow label{color:var(--muted);font-weight:600;font-size:0.78rem;margin:0;flex-shrink:0;}
+.drow span{font-weight:700;text-align:right;margin-left:10px;}
 
-/* Success / WA */
-.success-icon{font-size:4rem;text-align:center;margin:8px 0 10px;}
-.success-name{font-size:1.3rem;font-weight:900;text-align:center;margin-bottom:4px;}
-.success-plate{font-family:var(--fm);font-size:1.8rem;font-weight:700;color:var(--warn);letter-spacing:6px;text-align:center;margin:6px 0;}
-.success-sub{font-size:0.88rem;color:var(--muted);text-align:center;margin-bottom:18px;}
-.divider{height:2px;background:var(--border);margin:16px 0;}
-.wa-label{font-size:0.78rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px;}
-.wa-preview{background:var(--bg);border:2px solid var(--border);border-radius:12px;padding:14px;margin-bottom:14px;font-size:0.85rem;color:var(--muted);line-height:1.8;white-space:pre-wrap;font-family:var(--fm);}
-.wa-ico{width:22px;height:22px;flex-shrink:0;}
+/* ── SUCCESS / WA ── */
+.suc-icon{font-size:3.5rem;text-align:center;margin:6px 0 8px;}
+.suc-name{font-size:1.2rem;font-weight:900;text-align:center;margin-bottom:4px;}
+.suc-plate{font-family:var(--fm);font-size:1.6rem;font-weight:700;color:var(--warn);letter-spacing:5px;text-align:center;margin:5px 0;}
+.suc-sub{font-size:0.85rem;color:var(--muted);text-align:center;margin-bottom:16px;}
+.divider{height:2px;background:var(--border);margin:14px 0;}
+.wa-lbl{font-size:0.72rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.8px;margin-bottom:7px;}
+.wa-prev{background:var(--bg);border:2px solid var(--border);border-radius:10px;padding:12px;margin-bottom:12px;font-size:0.8rem;color:var(--muted);line-height:1.8;white-space:pre-wrap;font-family:var(--fm);}
+.wa-ico{width:20px;height:20px;flex-shrink:0;}
 
-/* Confirm exit */
-.conf-plate{font-family:var(--fm);font-size:2rem;font-weight:700;color:var(--warn);letter-spacing:6px;text-align:center;margin:10px 0;}
-.conf-name{font-size:1.2rem;font-weight:800;text-align:center;}
-.conf-sub{font-size:0.88rem;color:var(--muted);text-align:center;margin-bottom:18px;}
-.conf-time{font-size:1rem;color:var(--text);font-weight:700;text-align:center;margin:6px 0 16px;}
+/* ── CONFIRM MODAL ── */
+.conf-plate{font-family:var(--fm);font-size:1.8rem;font-weight:700;color:var(--warn);letter-spacing:5px;text-align:center;margin:8px 0;}
+.conf-name{font-size:1.1rem;font-weight:800;text-align:center;}
+.conf-sub{font-size:0.85rem;color:var(--muted);text-align:center;margin-bottom:14px;}
 
-/* Empty */
-.empty{text-align:center;padding:48px 20px;color:var(--muted);}
-.empty-ico{font-size:3.5rem;margin-bottom:12px;}
-.empty h3{font-size:1.1rem;font-weight:800;color:var(--text);margin-bottom:6px;}
-.empty p{font-size:0.88rem;}
+/* ── FROTA MODULE TABS ── */
+.mtab-row{display:flex;gap:0;background:var(--s2);border-radius:12px;padding:4px;margin-bottom:16px;}
+.mtab{flex:1;border:none;border-radius:9px;padding:11px 8px;font-family:var(--f);font-size:0.8rem;font-weight:700;cursor:pointer;background:transparent;color:var(--muted);transition:all .2s;}
+.mtab.active{background:var(--accent);color:#000;}
+.msub{display:none;}.msub.active{display:block;animation:fadeUp .2s ease;}
 
+/* ── SECTION DIVIDER ── */
+.sec-div{height:1px;background:var(--border);margin:20px 0 14px;}
+
+/* ── EMPTY ── */
+.empty{text-align:center;padding:40px 20px;color:var(--muted);}
+.empty-ico{font-size:3rem;margin-bottom:10px;}
+.empty h3{font-size:1rem;font-weight:800;color:var(--text);margin-bottom:5px;}
+.empty p{font-size:0.82rem;}
+
+/* ── SCROLLBAR ── */
 ::-webkit-scrollbar{width:4px;}
 ::-webkit-scrollbar-track{background:var(--bg);}
 ::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px;}
@@ -324,1532 +235,1161 @@ canvas{display:none;}
 </head>
 <body>
 
-<!-- HEADER -->
+<!-- ══ HEADER ══ -->
 <div class="hdr">
   <div class="hdr-logo">
-    <div class="hdr-dot" id="hdrDot" title="Verificando conexão..."></div>
+    <div class="hdr-dot" id="hdrDot" title="Status Gist" onclick="toggleTema()"></div>
     PortalGuard
   </div>
-  <div style="display:flex;align-items:center;gap:12px;">
-    <div id="hdrTema" style="font-size:1.1rem;cursor:pointer;" onclick="toggleTema()" title="Alternar tema">🌙</div>
+  <div class="hdr-right">
+    <div class="hdr-tema" id="hdrTema" onclick="toggleTema()">🌙</div>
     <div class="hdr-time" id="hdrTime"></div>
   </div>
 </div>
 
-<!-- ════════════════════════════════
-     PANEL: REGISTRO (WIZARD)
-════════════════════════════════ -->
-<div class="panel active" id="panel-reg">
+<!-- ══════════════════════════════════
+     PANEL 1: ENTRADA DE VISITANTES
+══════════════════════════════════ -->
+<div class="panel active" id="panel-entrada">
 
-  <!-- Steps indicator -->
-  <div class="steps" id="stepsBar">
-    <div class="step active" id="s1"><div class="step-num">1</div><span class="step-label">Motorista</span></div>
-    <div class="step-line" id="sl1"></div>
-    <div class="step" id="s2"><div class="step-num">2</div><span class="step-label">Veículo</span></div>
-    <div class="step-line" id="sl2"></div>
-    <div class="step" id="s3"><div class="step-num">3</div><span class="step-label">Confirmar</span></div>
+  <!-- Steps -->
+  <div class="steps" id="vsteps">
+    <div class="step active" id="vs1"><div class="step-num">1</div><span class="step-lbl">Motorista</span></div>
+    <div class="step-line" id="vsl1"></div>
+    <div class="step" id="vs2"><div class="step-num">2</div><span class="step-lbl">Veículo</span></div>
+    <div class="step-line" id="vsl2"></div>
+    <div class="step" id="vs3"><div class="step-num">3</div><span class="step-lbl">Confirmar</span></div>
   </div>
 
   <!-- STEP 1: MOTORISTA -->
-  <div class="wpage active" id="wp1">
+  <div class="wpage active" id="vwp1">
     <div class="sec-label"><div class="sec-num">1</div>Dados do Motorista</div>
-
-    <div class="field ac-wrap">
-      <div class="field-label"><span>👤</span> Nome do Motorista *</div>
-      <input type="text" id="inputNome" placeholder="Digite o nome..." autocomplete="off"
-        oninput="acMotorista(this.value)" onfocus="acMotorista(this.value)" style="font-size:1.1rem;">
-      <div class="ac-list" id="acNomeList"></div>
-    </div>
-
-    <div class="field ac-wrap">
-      <div class="field-label"><span>🏢</span> Empresa / Procedência *</div>
-      <input type="text" id="inputEmpresa" placeholder="De onde vem..." autocomplete="off"
-        oninput="acEmpresa(this.value)" onfocus="acEmpresa(this.value)" style="font-size:1.1rem;">
-      <div class="ac-list" id="acEmpresaList"></div>
-    </div>
-
-    <div class="field">
-      <div class="field-label"><span>📸</span> Foto do Motorista ou RG</div>
-      <div class="photo-block" id="fotoMotoBlock" onclick="openCam('motorista')">
-        <div class="photo-block-icon">🤳</div>
-        <div class="photo-block-label">Toque para fotografar</div>
-        <div class="photo-block-sub">Motorista ou documento de identidade</div>
+    <div class="card">
+      <div class="field ac-wrap">
+        <div class="field-label">👤 Nome do Motorista *</div>
+        <input type="text" id="vNome" placeholder="Nome completo..." autocomplete="off"
+          oninput="acVNome(this.value)" onfocus="acVNome(this.value)">
+        <div class="ac-list" id="acVNomeList"></div>
       </div>
-      <div class="photo-btns">
-        <button class="pbtn pbtn-cam" onclick="openCam('motorista')">📷 Câmera</button>
-        <button class="pbtn" onclick="document.getElementById('fileMoto').click()">🖼 Galeria</button>
+      <div class="field ac-wrap">
+        <div class="field-label">🏢 Empresa / Procedência *</div>
+        <input type="text" id="vEmpresa" placeholder="De onde vem..." autocomplete="off"
+          oninput="acVEmpresa(this.value)" onfocus="acVEmpresa(this.value)">
+        <div class="ac-list" id="acVEmpresaList"></div>
       </div>
-      <input type="file" id="fileMoto" accept="image/*" onchange="fileSelected(this,'motorista')">
+      <div class="field">
+        <div class="field-label">📸 Foto do Motorista / RG</div>
+        <div class="photo-block" id="vFotoMotoBlock" onclick="openCam('vmoto')">
+          <div class="photo-block-icon">🤳</div>
+          <div class="photo-block-lbl">Toque para fotografar</div>
+          <div class="photo-block-sub">Motorista ou documento</div>
+        </div>
+        <div class="photo-btns">
+          <button class="pbtn pbtn-cam" onclick="openCam('vmoto')">📷 Câmera</button>
+          <button class="pbtn" onclick="document.getElementById('fileVMoto').click()">🖼 Galeria</button>
+        </div>
+        <input type="file" id="fileVMoto" accept="image/*" onchange="fileSelected(this,'vmoto')">
+      </div>
     </div>
-
-    <button class="big-btn big-btn-accent" onclick="goStep2()">
-      Próximo: Veículo →
-    </button>
+    <button class="big-btn btn-accent" onclick="vGoStep2()">Próximo: Veículo →</button>
   </div>
 
   <!-- STEP 2: VEÍCULO -->
-  <div class="wpage" id="wp2">
+  <div class="wpage" id="vwp2">
     <div class="sec-label"><div class="sec-num">2</div>Dados do Veículo</div>
-
-    <div class="field">
-      <div class="field-label"><span>🚗</span> Foto do Veículo com a Placa</div>
-      <div class="photo-block" id="fotoVeicBlock" onclick="openCam('veiculo')">
-        <div class="photo-block-icon">🚗</div>
-        <div class="photo-block-label">Toque para fotografar</div>
-        <div class="photo-block-sub">Mantenha a placa visível — OCR automático</div>
+    <div class="card">
+      <div class="field">
+        <div class="field-label">🚗 Foto do Veículo com a Placa</div>
+        <div class="photo-block" id="vFotoVeicBlock" onclick="openCam('vveic')">
+          <div class="photo-block-icon">🚗</div>
+          <div class="photo-block-lbl">Toque para fotografar</div>
+          <div class="photo-block-sub">Câmera traseira — OCR automático</div>
+        </div>
+        <div class="photo-btns">
+          <button class="pbtn pbtn-cam" onclick="openCam('vveic')">📷 Câmera Traseira</button>
+          <button class="pbtn" onclick="document.getElementById('fileVVeic').click()">🖼 Galeria</button>
+        </div>
+        <input type="file" id="fileVVeic" accept="image/*" onchange="fileSelected(this,'vveic')">
       </div>
-      <div class="photo-btns">
-        <button class="pbtn pbtn-cam" onclick="openCam('veiculo')">📷 Câmera Traseira</button>
-        <button class="pbtn" onclick="document.getElementById('fileVeic').click()">🖼 Galeria</button>
+      <div class="ocr-bar" id="ocrBar"><div class="spin"></div><div class="ocr-txt" id="ocrTxt">Lendo placa...</div><div class="ocr-pct" id="ocrPct">0%</div></div>
+      <div class="plate-found" id="plateFound"><span style="font-size:1.2rem">🔍</span><div><div class="pf-val" id="pfVal"></div><div class="pf-conf" id="pfConf"></div></div></div>
+      <div class="field">
+        <div class="field-label">🔢 Placa do Veículo *</div>
+        <input type="text" id="vPlaca" class="plate-field" placeholder="ABC-1234" maxlength="8" oninput="formatPlate(this)">
       </div>
-      <input type="file" id="fileVeic" accept="image/*" onchange="fileSelected(this,'veiculo')">
+      <div class="field">
+        <div class="field-label">🚙 Tipo</div>
+        <select id="vTipo" style="padding:14px;font-size:1rem;">
+          <option>Carro</option><option>Caminhão</option><option>Van</option>
+          <option>Moto</option><option>Ônibus</option><option>Outro</option>
+        </select>
+      </div>
+      <div class="field">
+        <div class="field-label">📝 Observações</div>
+        <textarea id="vObs" rows="2" placeholder="Motivo da visita..." style="font-size:0.95rem;resize:none;padding:12px;"></textarea>
+      </div>
     </div>
-
-    <!-- OCR -->
-    <div class="ocr-bar" id="ocrBar">
-      <div class="spin"></div>
-      <div class="ocr-bar-txt" id="ocrTxt">Lendo placa...</div>
-      <div class="ocr-bar-pct" id="ocrPct">0%</div>
-    </div>
-    <div class="plate-found" id="plateFound">
-      <div class="pf-icon">🔍</div>
-      <div><div class="pf-val" id="pfVal"></div><div class="pf-conf" id="pfConf"></div></div>
-    </div>
-
-    <div class="field">
-      <div class="field-label"><span>🔢</span> Placa do Veículo *</div>
-      <input type="text" id="inputPlaca" class="plate-field" placeholder="ABC-1234"
-        maxlength="8" oninput="formatPlate(this)">
-    </div>
-
-    <div class="field">
-      <div class="field-label"><span>🚙</span> Tipo do Veículo</div>
-      <select id="inputTipo" style="font-size:1.05rem;padding:16px;">
-        <option>Carro</option><option>Caminhão</option><option>Van</option>
-        <option>Moto</option><option>Ônibus</option><option>Outro</option>
-      </select>
-    </div>
-
-    <div class="field">
-      <div class="field-label"><span>📝</span> Observações</div>
-      <textarea id="inputObs" rows="2" placeholder="Motivo da visita, destino interno..." style="font-size:1rem;padding:14px;resize:none;"></textarea>
-    </div>
-
-    <div class="nav-row">
-      <button class="big-btn big-btn-gray" onclick="goStep1()" style="font-size:1rem;">← Voltar</button>
-      <button class="big-btn big-btn-accent" onclick="goStep3()">Revisar →</button>
+    <div class="nav2">
+      <button class="big-btn btn-gray" onclick="vGoStep1()" style="font-size:0.95rem;">← Voltar</button>
+      <button class="big-btn btn-accent" onclick="vGoStep3()">Revisar →</button>
     </div>
   </div>
 
-  <!-- STEP 3: CONFIRMAR -->
-  <div class="wpage" id="wp3">
+  <!-- STEP 3: REVISAR -->
+  <div class="wpage" id="vwp3">
     <div class="sec-label"><div class="sec-num">3</div>Confirmar Entrada</div>
-
-    <div class="dphotos" id="reviewPhotos"></div>
-
-    <div class="card" id="reviewData" style="margin-bottom:16px;"></div>
-
-    <button class="big-btn big-btn-green" onclick="registrar()">
-      ✅ CONFIRMAR ENTRADA
-    </button>
-    <div style="margin-top:10px">
-      <button class="big-btn big-btn-gray" onclick="goStep2(true)" style="font-size:1rem;">← Editar</button>
-    </div>
+    <div class="dphotos" id="vReviewPhotos"></div>
+    <div class="card" id="vReviewData" style="margin-bottom:14px;"></div>
+    <button class="big-btn btn-green" onclick="registrarVisitante()">✅ CONFIRMAR ENTRADA</button>
+    <button class="big-btn btn-gray" onclick="vGoStep2(true)" style="margin-top:9px;font-size:0.95rem;">← Editar</button>
   </div>
 
 </div>
 
-<!-- ════════════════════════════════
-     PANEL: VIGILANTE — CONFIRMAR SAÍDA
-     (veículos autorizados pelo gestor)
-════════════════════════════════ -->
-<div class="panel" id="panel-saida">
-  <div class="inside-hdr">
-    <div style="font-size:1.1rem;font-weight:800;">✅ Autorizados a Sair</div>
-    <div class="inside-cnt" id="autorizadosCnt">—</div>
-  </div>
-  <div style="font-size:0.82rem;color:var(--muted);margin-bottom:14px;">Veículos que o gestor autorizou — confirme quando o veículo sair fisicamente</div>
-  <div class="search-wrap">
-    <span class="search-ico">🔍</span>
-    <input type="text" id="searchSaida" placeholder="Placa, nome ou empresa..." oninput="renderSaida()">
-  </div>
-  <div id="saidaList"></div>
+<!-- ══════════════════════════════════
+     PANEL 2: FROTA — GESTOR + VIGILANTE
+══════════════════════════════════ -->
+<div class="panel" id="panel-frota">
 
-  <div style="margin-top:24px;margin-bottom:8px;">
-    <div class="inside-hdr">
-      <div style="font-size:1.1rem;font-weight:800;">🔄 Aguardando Retorno</div>
-      <div class="inside-cnt" id="foraCnt">—</div>
+  <!-- MODULE TABS -->
+  <div class="mtab-row">
+    <button class="mtab active" id="mtab-gestor" onclick="setMTab('gestor')">👔 Gestor</button>
+    <button class="mtab" id="mtab-vigilante" onclick="setMTab('vigilante')">👷 Vigilante</button>
+  </div>
+
+  <!-- ── GESTOR: cadastrar autorização ── -->
+  <div class="msub active" id="msub-gestor">
+    <div class="sec-label"><div class="sec-num" style="background:var(--warn);color:#000;">G</div>Nova Autorização de Saída</div>
+
+    <div class="card">
+      <div class="card-title">🚗 Veículo da Frota</div>
+      <div class="field ac-wrap">
+        <div class="field-label">🔢 Placa do Veículo *</div>
+        <input type="text" id="gPlaca" class="plate-field" placeholder="ABC-1234"
+          maxlength="8" oninput="formatPlate(this);acGPlaca(this.value)"
+          onfocus="acGPlaca(this.value)" autocomplete="off">
+        <div class="ac-list" id="acGPlacaList"></div>
+      </div>
+      <div class="field ac-wrap">
+        <div class="field-label">👤 Motorista *</div>
+        <input type="text" id="gMotorista" placeholder="Nome do motorista..."
+          oninput="acGMoto(this.value)" onfocus="acGMoto(this.value)" autocomplete="off"
+          style="font-size:1rem;font-weight:600;">
+        <div class="ac-list" id="acGMotoList"></div>
+      </div>
+      <div class="field">
+        <div class="field-label">📍 Destino / Motivo *</div>
+        <input type="text" id="gDestino" placeholder="Para onde vai e motivo..." style="font-size:1rem;font-weight:600;">
+      </div>
+      <div class="field">
+        <div class="field-label">🕐 Data e Hora Prevista de Saída *</div>
+        <input type="datetime-local" id="gDataHora">
+      </div>
+      <div class="field">
+        <div class="field-label">👔 Seu Nome (Gestor) *</div>
+        <input type="text" id="gGestor" placeholder="Quem está autorizando..." style="font-size:1rem;font-weight:600;">
+      </div>
     </div>
-    <div style="font-size:0.82rem;color:var(--muted);margin-bottom:14px;">Veículos que saíram — confirme o retorno para encerrar o ciclo</div>
-    <div id="foraList"></div>
-  </div>
-</div>
 
-<!-- ════════════════════════════════
-     PANEL: GESTOR
-════════════════════════════════ -->
-<div class="panel" id="panel-gestor">
+    <button class="big-btn btn-warn" onclick="registrarAutorizacao()">✅ AUTORIZAR SAÍDA</button>
 
-  <!-- Sub-abas do gestor -->
-  <div style="display:flex;gap:0;margin-bottom:16px;background:var(--s2);border-radius:12px;padding:4px;">
-    <button class="gtab active" id="gtab-patio" onclick="setGTab('patio')">🏁 Pátio</button>
-    <button class="gtab" id="gtab-hist" onclick="setGTab('hist')">📋 Histórico</button>
-  </div>
-
-  <!-- SUB: PÁTIO (gestor vê tudo + pode autorizar) -->
-  <div class="gpanel active" id="gpanel-patio">
-    <div class="inside-hdr">
-      <div style="font-size:1rem;font-weight:800;">🏁 Veículos no Pátio</div>
-      <div class="inside-cnt" id="gestorPatioCnt">—</div>
+    <!-- Lista das autorizações do gestor -->
+    <div class="sec-div"></div>
+    <div class="list-hdr">
+      <div style="font-size:0.9rem;font-weight:800;">Minhas Autorizações</div>
+      <div class="list-cnt" id="gTotalCnt">—</div>
     </div>
-    <div style="font-size:0.82rem;color:var(--muted);margin-bottom:14px;">Toque em um veículo para autorizar ou cancelar saída</div>
+    <div id="gListaAutorizacoes"></div>
+  </div>
+
+  <!-- ── VIGILANTE: confirmar saída + retorno ── -->
+  <div class="msub" id="msub-vigilante">
+
+    <!-- LISTA 1: Autorizadas aguardando saída -->
+    <div class="list-hdr">
+      <div style="font-size:1rem;font-weight:800;">✅ Autorizadas — Confirmar Saída</div>
+      <div class="list-cnt" id="vPendCnt">—</div>
+    </div>
+    <div style="font-size:0.8rem;color:var(--muted);margin-bottom:12px;">Gestor autorizou. Confirme quando o veículo sair fisicamente.</div>
     <div class="search-wrap">
       <span class="search-ico">🔍</span>
-      <input type="text" id="searchGestor" placeholder="Placa, nome ou empresa..." oninput="renderGestorPatio()">
+      <input type="text" id="searchVig1" placeholder="Placa ou motorista..." oninput="renderVigilante()">
     </div>
-    <div id="gestorPatioList"></div>
-  </div>
+    <div id="vListaPendentes"></div>
 
-  <!-- SUB: HISTÓRICO -->
-  <div class="gpanel" id="gpanel-hist">
-    <div style="font-size:1rem;font-weight:800;margin-bottom:14px;">📋 Histórico Completo</div>
-    <div class="chips">
-      <div class="chip active" onclick="setHistFilter('todos',this)">Todos</div>
-      <div class="chip" onclick="setHistFilter('hoje',this)">Hoje</div>
-      <div class="chip" onclick="setHistFilter('semana',this)">Semana</div>
+    <!-- LISTA 2: Fora aguardando retorno -->
+    <div class="sec-div"></div>
+    <div class="list-hdr">
+      <div style="font-size:1rem;font-weight:800;">🔄 Fora — Confirmar Retorno</div>
+      <div class="list-cnt" id="vForaCnt">—</div>
     </div>
-    <div class="search-wrap" style="margin-bottom:12px;">
-      <span class="search-ico">🔍</span>
-      <input type="text" id="searchHist" placeholder="Placa, nome ou empresa..." oninput="renderHist()">
-    </div>
-    <div id="histList"></div>
+    <div style="font-size:0.8rem;color:var(--muted);margin-bottom:12px;">Veículo saiu. Confirme quando retornar.</div>
+    <div id="vListaFora"></div>
+
   </div>
 </div>
 
-<!-- ════════════════════════════════
-     PANEL: CONSULTA
-════════════════════════════════ -->
+<!-- ══════════════════════════════════
+     PANEL 3: CONSULTA
+══════════════════════════════════ -->
 <div class="panel" id="panel-consulta">
-  <div style="font-size:1.1rem;font-weight:800;margin-bottom:14px;">🔍 Consultar Registros</div>
+  <div style="font-size:1.05rem;font-weight:800;margin-bottom:14px;">🔍 Consultar Registros</div>
   <div class="search-wrap">
     <span class="search-ico">🔍</span>
-    <input type="text" id="searchInput" placeholder="Placa, nome ou empresa..." oninput="renderConsulta()">
+    <input type="text" id="searchConsulta" placeholder="Placa, nome ou empresa..." oninput="renderConsulta()">
   </div>
   <div class="chips">
     <div class="chip active" onclick="setFilter('todos',this)">Todos</div>
     <div class="chip" onclick="setFilter('hoje',this)">Hoje</div>
-    <div class="chip" onclick="setFilter('semana',this)">Esta semana</div>
-    <div class="chip" onclick="setFilter('patioAtivo',this)">No pátio</div>
-    <div class="chip" onclick="setFilter('autorizado',this)">Autorizados</div>
+    <div class="chip" onclick="setFilter('semana',this)">Semana</div>
+    <div class="chip" onclick="setFilter('visitante',this)">Visitantes</div>
+    <div class="chip" onclick="setFilter('pendente',this)">Pendentes</div>
     <div class="chip" onclick="setFilter('fora',this)">Fora</div>
-    <div class="chip" onclick="setFilter('encerrado',this)">Encerrados</div>
+    <div class="chip" onclick="setFilter('retornou',this)">Retornados</div>
   </div>
   <div id="consultaList"></div>
 </div>
 
-<!-- ════════════════════════════════
-     PANEL: DASHBOARD
-════════════════════════════════ -->
-<div class="panel" id="panel-dash">
-  <div style="font-size:1.1rem;font-weight:800;margin-bottom:14px;">📊 Dashboard</div>
-  <div class="stats" id="statsGrid"></div>
-  <div class="card">
-    <div style="font-size:0.72rem;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;">🕐 Últimas Movimentações</div>
-    <div id="recentList"></div>
-  </div>
-  <div class="card" style="margin-top:12px">
-    <div style="font-size:0.72rem;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;">🏢 Top Empresas</div>
-    <div id="topEmpresas"></div>
-  </div>
-</div>
-
-<!-- ════════════════════════════════
-     PANEL: CONFIG
-════════════════════════════════ -->
+<!-- ══════════════════════════════════
+     PANEL 4: CONFIG
+══════════════════════════════════ -->
 <div class="panel" id="panel-config">
-  <div style="font-size:1.1rem;font-weight:800;margin-bottom:6px;">⚙️ Configurações</div>
-  <div style="font-size:0.85rem;color:var(--muted);margin-bottom:20px;">Sincronização via GitHub Gist</div>
+  <div style="font-size:1.05rem;font-weight:800;margin-bottom:6px;">⚙️ Configurações</div>
+  <div style="font-size:0.82rem;color:var(--muted);margin-bottom:18px;">Sincronização via GitHub Gist</div>
 
   <!-- TEMA -->
-  <div class="card" style="margin-bottom:14px;">
-    <div style="font-size:0.72rem;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:14px;">🎨 Aparência</div>
+  <div class="card" style="margin-bottom:12px;">
+    <div class="card-title">🎨 Aparência</div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
-
-      <div id="btnTemaNight" onclick="setTema('noite')" style="cursor:pointer;border-radius:14px;overflow:hidden;border:3px solid var(--accent);transition:all .2s;">
-        <div style="background:#0d0f14;padding:14px 12px;">
-          <div style="display:flex;gap:5px;margin-bottom:10px;">
-            <div style="width:7px;height:7px;border-radius:50%;background:#ff4455;"></div>
-            <div style="width:7px;height:7px;border-radius:50%;background:#ffb020;"></div>
-            <div style="width:7px;height:7px;border-radius:50%;background:#00c896;"></div>
-          </div>
-          <div style="background:#141720;border-radius:6px;padding:6px 8px;margin-bottom:6px;">
-            <div style="height:6px;border-radius:3px;background:#00d4ff;width:60%;margin-bottom:4px;"></div>
-            <div style="height:5px;border-radius:3px;background:#2a2f42;width:80%;margin-bottom:3px;"></div>
-            <div style="height:5px;border-radius:3px;background:#2a2f42;width:55%;"></div>
-          </div>
-          <div style="background:#00d4ff;border-radius:6px;padding:5px 8px;text-align:center;">
-            <div style="height:5px;border-radius:3px;background:#0d0f14;width:70%;margin:0 auto;"></div>
-          </div>
+      <div id="btnTemaNight" onclick="setTema('noite')" style="cursor:pointer;border-radius:12px;overflow:hidden;border:3px solid var(--accent);transition:border .2s;">
+        <div style="background:#0d0f14;padding:12px;">
+          <div style="background:#141720;border-radius:5px;padding:5px 7px;margin-bottom:5px;"><div style="height:5px;border-radius:2px;background:#00d4ff;width:55%;margin-bottom:3px;"></div><div style="height:4px;border-radius:2px;background:#2a2f42;width:75%;"></div></div>
+          <div style="background:#00d4ff;border-radius:5px;padding:4px;text-align:center;"><div style="height:4px;border-radius:2px;background:#0d0f14;width:65%;margin:0 auto;"></div></div>
         </div>
-        <div style="background:#141720;padding:8px;text-align:center;">
-          <div style="font-size:0.82rem;font-weight:700;color:#f0f2f8;">🌙 Tema Noite</div>
-          <div style="font-size:0.68rem;color:#7b829a;margin-top:2px;">Ambientes escuros</div>
-        </div>
+        <div style="background:#141720;padding:7px;text-align:center;"><div style="font-size:0.8rem;font-weight:700;color:#f0f2f8;">🌙 Tema Noite</div></div>
       </div>
-
-      <div id="btnTemaDia" onclick="setTema('dia')" style="cursor:pointer;border-radius:14px;overflow:hidden;border:3px solid transparent;transition:all .2s;">
-        <div style="background:#f0f4f8;padding:14px 12px;">
-          <div style="display:flex;gap:5px;margin-bottom:10px;">
-            <div style="width:7px;height:7px;border-radius:50%;background:#d63040;"></div>
-            <div style="width:7px;height:7px;border-radius:50%;background:#d4850a;"></div>
-            <div style="width:7px;height:7px;border-radius:50%;background:#00966e;"></div>
-          </div>
-          <div style="background:#ffffff;border-radius:6px;padding:6px 8px;margin-bottom:6px;border:1px solid #c5cfe0;">
-            <div style="height:6px;border-radius:3px;background:#0077cc;width:60%;margin-bottom:4px;"></div>
-            <div style="height:5px;border-radius:3px;background:#c5cfe0;width:80%;margin-bottom:3px;"></div>
-            <div style="height:5px;border-radius:3px;background:#c5cfe0;width:55%;"></div>
-          </div>
-          <div style="background:#0077cc;border-radius:6px;padding:5px 8px;text-align:center;">
-            <div style="height:5px;border-radius:3px;background:#ffffff;width:70%;margin:0 auto;"></div>
-          </div>
+      <div id="btnTemaDia" onclick="setTema('dia')" style="cursor:pointer;border-radius:12px;overflow:hidden;border:3px solid transparent;transition:border .2s;">
+        <div style="background:#f0f4f8;padding:12px;">
+          <div style="background:#fff;border-radius:5px;padding:5px 7px;margin-bottom:5px;border:1px solid #c5cfe0;"><div style="height:5px;border-radius:2px;background:#0077cc;width:55%;margin-bottom:3px;"></div><div style="height:4px;border-radius:2px;background:#c5cfe0;width:75%;"></div></div>
+          <div style="background:#0077cc;border-radius:5px;padding:4px;text-align:center;"><div style="height:4px;border-radius:2px;background:#fff;width:65%;margin:0 auto;"></div></div>
         </div>
-        <div style="background:#ffffff;padding:8px;text-align:center;border-top:1px solid #c5cfe0;">
-          <div style="font-size:0.82rem;font-weight:700;color:#0f1420;">☀️ Tema Dia</div>
-          <div style="font-size:0.68rem;color:#5a6480;margin-top:2px;">Ambientes claros / sol</div>
-        </div>
+        <div style="background:#fff;padding:7px;text-align:center;border-top:1px solid #c5cfe0;"><div style="font-size:0.8rem;font-weight:700;color:#0f1420;">☀️ Tema Dia</div></div>
       </div>
-
     </div>
   </div>
 
-  <!-- STATUS -->
-  <div class="card" style="margin-bottom:14px;">
-    <div style="font-size:0.72rem;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">🔄 Status da Sincronização</div>
-    <div id="syncStatusBox"></div>
-    <button class="big-btn big-btn-gray" onclick="sincronizarAgora()" style="margin-top:12px;font-size:0.9rem;">🔄 Sincronizar Agora</button>
-  </div>
-
-  <!-- GIST CONFIG -->
-  <div class="card" style="margin-bottom:14px;">
-    <div style="font-size:0.72rem;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;">🐙 GitHub Gist</div>
-
-    <div style="background:var(--bg);border-radius:10px;padding:14px;margin-bottom:16px;font-size:0.85rem;line-height:2;color:var(--muted);">
+  <!-- GIST -->
+  <div class="card" style="margin-bottom:12px;">
+    <div class="card-title">🐙 GitHub Gist — Sincronização</div>
+    <div style="background:var(--bg);border-radius:9px;padding:12px;margin-bottom:14px;font-size:0.82rem;line-height:2;color:var(--muted);">
       <div style="color:var(--text);font-weight:700;margin-bottom:6px;">Como configurar:</div>
       <div>1. Acesse <strong style="color:var(--accent)">gist.github.com</strong></div>
-      <div>2. Crie um novo Gist com o arquivo <strong>portaria_db.json</strong> e conteúdo <strong>[]</strong></div>
-      <div>3. Copie o <strong>ID do Gist</strong> (código na URL)</div>
-      <div>4. Em <strong>github.com → Settings → Developer settings → Personal access tokens → Tokens (classic)</strong></div>
-      <div>5. Gere um token com permissão <strong>gist</strong></div>
-      <div>6. Cole os dois campos abaixo</div>
+      <div>2. Crie um Gist com o arquivo <strong>portaria_db.json</strong> e conteúdo <strong>[]</strong></div>
+      <div>3. Copie o ID da URL</div>
+      <div>4. Gere um token em <strong>GitHub → Settings → Developer settings → Tokens (classic)</strong> com permissão <strong>gist</strong></div>
+      <div>5. Cole abaixo e clique em Salvar</div>
     </div>
-
+    <div id="syncStatusBox" style="margin-bottom:12px;"></div>
     <div class="field">
-      <div class="field-label"><span>🔑</span> Gist ID</div>
-      <input type="text" id="cfgGistId" placeholder="abc123def456..." style="font-size:0.9rem;font-family:var(--fm);">
+      <div class="field-label">🔑 Gist ID</div>
+      <input type="text" id="cfgGistId" placeholder="abc123def456..." style="font-size:0.88rem;font-family:var(--fm);">
     </div>
-
     <div class="field">
-      <div class="field-label"><span>🔐</span> Token GitHub</div>
-      <input type="password" id="cfgToken" placeholder="ghp_xxxxxxxxxxxx..." style="font-size:0.9rem;font-family:var(--fm);">
+      <div class="field-label">🔐 Token GitHub</div>
+      <input type="password" id="cfgToken" placeholder="ghp_xxxxxxxxxxxx..." style="font-size:0.88rem;font-family:var(--fm);">
     </div>
-
-    <button class="big-btn big-btn-accent" id="btnSalvarCfg" onclick="salvarConfig()">💾 Salvar e Conectar</button>
+    <button class="big-btn btn-accent" id="btnSalvarCfg" onclick="salvarConfig()">💾 Salvar e Conectar</button>
+    <button class="big-btn btn-gray" onclick="sincronizarAgora()" style="margin-top:9px;font-size:0.9rem;">🔄 Sincronizar Agora</button>
   </div>
 
-  <!-- INFO -->
-  <div class="card" style="margin-bottom:14px;">
-    <div style="font-size:0.72rem;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">ℹ️ Como funciona</div>
-    <div style="font-size:0.85rem;color:var(--muted);line-height:1.8;">
-      <div>📱 Cada celular salva localmente <strong style="color:var(--text)">e</strong> envia para o Gist</div>
-      <div>🔄 Ao abrir o app, puxa os dados mais recentes do Gist</div>
-      <div>👥 Todos os vigilantes veem os mesmos dados</div>
-      <div>📸 Fotos ficam salvas só localmente (Gist salva apenas texto)</div>
-    </div>
-  </div>
-
-  <!-- DANGER -->
-  <div class="card" style="margin-bottom:14px;">
-    <div style="font-size:0.72rem;font-weight:700;color:var(--red);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">⚠️ Zona de Perigo</div>
-    <button class="big-btn big-btn-gray" onclick="limparDados()" style="font-size:0.9rem;border-color:var(--red);color:var(--red);">🗑 Limpar dados locais deste celular</button>
-    <div style="font-size:0.75rem;color:var(--muted);margin-top:8px;text-align:center;">Os dados no Gist não serão afetados</div>
+  <!-- PERIGO -->
+  <div class="card">
+    <div class="card-title" style="color:var(--red);">⚠️ Zona de Perigo</div>
+    <button class="big-btn btn-gray" onclick="limparDados()" style="font-size:0.88rem;border-color:var(--red);color:var(--red);">🗑 Limpar dados locais deste celular</button>
+    <div style="font-size:0.72rem;color:var(--muted);margin-top:7px;text-align:center;">Os dados no Gist não serão apagados</div>
   </div>
   <div style="height:10px"></div>
 </div>
 
-<!-- BOTTOM NAV -->
+<!-- ══ BOTTOM NAV ══ -->
 <div class="bnav">
-  <button class="bnav-btn active" id="nav-reg" onclick="showPanel('reg')">
-    <div class="ico">➕</div>Entrada
-  </button>
-  <button class="bnav-btn" id="nav-saida" onclick="showPanel('saida')">
-    <div class="ico">✅</div>Saída
-  </button>
-  <button class="bnav-btn" id="nav-gestor" onclick="showPanel('gestor')">
-    <div class="ico">👔</div>Gestor
-  </button>
-  <button class="bnav-btn" id="nav-consulta" onclick="showPanel('consulta')">
-    <div class="ico">🔍</div>Consulta
-  </button>
-  <button class="bnav-btn" id="nav-config" onclick="showPanel('config')">
-    <div class="ico">⚙️</div>Config
-  </button>
+  <button class="bnav-btn active" id="nav-entrada" onclick="showPanel('entrada')"><div class="ico">👤</div>Visitante</button>
+  <button class="bnav-btn" id="nav-frota" onclick="showPanel('frota')"><div class="ico">🚗</div>Frota</button>
+  <button class="bnav-btn" id="nav-consulta" onclick="showPanel('consulta')"><div class="ico">🔍</div>Consulta</button>
+  <button class="bnav-btn" id="nav-config" onclick="showPanel('config')"><div class="ico">⚙️</div>Config</button>
 </div>
 
-<!-- ═══ MODAL: CÂMERA ═══ -->
+<!-- ══ MODAIS ══ -->
+<!-- Câmera -->
 <div class="modal-bg" id="camModal">
   <div class="modal">
-    <div class="modal-hdr">
-      <div class="modal-title" id="camTitle">📷 Câmera</div>
-      <button class="modal-close" onclick="closeCam()">✕ Fechar</button>
-    </div>
+    <div class="modal-hdr"><div class="modal-title" id="camTitle">📷 Câmera</div><button class="modal-close" onclick="closeCam()">✕ Fechar</button></div>
     <div class="modal-body">
-      <div class="cam-wrap">
-        <video id="camVideo" autoplay playsinline muted></video>
-        <div class="cam-guide" id="camGuide" style="display:none">
-          <div class="cam-guide-box"><div class="cam-guide-label">▶ CENTRALIZAR A PLACA ◀</div></div>
-        </div>
+      <div class="cam-wrap"><video id="camVideo" autoplay playsinline muted></video>
+        <div class="cam-guide" id="camGuide" style="display:none"><div class="cam-guide-box"><div class="cam-guide-lbl">▶ CENTRALIZAR A PLACA ◀</div></div></div>
       </div>
       <canvas id="camCanvas"></canvas>
-      <div style="display:grid;grid-template-columns:1fr auto;gap:10px">
-        <button class="big-btn big-btn-accent" onclick="capturarFoto()">📸 Capturar Foto</button>
-        <button class="big-btn big-btn-gray" onclick="flipCam()" style="width:64px;padding:0;">🔄</button>
+      <div style="display:grid;grid-template-columns:1fr auto;gap:9px;">
+        <button class="big-btn btn-accent" onclick="capturarFoto()">📸 Capturar</button>
+        <button class="big-btn btn-gray" onclick="flipCam()" style="width:58px;padding:0;">🔄</button>
       </div>
     </div>
   </div>
 </div>
 
-<!-- ═══ MODAL: DETALHE ═══ -->
+<!-- Detalhe -->
 <div class="modal-bg" id="detailModal">
   <div class="modal">
-    <div class="modal-hdr">
-      <div class="modal-title" id="detailTitle">Registro</div>
-      <button class="modal-close" onclick="closeDetail()">✕</button>
-    </div>
+    <div class="modal-hdr"><div class="modal-title" id="detailTitle">Registro</div><button class="modal-close" onclick="closeDetail()">✕</button></div>
     <div class="modal-body" id="detailBody"></div>
   </div>
 </div>
 
-<!-- ═══ MODAL: CONFIRMAR SAÍDA (vigilante) ═══ -->
-<div class="modal-bg" id="saidaModal">
+<!-- Confirmar saída (vigilante) -->
+<div class="modal-bg" id="confSaidaModal">
   <div class="modal">
-    <div class="modal-hdr">
-      <div class="modal-title">✅ Confirmar Saída Física</div>
-      <button class="modal-close" onclick="closeSaidaModal()">✕</button>
-    </div>
-    <div class="modal-body" id="saidaModalBody"></div>
+    <div class="modal-hdr"><div class="modal-title">✅ Confirmar Saída</div><button class="modal-close" onclick="closeConfSaida()">✕</button></div>
+    <div class="modal-body" id="confSaidaBody"></div>
   </div>
 </div>
 
-<!-- ═══ MODAL: CONFIRMAR RETORNO (vigilante) ═══ -->
-<div class="modal-bg" id="retornoModal">
+<!-- Confirmar retorno (vigilante) -->
+<div class="modal-bg" id="confRetornoModal">
   <div class="modal">
-    <div class="modal-hdr">
-      <div class="modal-title">🔄 Confirmar Retorno</div>
-      <button class="modal-close" onclick="closeRetornoModal()">✕</button>
-    </div>
-    <div class="modal-body" id="retornoModalBody"></div>
+    <div class="modal-hdr"><div class="modal-title">🔄 Confirmar Retorno</div><button class="modal-close" onclick="closeConfRetorno()">✕</button></div>
+    <div class="modal-body" id="confRetornoBody"></div>
   </div>
 </div>
 
-<!-- ═══ MODAL: AUTORIZAR SAÍDA (gestor) ═══ -->
-<div class="modal-bg" id="autorizarModal">
+<!-- Sucesso entrada visitante -->
+<div class="modal-bg" id="sucEntradaModal">
   <div class="modal">
-    <div class="modal-hdr">
-      <div class="modal-title">👔 Autorizar Saída</div>
-      <button class="modal-close" onclick="closeAutorizarModal()">✕</button>
-    </div>
-    <div class="modal-body" id="autorizarModalBody"></div>
+    <div class="modal-hdr"><div class="modal-title">✅ Entrada Registrada!</div><button class="modal-close" onclick="closeSucEntrada()">✕</button></div>
+    <div class="modal-body" id="sucEntradaBody"></div>
   </div>
 </div>
 
-<!-- ═══ MODAL: SUCESSO ENTRADA ═══ -->
-<div class="modal-bg" id="successModal">
+<!-- Sucesso autorização gestor -->
+<div class="modal-bg" id="sucAutModal">
   <div class="modal">
-    <div class="modal-hdr">
-      <div class="modal-title">✅ Entrada Registrada!</div>
-      <button class="modal-close" onclick="closeSuccessModal()">✕</button>
-    </div>
-    <div class="modal-body" id="successBody"></div>
+    <div class="modal-hdr"><div class="modal-title">✅ Saída Autorizada!</div><button class="modal-close" onclick="closeSucAut()">✕</button></div>
+    <div class="modal-body" id="sucAutBody"></div>
   </div>
-</div>
-
-<!-- ═══ MODAL: SUCESSO SAÍDA ═══ -->
-<div class="modal-bg" id="saidaSuccessModal">
-  <div class="modal">
-    <div class="modal-hdr">
-      <div class="modal-title">🚪 Saída Registrada!</div>
-      <button class="modal-close" onclick="closeSaidaSuccessModal()">✕</button>
-    </div>
-    <div class="modal-body" id="saidaSuccessBody"></div>
-  </div>
-</div>
-
-<!-- ═══ MODAL: DETALHE ═══ -->
-<div class="modal-bg" id="detailModal">
-  <div class="modal">
-    <div class="modal-hdr">
-      <div class="modal-title" id="detailTitle">Registro</div>
-      <button class="modal-close" onclick="closeDetail()">✕</button>
-    </div>
-    <div class="modal-body" id="detailBody"></div>
-  </div>
-</div>
-
-<!-- BOTTOM NAV -->
-<div class="bnav">
-  <button class="bnav-btn active" id="nav-reg" onclick="showPanel('reg')">
-    <div class="ico">➕</div>Entrada
-  </button>
-  <button class="bnav-btn" id="nav-saida" onclick="showPanel('saida')">
-    <div class="ico">✅</div>Saída
-  </button>
-  <button class="bnav-btn" id="nav-gestor" onclick="showPanel('gestor')">
-    <div class="ico">👔</div>Gestor
-  </button>
-  <button class="bnav-btn" id="nav-consulta" onclick="showPanel('consulta')">
-    <div class="ico">🔍</div>Consulta
-  </button>
-  <button class="bnav-btn" id="nav-config" onclick="showPanel('config')">
-    <div class="ico">⚙️</div>Config
-  </button>
 </div>
 
 <script>
-// ══════════════════════════════════
+// ══════════════════════════════
 //  STATE
-// ══════════════════════════════════
-let DB = JSON.parse(localStorage.getItem('pg_v4') || 'null') || [];
+// ══════════════════════════════
+// VISITANTES: registro de entrada de visitantes/terceiros
+let VISITANTES = JSON.parse(localStorage.getItem('pg_visitantes') || '[]');
+// FROTA: autorizações de saída de veículos da empresa
+let FROTA = JSON.parse(localStorage.getItem('pg_frota') || '[]');
+
 let GIST_ID    = localStorage.getItem('pg_gist_id')    || '';
 let GIST_TOKEN = localStorage.getItem('pg_gist_token') || '';
-let photoMoto = null, photoVeic = null;
-let camStream = null, camTarget = null, camFacing = 'environment';
-let filterMode = 'todos';
 let isSyncing  = false;
+let filterMode = 'todos';
 
-function saveLocal(){ localStorage.setItem('pg_v4', JSON.stringify(DB)); }
+// Camera state
+let camStream = null, camTarget = null, camFacing = 'environment';
+// Visitor form photos
+let vPhotoMoto = null, vPhotoVeic = null;
 
-// ══ TEMA ══
-function setTema(t){
-  const isDia = t === 'dia';
-  document.body.classList.toggle('tema-dia', isDia);
-  localStorage.setItem('pg_tema', t);
-  // update border highlight on selector cards
-  const night = document.getElementById('btnTemaNight');
-  const dia   = document.getElementById('btnTemaDia');
-  if(night && dia){
-    night.style.border = isDia ? '3px solid transparent' : '3px solid var(--accent)';
-    dia.style.border   = isDia ? '3px solid var(--accent)' : '3px solid transparent';
-  }
-  // update header indicator
-  document.getElementById('hdrTema').textContent = isDia ? '☀️' : '🌙';
-}
-
-function initTema(){
-  const saved = localStorage.getItem('pg_tema') || 'noite';
-  setTema(saved);
-}
+function saveVisitantes(){ localStorage.setItem('pg_visitantes', JSON.stringify(VISITANTES)); }
+function saveFrota(){       localStorage.setItem('pg_frota',      JSON.stringify(FROTA)); }
 
 // ══ CLOCK ══
 function tick(){
-  const n=new Date();
-  document.getElementById('hdrTime').textContent=
-    n.toLocaleDateString('pt-BR')+' '+n.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+  const n = new Date();
+  document.getElementById('hdrTime').textContent =
+    n.toLocaleDateString('pt-BR') + ' ' +
+    n.toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'});
 }
-setInterval(tick,1000); tick();
+setInterval(tick, 1000); tick();
 
 // ══ PANELS ══
 function showPanel(id){
-  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.bnav-btn').forEach(b=>b.classList.remove('active'));
-  document.getElementById('panel-'+id).classList.add('active');
-  const navEl = document.getElementById('nav-'+id);
-  if(navEl) navEl.classList.add('active');
-  if(id==='consulta') renderConsulta();
-  if(id==='dash') renderDashboard();
-  if(id==='saida') renderSaida();
-  if(id==='gestor'){renderGestorPatio();renderHist();}
-  if(id==='config') renderConfig();
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.bnav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('panel-' + id).classList.add('active');
+  const nb = document.getElementById('nav-' + id);
+  if(nb) nb.classList.add('active');
+  if(id === 'frota')   { renderGestorLista(); renderVigilante(); }
+  if(id === 'consulta') renderConsulta();
+  if(id === 'config')   renderConfig();
 }
 
-// ══ GESTOR TABS ══
-let histFilter='todos';
-function setGTab(t){
-  document.querySelectorAll('.gtab').forEach(b=>b.classList.remove('active'));
-  document.querySelectorAll('.gpanel').forEach(p=>p.classList.remove('active'));
-  document.getElementById('gtab-'+t).classList.add('active');
-  document.getElementById('gpanel-'+t).classList.add('active');
-  if(t==='patio') renderGestorPatio();
-  if(t==='hist') renderHist();
-}
-function setHistFilter(f,el){
-  histFilter=f;
-  document.querySelectorAll('#gpanel-hist .chip').forEach(c=>c.classList.remove('active'));
-  el.classList.add('active');
-  renderHist();
+// ══ FROTA MODULE TABS ══
+function setMTab(t){
+  document.querySelectorAll('.mtab').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.msub').forEach(s => s.classList.remove('active'));
+  document.getElementById('mtab-' + t).classList.add('active');
+  document.getElementById('msub-' + t).classList.add('active');
+  if(t === 'gestor')    renderGestorLista();
+  if(t === 'vigilante') renderVigilante();
 }
 
-// ══ STATUS HELPERS ══
-// status values: 'patioAtivo' | 'autorizado' | 'fora' | 'encerrado'
-function statusTag(s){
-  const map={
-    patioAtivo: ['NO PÁTIO','tag-patio'],
-    autorizado: ['AUTORIZADO','tag-autorizado'],
-    fora:       ['FORA','tag-fora'],
-    encerrado:  ['ENCERRADO','tag-encerrado'],
-  };
-  const [lbl,cls]=map[s]||['—','tag-patio'];
-  return `<span class="tag ${cls}">${lbl}</span>`;
+// ══ TEMA ══
+function setTema(t){
+  const dia = t === 'dia';
+  document.body.classList.toggle('tema-dia', dia);
+  localStorage.setItem('pg_tema', t);
+  document.getElementById('hdrTema').textContent = dia ? '☀️' : '🌙';
+  const n = document.getElementById('btnTemaNight');
+  const d = document.getElementById('btnTemaDia');
+  if(n && d){
+    n.style.border = dia ? '3px solid transparent' : '3px solid var(--accent)';
+    d.style.border = dia ? '3px solid var(--accent)' : '3px solid transparent';
+  }
 }
-function fmtDt(iso){
-  if(!iso) return '—';
-  const d=new Date(iso);
-  return d.toLocaleDateString('pt-BR')+' '+d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+function toggleTema(){
+  setTema(localStorage.getItem('pg_tema') === 'dia' ? 'noite' : 'dia');
 }
+function initTema(){ setTema(localStorage.getItem('pg_tema') || 'noite'); }
 
-// ══════════════════════════════════
-//  GITHUB GIST SYNC
-// ══════════════════════════════════
-const GIST_FILENAME = 'portaria_db.json';
+// ══ GIST SYNC ══
+const GIST_FILE = 'portaria_db.json';
 
 function syncDot(state){
-  // state: 'ok' | 'syncing' | 'offline' | 'error'
-  const dot = document.getElementById('hdrDot');
-  const colors = {
+  const el = document.getElementById('hdrDot');
+  const map = {
     ok:      ['var(--green)',  '0 0 8px var(--green)'],
     syncing: ['var(--accent)', '0 0 8px var(--accent)'],
     offline: ['var(--warn)',   '0 0 8px var(--warn)'],
     error:   ['var(--red)',    '0 0 8px var(--red)'],
   };
-  const [bg, shadow] = colors[state] || colors.offline;
-  dot.style.background  = bg;
-  dot.style.boxShadow   = shadow;
-  const tips = {ok:'Sincronizado com Gist',syncing:'Sincronizando...',offline:'Sem Gist configurado',error:'Erro na sincronização'};
-  dot.title = tips[state]||'';
+  const [bg, sh] = map[state] || map.offline;
+  el.style.background = bg;
+  el.style.boxShadow  = sh;
 }
 
-function gistHeaders(){
-  return {
-    'Authorization': 'token ' + GIST_TOKEN,
-    'Content-Type':  'application/json',
-    'Accept':        'application/vnd.github+json',
-  };
-}
+function gistHdrs(){ return {'Authorization':'token '+GIST_TOKEN,'Content-Type':'application/json','Accept':'application/vnd.github+json'}; }
 
-// READ — pull latest DB from Gist
 async function gistPull(){
   if(!GIST_ID || !GIST_TOKEN) return;
-  try{
-    syncDot('syncing');
-    const res = await fetch(`https://api.github.com/gists/${GIST_ID}`, {
-      headers: gistHeaders()
-    });
-    if(!res.ok) throw new Error('HTTP '+res.status);
-    const gist = await res.json();
-    const content = gist.files[GIST_FILENAME]?.content;
-    if(content){
-      const remote = JSON.parse(content);
-      // Merge: union by id, remote wins on conflict
-      const map = {};
-      DB.forEach(r => map[r.id] = r);
-      remote.forEach(r => map[r.id] = r);         // remote overwrites
-      DB = Object.values(map).sort((a,b)=> b.id - a.id);
-      saveLocal();
-    }
-    syncDot('ok');
-  }catch(e){
-    syncDot('error');
-    console.warn('Gist pull error:', e);
-  }
-}
-
-// WRITE — push DB to Gist
-async function gistPush(){
-  if(!GIST_ID || !GIST_TOKEN) return;
-  if(isSyncing) return;
-  isSyncing = true;
   syncDot('syncing');
   try{
-    // Strip base64 photos before saving to Gist (keep only metadata)
-    const slim = DB.map(r =>({
-      ...r,
-      fotoMotorista: r.fotoMotorista ? '📸' : null,
-      fotoVeiculo:   r.fotoVeiculo   ? '📸' : null,
-    }));
-    await fetch(`https://api.github.com/gists/${GIST_ID}`, {
-      method:  'PATCH',
-      headers: gistHeaders(),
-      body: JSON.stringify({
-        files: {
-          [GIST_FILENAME]: { content: JSON.stringify(slim, null, 2) }
-        }
-      })
+    const res = await fetch('https://api.github.com/gists/' + GIST_ID, {headers: gistHdrs()});
+    if(!res.ok) throw new Error(res.status);
+    const gist = await res.json();
+    const raw = gist.files[GIST_FILE]?.content;
+    if(raw){
+      const remote = JSON.parse(raw);
+      // Merge visitantes and frota separately
+      const vMap = {}, fMap = {};
+      VISITANTES.forEach(r => vMap[r.id] = r);
+      FROTA.forEach(r => fMap[r.id] = r);
+      (remote.visitantes || []).forEach(r => vMap[r.id] = r);
+      (remote.frota || []).forEach(r => fMap[r.id] = r);
+      VISITANTES = Object.values(vMap).sort((a,b) => b.id - a.id);
+      FROTA      = Object.values(fMap).sort((a,b) => b.id - a.id);
+      saveVisitantes(); saveFrota();
+    }
+    syncDot('ok');
+  }catch(e){ syncDot('error'); console.warn('Gist pull:', e); }
+}
+
+async function gistPush(){
+  if(!GIST_ID || !GIST_TOKEN || isSyncing) return;
+  isSyncing = true; syncDot('syncing');
+  try{
+    const slim = {
+      visitantes: VISITANTES.map(r => ({...r, fotoMotorista: r.fotoMotorista ? '📸' : null, fotoVeiculo: r.fotoVeiculo ? '📸' : null})),
+      frota: FROTA
+    };
+    await fetch('https://api.github.com/gists/' + GIST_ID, {
+      method: 'PATCH', headers: gistHdrs(),
+      body: JSON.stringify({files:{[GIST_FILE]:{content: JSON.stringify(slim, null, 2)}}})
     });
     syncDot('ok');
-  }catch(e){
-    syncDot('error');
-    console.warn('Gist push error:', e);
-  }finally{
-    isSyncing = false;
-  }
+  }catch(e){ syncDot('error'); console.warn('Gist push:', e); }
+  finally{ isSyncing = false; }
 }
 
-// Save locally AND push to Gist
-function saveDB(){
-  saveLocal();
-  gistPush();
-}
-
-// ══ CONFIG PANEL ══
-function toggleTema(){
-  const current = localStorage.getItem('pg_tema') || 'noite';
-  setTema(current === 'noite' ? 'dia' : 'noite');
-}
-
+// ══ CONFIG ══
 function renderConfig(){
   document.getElementById('cfgGistId').value = GIST_ID;
   document.getElementById('cfgToken').value  = GIST_TOKEN;
-  renderSyncStatus();
-  // Refresh theme border highlight
-  const saved = localStorage.getItem('pg_tema') || 'noite';
-  const night = document.getElementById('btnTemaNight');
-  const dia   = document.getElementById('btnTemaDia');
-  if(night && dia){
-    night.style.border = saved==='dia' ? '3px solid transparent' : '3px solid var(--accent)';
-    dia.style.border   = saved==='dia' ? '3px solid var(--accent)' : '3px solid transparent';
-  }
-}
-
-function renderSyncStatus(){
-  const el = document.getElementById('syncStatusBox');
-  if(!el) return;
-  if(!GIST_ID || !GIST_TOKEN){
-    el.innerHTML=`<div style="color:var(--warn);font-weight:700">⚠️ Gist não configurado</div>
-      <div style="font-size:0.8rem;color:var(--muted);margin-top:4px">Configure o Gist ID e o Token abaixo para sincronizar entre celulares.</div>`;
-  } else {
-    el.innerHTML=`<div style="color:var(--green);font-weight:700">✅ Gist configurado</div>
-      <div style="font-size:0.78rem;color:var(--muted);margin-top:4px;font-family:var(--fm);word-break:break-all">${GIST_ID}</div>`;
+  const box = document.getElementById('syncStatusBox');
+  box.innerHTML = GIST_ID
+    ? `<div style="color:var(--green);font-weight:700;font-size:0.88rem;">✅ Gist configurado</div><div style="font-size:0.75rem;color:var(--muted);font-family:var(--fm);margin-top:3px;word-break:break-all;">${GIST_ID}</div>`
+    : `<div style="color:var(--warn);font-weight:700;font-size:0.88rem;">⚠️ Gist não configurado</div>`;
+  const dia = localStorage.getItem('pg_tema') === 'dia';
+  const n = document.getElementById('btnTemaNight');
+  const d = document.getElementById('btnTemaDia');
+  if(n && d){
+    n.style.border = dia ? '3px solid transparent' : '3px solid var(--accent)';
+    d.style.border = dia ? '3px solid var(--accent)' : '3px solid transparent';
   }
 }
 
 async function salvarConfig(){
-  const id    = document.getElementById('cfgGistId').value.trim();
-  const token = document.getElementById('cfgToken').value.trim();
-  if(!id || !token){ alert('Preencha o Gist ID e o Token.'); return; }
-
+  const id = document.getElementById('cfgGistId').value.trim();
+  const tk = document.getElementById('cfgToken').value.trim();
+  if(!id || !tk){ alert('Preencha o Gist ID e o Token.'); return; }
   const btn = document.getElementById('btnSalvarCfg');
-  btn.textContent = '🔄 Testando...';
-  btn.disabled = true;
-
+  btn.textContent = '🔄 Testando...'; btn.disabled = true;
   try{
-    const res = await fetch(`https://api.github.com/gists/${id}`,{
-      headers:{
-        'Authorization':'token '+token,
-        'Accept':'application/vnd.github+json'
-      }
-    });
-    if(!res.ok) throw new Error('HTTP '+res.status);
-
-    GIST_ID = id; GIST_TOKEN = token;
+    const res = await fetch('https://api.github.com/gists/' + id, {headers:{'Authorization':'token '+tk,'Accept':'application/vnd.github+json'}});
+    if(!res.ok) throw new Error(res.status);
+    GIST_ID = id; GIST_TOKEN = tk;
     localStorage.setItem('pg_gist_id', id);
-    localStorage.setItem('pg_gist_token', token);
-
-    btn.textContent = '✅ Salvo!';
-    syncDot('ok');
-    renderSyncStatus();
-    // Pull remote data immediately
+    localStorage.setItem('pg_gist_token', tk);
+    btn.textContent = '✅ Conectado!';
+    syncDot('ok'); renderConfig();
     await gistPull();
-    renderSaida(); renderConsulta();
-    setTimeout(()=>{ btn.textContent='💾 Salvar e Conectar'; btn.disabled=false; }, 2000);
+    renderGestorLista(); renderVigilante(); renderConsulta();
+    setTimeout(() => { btn.textContent = '💾 Salvar e Conectar'; btn.disabled = false; }, 2000);
   }catch(e){
-    btn.textContent = '❌ Erro — verifique os dados';
-    btn.disabled = false;
+    btn.textContent = '❌ Erro — verifique os dados'; btn.disabled = false;
     syncDot('error');
-    console.warn(e);
-    setTimeout(()=>{ btn.textContent='💾 Salvar e Conectar'; }, 3000);
+    setTimeout(() => { btn.textContent = '💾 Salvar e Conectar'; }, 3000);
   }
 }
 
 async function sincronizarAgora(){
-  if(!GIST_ID||!GIST_TOKEN){ alert('Configure o Gist primeiro.'); return; }
+  if(!GIST_ID || !GIST_TOKEN){ alert('Configure o Gist primeiro.'); return; }
   await gistPull();
-  renderSaida(); renderConsulta(); renderDashboard();
-  renderSyncStatus();
+  renderGestorLista(); renderVigilante(); renderConsulta();
 }
 
 function limparDados(){
-  if(!confirm('Apagar TODOS os dados locais deste celular?\n\nOs dados no Gist NÃO serão apagados.\n\nTem certeza?')) return;
-  DB=[];
-  saveLocal();
-  renderSaida(); renderConsulta();
+  if(!confirm('Apagar TODOS os dados locais?\n\nOs dados no Gist NÃO serão apagados.')) return;
+  VISITANTES = []; FROTA = [];
+  saveVisitantes(); saveFrota();
+  renderGestorLista(); renderVigilante(); renderConsulta();
   alert('Dados locais apagados.');
 }
 
-// ══ WIZARD ══
-let currentStep = 1;
-
-function setStep(n){
-  currentStep=n;
-  [1,2,3].forEach(i=>{
-    document.getElementById('wp'+i).classList.toggle('active',i===n);
-    const s=document.getElementById('s'+i);
-    s.classList.remove('active','done');
-    if(i===n) s.classList.add('active');
-    else if(i<n) s.classList.add('done');
-  });
-  [1,2].forEach(i=>{
-    document.getElementById('sl'+i).classList.toggle('done',i<n);
-  });
-  window.scrollTo(0,0);
-}
-
-function goStep2(){
-  const nome=document.getElementById('inputNome').value.trim();
-  const empresa=document.getElementById('inputEmpresa').value.trim();
-  if(!nome){alert('Informe o nome do motorista.');return;}
-  if(!empresa){alert('Informe a empresa/procedência.');return;}
-  setStep(2);
-}
-
-function goStep1(){ setStep(1); }
-
-function goStep3(back){
-  if(!back){
-    const placa=document.getElementById('inputPlaca').value.trim();
-    if(placa.replace('-','').length<7){alert('Informe a placa do veículo.');return;}
-  }
-  // Build review
-  const nome=document.getElementById('inputNome').value.trim();
-  const empresa=document.getElementById('inputEmpresa').value.trim();
-  const placa=document.getElementById('inputPlaca').value.trim().toUpperCase();
-  const tipo=document.getElementById('inputTipo').value;
-  const obs=document.getElementById('inputObs').value.trim();
-
-  document.getElementById('reviewPhotos').innerHTML=`
-    <div>
-      <div style="font-size:0.72rem;color:var(--muted);font-weight:700;margin-bottom:6px;">MOTORISTA / DOC</div>
-      <div class="dphoto">${photoMoto?`<img src="${photoMoto}">`:'🤳'}</div>
-    </div>
-    <div>
-      <div style="font-size:0.72rem;color:var(--muted);font-weight:700;margin-bottom:6px;">VEÍCULO / PLACA</div>
-      <div class="dphoto">${photoVeic?`<img src="${photoVeic}">`:'🚗'}</div>
-    </div>`;
-
-  document.getElementById('reviewData').innerHTML=`
-    <div class="drow"><label>👤 Motorista</label><span>${nome}</span></div>
-    <div class="drow"><label>🏢 Empresa</label><span>${empresa}</span></div>
-    <div class="drow"><label>🚗 Placa</label><span style="font-family:var(--fm);color:var(--warn);letter-spacing:3px;font-size:1.1rem;">${placa}</span></div>
-    <div class="drow"><label>🚙 Tipo</label><span>${tipo}</span></div>
-    ${obs?`<div class="drow"><label>📝 Obs.</label><span>${obs}</span></div>`:''}`;
-
-  setStep(3);
-}
-
-// ══ AUTOCOMPLETE ══
-function getMotoristas(){
-  const m={};
-  DB.forEach(r=>{if(!m[r.nome])m[r.nome]={nome:r.nome,empresa:r.empresa,c:0};m[r.nome].c++;});
-  return Object.values(m).sort((a,b)=>b.c-a.c);
-}
-function getEmpresas(){
-  const m={};
-  DB.forEach(r=>{m[r.empresa]=(m[r.empresa]||0)+1;});
-  return Object.entries(m).sort((a,b)=>b[1]-a[1]).map(e=>e[0]);
-}
-function acMotorista(q){
-  const list=document.getElementById('acNomeList');
-  if(!q||q.length<2){list.classList.remove('show');return;}
-  const hits=getMotoristas().filter(x=>x.nome.toLowerCase().includes(q.toLowerCase())).slice(0,5);
-  if(!hits.length){list.classList.remove('show');return;}
-  list.innerHTML=hits.map(x=>`<div class="ac-item" onclick="selMoto('${esc(x.nome)}','${esc(x.empresa)}')">${x.nome}<small>🏢 ${x.empresa} · ${x.c} visita(s)</small></div>`).join('');
-  list.classList.add('show');
-}
-function acEmpresa(q){
-  const list=document.getElementById('acEmpresaList');
-  if(!q||q.length<1){list.classList.remove('show');return;}
-  const hits=getEmpresas().filter(e=>e.toLowerCase().includes(q.toLowerCase())).slice(0,5);
-  if(!hits.length){list.classList.remove('show');return;}
-  list.innerHTML=hits.map(e=>`<div class="ac-item" onclick="selEmp('${esc(e)}')">${e}</div>`).join('');
-  list.classList.add('show');
-}
-function selMoto(nome,empresa){
-  document.getElementById('inputNome').value=nome;
-  document.getElementById('inputEmpresa').value=empresa;
-  document.querySelectorAll('.ac-list').forEach(l=>l.classList.remove('show'));
-}
-function selEmp(e){
-  document.getElementById('inputEmpresa').value=e;
-  document.getElementById('acEmpresaList').classList.remove('show');
-}
-document.addEventListener('click',e=>{if(!e.target.closest('.ac-wrap'))document.querySelectorAll('.ac-list').forEach(l=>l.classList.remove('show'));});
-
 // ══ CAMERA ══
 async function openCam(target){
-  camTarget=target;
-  const isPlate=target==='veiculo';
-  document.getElementById('camTitle').textContent=isPlate?'📷 Câmera Traseira — Placa':'📷 Fotografar Motorista / Documento';
-  document.getElementById('camGuide').style.display=isPlate?'flex':'none';
+  camTarget = target;
+  const isPlate = target === 'vveic';
+  document.getElementById('camTitle').textContent = isPlate ? '📷 Câmera Traseira — Placa' : '📷 Fotografar';
+  document.getElementById('camGuide').style.display = isPlate ? 'flex' : 'none';
   document.getElementById('camModal').classList.add('open');
   await startCam();
 }
 async function startCam(){
   stopCam();
   try{
-    camStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'},width:{ideal:1920},height:{ideal:1080}}});
-    document.getElementById('camVideo').srcObject=camStream;
+    camStream = await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'},width:{ideal:1920},height:{ideal:1080}}});
+    document.getElementById('camVideo').srcObject = camStream;
   }catch{
     try{
-      camStream=await navigator.mediaDevices.getUserMedia({video:true});
-      document.getElementById('camVideo').srcObject=camStream;
+      camStream = await navigator.mediaDevices.getUserMedia({video:true});
+      document.getElementById('camVideo').srcObject = camStream;
     }catch{
-      alert('Câmera não acessível.\n\nVerifique as permissões ou use a opção "Galeria".\n\nNota: a câmera só funciona via HTTPS (GitHub Pages). Arquivos locais não têm acesso à câmera.');
+      alert('Câmera não acessível.\nUse a opção "Galeria" ou hospede o app via HTTPS (GitHub Pages).');
       closeCam();
     }
   }
 }
-function stopCam(){if(camStream){camStream.getTracks().forEach(t=>t.stop());camStream=null;}}
-function closeCam(){stopCam();document.getElementById('camModal').classList.remove('open');}
-
+function stopCam(){ if(camStream){ camStream.getTracks().forEach(t => t.stop()); camStream = null; } }
+function closeCam(){ stopCam(); document.getElementById('camModal').classList.remove('open'); }
 async function flipCam(){
-  // Toggle facing mode
   camFacing = camFacing === 'environment' ? 'user' : 'environment';
   stopCam();
   try{
-    // Use exact instead of ideal so it actually switches
-    camStream = await navigator.mediaDevices.getUserMedia({
-      video:{ facingMode:{ exact: camFacing }, width:{ideal:1920}, height:{ideal:1080} }
-    });
+    camStream = await navigator.mediaDevices.getUserMedia({video:{facingMode:{exact:camFacing}}});
     document.getElementById('camVideo').srcObject = camStream;
   }catch{
-    // exact may fail on devices with only one camera — fall back to ideal
-    try{
-      camStream = await navigator.mediaDevices.getUserMedia({
-        video:{ facingMode: camFacing }
-      });
-      document.getElementById('camVideo').srcObject = camStream;
-    }catch(e){
-      // revert facing if failed
-      camFacing = camFacing === 'environment' ? 'user' : 'environment';
-      alert('Não foi possível virar a câmera. Este dispositivo pode ter apenas uma câmera.');
-    }
+    camFacing = camFacing === 'environment' ? 'user' : 'environment';
+    await startCam();
   }
 }
-
 function capturarFoto(){
-  const video=document.getElementById('camVideo');
-  const canvas=document.getElementById('camCanvas');
-  canvas.width=video.videoWidth||1280;
-  canvas.height=video.videoHeight||960;
-  canvas.getContext('2d').drawImage(video,0,0);
-  const url=canvas.toDataURL('image/jpeg',.85);
+  const video = document.getElementById('camVideo');
+  const canvas = document.getElementById('camCanvas');
+  canvas.width = video.videoWidth || 1280;
+  canvas.height = video.videoHeight || 960;
+  canvas.getContext('2d').drawImage(video, 0, 0);
+  const url = canvas.toDataURL('image/jpeg', .85);
   closeCam();
-  applyPhoto(url,camTarget);
-  if(camTarget==='veiculo') runOCR(url);
+  applyPhoto(url, camTarget);
+  if(camTarget === 'vveic') runOCR(url);
 }
-function fileSelected(input,target){
-  const file=input.files[0];if(!file)return;
-  const r=new FileReader();
-  r.onload=e=>{applyPhoto(e.target.result,target);if(target==='veiculo')runOCR(e.target.result);};
-  r.readAsDataURL(file);input.value='';
+function fileSelected(input, target){
+  const file = input.files[0]; if(!file) return;
+  const r = new FileReader();
+  r.onload = e => { applyPhoto(e.target.result, target); if(target === 'vveic') runOCR(e.target.result); };
+  r.readAsDataURL(file); input.value = '';
 }
-function applyPhoto(url,target){
-  if(target==='motorista'){
-    photoMoto=url;
-    document.getElementById('fotoMotoBlock').innerHTML=`<img src="${url}" style="width:100%;height:100%;object-fit:cover;">`;
-  }else{
-    photoVeic=url;
-    document.getElementById('fotoVeicBlock').innerHTML=`<img src="${url}" style="width:100%;height:100%;object-fit:cover;">`;
+function applyPhoto(url, target){
+  if(target === 'vmoto'){
+    vPhotoMoto = url;
+    document.getElementById('vFotoMotoBlock').innerHTML = `<img src="${url}">`;
+  } else if(target === 'vveic'){
+    vPhotoVeic = url;
+    document.getElementById('vFotoVeicBlock').innerHTML = `<img src="${url}">`;
   }
 }
 
 // ══ OCR ══
-
-// Pre-process image: crop center strip where plate usually is, upscale, grayscale + contrast
 function preprocessPlate(imgData){
-  return new Promise(resolve=>{
-    const img=new Image();
-    img.onload=()=>{
-      const W=img.width, H=img.height;
-
-      // Crop the bottom-center region where plate usually appears (60-90% height, 10-90% width)
-      const cropX=Math.round(W*0.05);
-      const cropY=Math.round(H*0.50);
-      const cropW=Math.round(W*0.90);
-      const cropH=Math.round(H*0.45);
-
-      // Upscale crop 3x for better OCR
-      const scale=3;
-      const c=document.createElement('canvas');
-      c.width=cropW*scale;
-      c.height=cropH*scale;
-      const ctx=c.getContext('2d');
-
-      // Draw cropped & scaled
-      ctx.drawImage(img, cropX, cropY, cropW, cropH, 0, 0, c.width, c.height);
-
-      // Get pixel data and apply grayscale + aggressive contrast
-      const id=ctx.getImageData(0,0,c.width,c.height);
-      const d=id.data;
-      for(let i=0;i<d.length;i+=4){
-        // Grayscale (luminance)
-        let g=0.299*d[i]+0.587*d[i+1]+0.114*d[i+2];
-        // Increase contrast: stretch towards black/white
-        g=((g-128)*2.2)+128;
-        g=Math.max(0,Math.min(255,g));
-        // Threshold: push towards pure B&W
-        const bw=g>140?255:0;
-        d[i]=d[i+1]=d[i+2]=bw;
-        d[i+3]=255;
+  return new Promise(resolve => {
+    const img = new Image();
+    img.onload = () => {
+      const W = img.width, H = img.height;
+      const scale = 3;
+      const c = document.createElement('canvas');
+      c.width = Math.round(W * .9) * scale;
+      c.height = Math.round(H * .45) * scale;
+      const ctx = c.getContext('2d');
+      ctx.drawImage(img, Math.round(W*.05), Math.round(H*.5), Math.round(W*.9), Math.round(H*.45), 0, 0, c.width, c.height);
+      const id = ctx.getImageData(0, 0, c.width, c.height); const d = id.data;
+      for(let i = 0; i < d.length; i+=4){
+        let g = 0.299*d[i] + 0.587*d[i+1] + 0.114*d[i+2];
+        g = Math.max(0, Math.min(255, ((g-128)*2.2)+128));
+        d[i] = d[i+1] = d[i+2] = g > 140 ? 255 : 0; d[i+3] = 255;
       }
-      ctx.putImageData(id,0,0);
-
-      resolve(c.toDataURL('image/png'));
-    };
-    img.src=imgData;
+      ctx.putImageData(id, 0, 0); resolve(c.toDataURL('image/png'));
+    }; img.src = imgData;
   });
 }
-
-// Also try inverted (white text on dark bg)
-function invertImage(dataUrl){
-  return new Promise(resolve=>{
-    const img=new Image();
-    img.onload=()=>{
-      const c=document.createElement('canvas');
-      c.width=img.width;c.height=img.height;
-      const ctx=c.getContext('2d');
-      ctx.drawImage(img,0,0);
-      const id=ctx.getImageData(0,0,c.width,c.height);
-      const d=id.data;
+function invertImg(url){
+  return new Promise(resolve => {
+    const img = new Image();
+    img.onload = () => {
+      const c = document.createElement('canvas'); c.width = img.width; c.height = img.height;
+      const ctx = c.getContext('2d'); ctx.drawImage(img,0,0);
+      const id = ctx.getImageData(0,0,c.width,c.height); const d = id.data;
       for(let i=0;i<d.length;i+=4){d[i]=255-d[i];d[i+1]=255-d[i+1];d[i+2]=255-d[i+2];}
-      ctx.putImageData(id,0,0);
-      resolve(c.toDataURL('image/png'));
-    };
-    img.src=dataUrl;
+      ctx.putImageData(id,0,0); resolve(c.toDataURL('image/png'));
+    }; img.src = url;
   });
 }
-
-async function ocrAttempt(worker, imgData, psm){
-  await worker.setParameters({
-    tessedit_char_whitelist:'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789',
-    tessedit_pageseg_mode: String(psm),
-  });
-  const{data}=await worker.recognize(imgData);
-  return {text:data.text, conf:data.confidence};
-}
-
 async function runOCR(imgData){
   showOCR(true,'Preparando imagem...',0);
   document.getElementById('plateFound').classList.remove('show');
-  document.getElementById('inputPlaca').value='';
+  document.getElementById('vPlaca').value = '';
   try{
-    showOCR(true,'Melhorando contraste...',10);
-    const processed = await preprocessPlate(imgData);
-    const inverted  = await invertImage(processed);
-
-    showOCR(true,'Iniciando leitura...',20);
-    const worker=await Tesseract.createWorker('eng',1,{
-      logger:m=>{
-        if(m.status==='recognizing text')
-          showOCR(true,'Lendo placa...',20+Math.round(m.progress*70));
-      }
+    const proc = await preprocessPlate(imgData);
+    const inv  = await invertImg(proc);
+    showOCR(true,'Analisando...',20);
+    const worker = await Tesseract.createWorker('eng',1,{
+      logger: m => { if(m.status==='recognizing text') showOCR(true,'Lendo placa...',20+Math.round(m.progress*70)); }
     });
-
-    // Try 4 combinations: processed+inverted × PSM 7 (single line) + PSM 8 (single word)
-    const attempts=[];
-    for(const img of [processed, inverted]){
+    const results = [];
+    for(const img of [proc, inv]){
       for(const psm of [7, 8, 13]){
-        const res=await ocrAttempt(worker, img, psm);
-        const raw=res.text.toUpperCase().replace(/[^A-Z0-9]/g,'');
-        const plate=extractPlate(raw);
-        attempts.push({plate, conf:res.conf, raw});
+        await worker.setParameters({tessedit_char_whitelist:'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789',tessedit_pageseg_mode:String(psm)});
+        const {data} = await worker.recognize(img);
+        const raw = data.text.toUpperCase().replace(/[^A-Z0-9]/g,'');
+        results.push({plate:extractPlate(raw), conf:data.confidence});
       }
     }
-    await worker.terminate();
-    showOCR(false);
-
-    // Pick best result: prefer valid plate pattern with highest confidence
-    const valid=attempts.filter(a=>a.plate);
-    const best = valid.length
-      ? valid.sort((a,b)=>b.conf-a.conf)[0]
-      : attempts.sort((a,b)=>b.conf-a.conf)[0];
-
+    await worker.terminate(); showOCR(false);
+    const valid = results.filter(x => x.plate).sort((a,b) => b.conf-a.conf);
+    const best = valid.length ? valid[0] : results.sort((a,b) => b.conf-a.conf)[0];
     if(best.plate){
-      document.getElementById('pfVal').textContent=best.plate;
-      document.getElementById('pfConf').textContent='Confiança: '+Math.round(best.conf)+'%';
+      document.getElementById('pfVal').textContent = best.plate;
+      document.getElementById('pfConf').textContent = 'Confiança: '+Math.round(best.conf)+'%';
       document.getElementById('plateFound').classList.add('show');
-      document.getElementById('inputPlaca').value=best.plate;
-    }else{
-      document.getElementById('pfVal').textContent='Não lido';
-      document.getElementById('pfConf').textContent='Digite a placa manualmente abaixo';
+      document.getElementById('vPlaca').value = best.plate;
+    } else {
+      document.getElementById('pfVal').textContent = 'Não identificada';
+      document.getElementById('pfConf').textContent = 'Digite manualmente abaixo';
       document.getElementById('plateFound').classList.add('show');
     }
-  }catch(err){
-    showOCR(false);
-    console.warn('OCR error:',err);
-  }
+  }catch(e){ showOCR(false); console.warn(e); }
 }
-
 function extractPlate(raw){
-  if(!raw||raw.length<6) return null;
-  // Common OCR confusions: 0↔O, 1↔I, 8↔B
-  const fix=raw
-    .replace(/O/g,'0_O').split('_') // keep both variants
-    .join('');
-  const src=raw;
-
-  const pats=[
-    /[A-Z]{3}[0-9][A-Z][0-9]{2}/,   // Mercosul: ABC1D23
-    /[A-Z]{3}[0-9]{4}/,              // Antiga:   ABC1234
-  ];
-
-  // Try original
-  for(let i=0;i<=src.length-7;i++){
-    const sub=src.slice(i,i+7);
-    for(const p of pats) if(p.test(sub)) return sub.slice(0,3)+'-'+sub.slice(3);
-  }
-
-  // Try with common substitutions
-  const variants=[
-    src,
-    src.replace(/0/g,'O'),
-    src.replace(/O/g,'0'),
-    src.replace(/1/g,'I'),
-    src.replace(/I/g,'1'),
-    src.replace(/8/g,'B'),
-    src.replace(/B/g,'8'),
-    src.replace(/5/g,'S'),
-    src.replace(/S/g,'5'),
-  ];
-  for(const v of variants){
+  if(!raw || raw.length < 6) return null;
+  const pats = [/[A-Z]{3}[0-9][A-Z][0-9]{2}/,/[A-Z]{3}[0-9]{4}/];
+  const variants = [raw, raw.replace(/0/g,'O'), raw.replace(/O/g,'0'), raw.replace(/1/g,'I'), raw.replace(/I/g,'1'), raw.replace(/8/g,'B'), raw.replace(/B/g,'8')];
+  for(const v of variants)
     for(let i=0;i<=v.length-7;i++){
-      const sub=v.slice(i,i+7);
-      for(const p of pats) if(p.test(sub)) return sub.slice(0,3)+'-'+sub.slice(3);
+      const s=v.slice(i,i+7);
+      for(const p of pats) if(p.test(s)) return s.slice(0,3)+'-'+s.slice(3);
     }
-  }
   return null;
 }
 function showOCR(show,txt='',pct=0){
-  const el=document.getElementById('ocrBar');
-  if(show){el.classList.add('show');document.getElementById('ocrTxt').textContent=txt;document.getElementById('ocrPct').textContent=pct+'%';}
+  const el = document.getElementById('ocrBar');
+  if(show){ el.classList.add('show'); document.getElementById('ocrTxt').textContent=txt; document.getElementById('ocrPct').textContent=pct+'%'; }
   else el.classList.remove('show');
 }
 function formatPlate(input){
-  let v=input.value.toUpperCase().replace(/[^A-Z0-9]/g,'');
-  if(v.length>3)v=v.slice(0,3)+'-'+v.slice(3);
-  if(v.length>8)v=v.slice(0,8);
-  input.value=v;
+  let v = input.value.toUpperCase().replace(/[^A-Z0-9]/g,'');
+  if(v.length > 3) v = v.slice(0,3) + '-' + v.slice(3);
+  if(v.length > 8) v = v.slice(0,8);
+  input.value = v;
 }
 
-// ══ GOOGLE SHEETS SYNC — removido, usando Gist ══
+// ══ VISITANTE: WIZARD ══
+let vStep = 1;
+function vSetStep(n){
+  vStep = n;
+  [1,2,3].forEach(i=>{
+    document.getElementById('vwp'+i).classList.toggle('active', i===n);
+    const s = document.getElementById('vs'+i);
+    s.classList.remove('active','done');
+    if(i===n) s.classList.add('active');
+    else if(i<n) s.classList.add('done');
+  });
+  [1,2].forEach(i => document.getElementById('vsl'+i).classList.toggle('done', i<n));
+  window.scrollTo(0,0);
+}
+function vGoStep2(){
+  if(!document.getElementById('vNome').value.trim()){ alert('Informe o nome do motorista.'); return; }
+  if(!document.getElementById('vEmpresa').value.trim()){ alert('Informe a empresa/procedência.'); return; }
+  vSetStep(2);
+}
+function vGoStep1(){ vSetStep(1); }
+function vGoStep3(back){
+  if(!back && document.getElementById('vPlaca').value.replace('-','').length < 7){ alert('Informe a placa do veículo.'); return; }
+  const nome    = document.getElementById('vNome').value.trim();
+  const empresa = document.getElementById('vEmpresa').value.trim();
+  const placa   = document.getElementById('vPlaca').value.trim().toUpperCase();
+  const tipo    = document.getElementById('vTipo').value;
+  const obs     = document.getElementById('vObs').value.trim();
+  document.getElementById('vReviewPhotos').innerHTML = `
+    <div><div style="font-size:0.68rem;color:var(--muted);font-weight:700;margin-bottom:5px;">MOTORISTA</div>
+      <div class="dphoto">${vPhotoMoto?`<img src="${vPhotoMoto}">`:'🤳'}</div></div>
+    <div><div style="font-size:0.68rem;color:var(--muted);font-weight:700;margin-bottom:5px;">VEÍCULO</div>
+      <div class="dphoto">${vPhotoVeic?`<img src="${vPhotoVeic}">`:'🚗'}</div></div>`;
+  document.getElementById('vReviewData').innerHTML = `
+    <div class="drow"><label>👤 Motorista</label><span>${nome}</span></div>
+    <div class="drow"><label>🏢 Empresa</label><span>${empresa}</span></div>
+    <div class="drow"><label>🚗 Placa</label><span style="font-family:var(--fm);color:var(--warn);letter-spacing:3px;font-size:1rem;">${placa}</span></div>
+    <div class="drow"><label>🚙 Tipo</label><span>${tipo}</span></div>
+    ${obs?`<div class="drow"><label>📝 Obs.</label><span>${obs}</span></div>`:''}`;
+  vSetStep(3);
+}
 
-// ══ REGISTRAR ENTRADA ══
-function registrar(){
-  const nome=document.getElementById('inputNome').value.trim();
-  const empresa=document.getElementById('inputEmpresa').value.trim();
-  const placa=document.getElementById('inputPlaca').value.trim().toUpperCase();
-  const entry={
-    id:Date.now(),nome,empresa,placa,
-    tipo:document.getElementById('inputTipo').value,
-    obs:document.getElementById('inputObs').value.trim(),
-    fotoMotorista:photoMoto,fotoVeiculo:photoVeic,
-    tsEntrada:new Date().toISOString(),
-    tsAutorizado:null, tsSaida:null, tsRetorno:null,
-    autorizadoPor:null, obsAutorizacao:null,
-    status:'patioAtivo'  // patioAtivo | autorizado | fora | encerrado
+// ══ VISITANTE: AUTOCOMPLETE ══
+function getVMotoristas(){
+  const m = {};
+  VISITANTES.forEach(r => { if(!m[r.nome]) m[r.nome]={nome:r.nome,empresa:r.empresa,c:0}; m[r.nome].c++; });
+  return Object.values(m).sort((a,b) => b.c-a.c);
+}
+function getVEmpresas(){
+  const m = {};
+  VISITANTES.forEach(r => { m[r.empresa] = (m[r.empresa]||0)+1; });
+  return Object.entries(m).sort((a,b) => b[1]-a[1]).map(e => e[0]);
+}
+function acVNome(q){
+  const list = document.getElementById('acVNomeList');
+  if(!q||q.length<2){ list.classList.remove('show'); return; }
+  const hits = getVMotoristas().filter(x => x.nome.toLowerCase().includes(q.toLowerCase())).slice(0,5);
+  if(!hits.length){ list.classList.remove('show'); return; }
+  list.innerHTML = hits.map(x=>`<div class="ac-item" onclick="selVNome('${esc(x.nome)}','${esc(x.empresa)}')">${x.nome}<small>🏢 ${x.empresa} · ${x.c} visita(s)</small></div>`).join('');
+  list.classList.add('show');
+}
+function acVEmpresa(q){
+  const list = document.getElementById('acVEmpresaList');
+  if(!q||q.length<1){ list.classList.remove('show'); return; }
+  const hits = getVEmpresas().filter(e => e.toLowerCase().includes(q.toLowerCase())).slice(0,5);
+  if(!hits.length){ list.classList.remove('show'); return; }
+  list.innerHTML = hits.map(e=>`<div class="ac-item" onclick="selVEmpresa('${esc(e)}')">${e}</div>`).join('');
+  list.classList.add('show');
+}
+function selVNome(n,e){ document.getElementById('vNome').value=n; document.getElementById('vEmpresa').value=e; document.querySelectorAll('.ac-list').forEach(l=>l.classList.remove('show')); }
+function selVEmpresa(e){ document.getElementById('vEmpresa').value=e; document.getElementById('acVEmpresaList').classList.remove('show'); }
+
+// ══ VISITANTE: REGISTRAR ══
+function registrarVisitante(){
+  const entry = {
+    id: Date.now(), tipo_registro: 'visitante',
+    nome:    document.getElementById('vNome').value.trim(),
+    empresa: document.getElementById('vEmpresa').value.trim(),
+    placa:   document.getElementById('vPlaca').value.trim().toUpperCase(),
+    tipo:    document.getElementById('vTipo').value,
+    obs:     document.getElementById('vObs').value.trim(),
+    fotoMotorista: vPhotoMoto,
+    fotoVeiculo:   vPhotoVeic,
+    tsEntrada: new Date().toISOString(),
   };
-  DB.unshift(entry);
-  saveDB();
-  resetForm();
-  showSuccessModal(entry);
+  VISITANTES.unshift(entry);
+  saveVisitantes();
+  gistPush();
+  resetVisitanteForm();
+  showSucEntrada(entry);
 }
-
-function resetForm(){
-  ['inputNome','inputEmpresa','inputPlaca','inputObs'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('inputTipo').value='Carro';
-  document.getElementById('fotoMotoBlock').innerHTML='<div class="photo-block-icon">🤳</div><div class="photo-block-label">Toque para fotografar</div><div class="photo-block-sub">Motorista ou documento de identidade</div>';
-  document.getElementById('fotoVeicBlock').innerHTML='<div class="photo-block-icon">🚗</div><div class="photo-block-label">Toque para fotografar</div><div class="photo-block-sub">Mantenha a placa visível — OCR automático</div>';
+function resetVisitanteForm(){
+  ['vNome','vEmpresa','vPlaca','vObs'].forEach(id => document.getElementById(id).value='');
+  document.getElementById('vTipo').value = 'Carro';
+  document.getElementById('vFotoMotoBlock').innerHTML = '<div class="photo-block-icon">🤳</div><div class="photo-block-lbl">Toque para fotografar</div><div class="photo-block-sub">Motorista ou documento</div>';
+  document.getElementById('vFotoVeicBlock').innerHTML = '<div class="photo-block-icon">🚗</div><div class="photo-block-lbl">Toque para fotografar</div><div class="photo-block-sub">Câmera traseira — OCR automático</div>';
   document.getElementById('plateFound').classList.remove('show');
   showOCR(false);
-  photoMoto=null;photoVeic=null;
-  setStep(1);
+  vPhotoMoto = null; vPhotoVeic = null;
+  vSetStep(1);
 }
 
-// ══ VIGILANTE: PAINEL SAÍDA ══
-// Mostra: autorizados (confirmar saída física) + fora (confirmar retorno)
-function renderSaida(){
-  const q=(document.getElementById('searchSaida').value||'').toLowerCase();
+// ══ VISITANTE: SUCESSO ══
+const WA_ICO = `<svg class="wa-ico" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>`;
 
-  // — Autorizados a sair —
-  let aut=DB.filter(r=>r.status==='autorizado');
-  document.getElementById('autorizadosCnt').textContent=aut.length+' veículo(s)';
-  if(q) aut=aut.filter(r=>matches(r,q));
-  document.getElementById('saidaList').innerHTML = aut.length
-    ? aut.map(r=>ecardVigilante(r,'autorizado')).join('')
-    : emptyState(q?'🔍':'✅', q?'Nenhum resultado':'Nenhum autorizado agora', q?'Tente outra busca':'O gestor ainda não autorizou saídas');
+function showSucEntrada(r){
+  const dt = new Date(r.tsEntrada);
+  const msg = `🛡 *PORTARIA — ENTRADA*\n━━━━━━━━━━━━━━━\n👤 *Motorista:* ${r.nome}\n🏢 *Empresa:* ${r.empresa}\n🚗 *Placa:* ${r.placa}\n🚙 *Tipo:* ${r.tipo}\n🕐 *Entrada:* ${fmtDt(r.tsEntrada)}${r.obs?'\n📝 '+r.obs:''}\n━━━━━━━━━━━━━━━`;
+  const waHref = 'whatsapp://send?text=' + encodeURIComponent(msg);
+  document.getElementById('sucEntradaBody').innerHTML = `
+    <div class="suc-icon">✅</div>
+    <div class="suc-name">${r.nome}</div>
+    <div class="suc-plate">${r.placa}</div>
+    <div class="suc-sub">🏢 ${r.empresa} · ${dt.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}</div>
+    <div class="divider"></div>
+    <div class="wa-lbl">📤 Mensagem WhatsApp</div>
+    <div class="wa-prev">${msg.replace(/\*/g,'')}</div>
+    <a href="${waHref}" class="big-btn btn-wa" style="text-decoration:none">${WA_ICO} Enviar pelo WhatsApp</a>
+    <button class="big-btn btn-gray" onclick="closeSucEntrada()" style="margin-top:9px">Fechar</button>`;
+  document.getElementById('sucEntradaModal').classList.add('open');
+}
+function closeSucEntrada(){ document.getElementById('sucEntradaModal').classList.remove('open'); }
 
-  // — Fora aguardando retorno —
-  let fora=DB.filter(r=>r.status==='fora');
-  document.getElementById('foraCnt').textContent=fora.length+' veículo(s)';
-  if(q) fora=fora.filter(r=>matches(r,q));
-  document.getElementById('foraList').innerHTML = fora.length
-    ? fora.map(r=>ecardVigilante(r,'fora')).join('')
-    : emptyState('🔄','Nenhum veículo fora','');
+// ══ FROTA: GESTOR — AUTOCOMPLETE ══
+function getFrotaPlacas(){
+  const m = {};
+  FROTA.forEach(r => { if(!m[r.placa]) m[r.placa]={placa:r.placa,motorista:r.motorista,c:0}; m[r.placa].c++; });
+  return Object.values(m).sort((a,b) => b.c-a.c);
+}
+function getFrotaMotoristas(){
+  const m = {};
+  FROTA.forEach(r => { m[r.motorista] = (m[r.motorista]||0)+1; });
+  return Object.keys(m).sort((a,b) => m[b]-m[a]);
+}
+function acGPlaca(q){
+  const list = document.getElementById('acGPlacaList');
+  if(!q||q.length<2){ list.classList.remove('show'); return; }
+  const hits = getFrotaPlacas().filter(x => x.placa.includes(q.toUpperCase())).slice(0,5);
+  if(!hits.length){ list.classList.remove('show'); return; }
+  list.innerHTML = hits.map(x=>`<div class="ac-item" onclick="selGPlaca('${esc(x.placa)}','${esc(x.motorista)}')">${x.placa}<small>👤 ${x.motorista}</small></div>`).join('');
+  list.classList.add('show');
+}
+function acGMoto(q){
+  const list = document.getElementById('acGMotoList');
+  if(!q||q.length<2){ list.classList.remove('show'); return; }
+  const hits = getFrotaMotoristas().filter(n => n.toLowerCase().includes(q.toLowerCase())).slice(0,5);
+  if(!hits.length){ list.classList.remove('show'); return; }
+  list.innerHTML = hits.map(n=>`<div class="ac-item" onclick="selGMoto('${esc(n)}')">${n}</div>`).join('');
+  list.classList.add('show');
+}
+function selGPlaca(p,m){ document.getElementById('gPlaca').value=p; if(m) document.getElementById('gMotorista').value=m; document.querySelectorAll('.ac-list').forEach(l=>l.classList.remove('show')); }
+function selGMoto(n){ document.getElementById('gMotorista').value=n; document.getElementById('acGMotoList').classList.remove('show'); }
+
+// ══ FROTA: GESTOR — REGISTRAR AUTORIZAÇÃO ══
+function registrarAutorizacao(){
+  const placa     = document.getElementById('gPlaca').value.trim().toUpperCase();
+  const motorista = document.getElementById('gMotorista').value.trim();
+  const destino   = document.getElementById('gDestino').value.trim();
+  const dataHora  = document.getElementById('gDataHora').value;
+  const gestor    = document.getElementById('gGestor').value.trim();
+  if(placa.replace('-','').length < 7){ alert('Informe a placa do veículo.'); return; }
+  if(!motorista){ alert('Informe o nome do motorista.'); return; }
+  if(!destino){ alert('Informe o destino/motivo.'); return; }
+  if(!dataHora){ alert('Informe a data e hora prevista de saída.'); return; }
+  if(!gestor){ alert('Informe seu nome como gestor.'); return; }
+
+  const auth = {
+    id: Date.now(), tipo_registro: 'frota',
+    placa, motorista, destino,
+    tsPrevSaida: new Date(dataHora).toISOString(),
+    gestor, tsAutorizacao: new Date().toISOString(),
+    tsSaidaReal: null, tsRetorno: null,
+    status: 'pendente'  // pendente | fora | retornou
+  };
+  FROTA.unshift(auth);
+  saveFrota();
+  gistPush();
+
+  // Reset form
+  ['gPlaca','gMotorista','gDestino','gGestor'].forEach(id => document.getElementById(id).value='');
+  document.getElementById('gDataHora').value = '';
+
+  renderGestorLista();
+  showSucAut(auth);
 }
 
-function matches(r,q){ return r.nome.toLowerCase().includes(q)||r.empresa.toLowerCase().includes(q)||r.placa.toLowerCase().includes(q); }
-
-function ecardVigilante(r, ctx){
-  const thumb=r.fotoVeiculo?`<img src="${r.fotoVeiculo}">`:(r.fotoMotorista?`<img src="${r.fotoMotorista}">`:'🚗');
-  const btnHtml = ctx==='autorizado'
-    ? `<button class="act-btn act-btn-red" onclick="event.stopPropagation();abrirConfSaida(${r.id})">🚪 Confirmar<br>Saída</button>`
-    : `<button class="act-btn act-btn-green" onclick="event.stopPropagation();abrirConfRetorno(${r.id})">🔄 Confirmar<br>Retorno</button>`;
-  const sub = ctx==='autorizado'
-    ? `✅ Autorizado por ${r.autorizadoPor||'Gestor'} · ${fmtDt(r.tsAutorizado)}`
-    : `🚪 Saiu em ${fmtDt(r.tsSaida)}`;
-  return `<div class="ecard" onclick="showDetail(${r.id})">
-    <div class="ecard-thumb">${thumb}</div>
-    <div class="ecard-info">
-      <div class="ecard-name">${r.nome}</div>
-      <div class="ecard-plate">${r.placa}</div>
-      <div class="ecard-meta">🏢 ${r.empresa}</div>
-      <div class="ecard-meta" style="font-size:0.72rem;">${sub}</div>
-    </div>
-    <div class="ecard-right">${statusTag(r.status)}${btnHtml}</div>
-  </div>`;
+// ══ FROTA: GESTOR — LISTA ══
+function renderGestorLista(){
+  const data = [...FROTA];
+  document.getElementById('gTotalCnt').textContent = data.length + ' registro(s)';
+  const el = document.getElementById('gListaAutorizacoes');
+  if(!data.length){ el.innerHTML = emptyState('📋','Nenhuma autorização cadastrada','Use o formulário acima para autorizar uma saída'); return; }
+  el.innerHTML = data.map(r => {
+    const isPend = r.status === 'pendente';
+    const cancelBtn = isPend ? `<button class="act-btn act-cancel" onclick="event.stopPropagation();cancelarAut(${r.id})">✕ Cancelar</button>` : '';
+    return `<div class="ecard" onclick="showFrotaDetail(${r.id})">
+      <div class="ecard-thumb">🚗</div>
+      <div class="ecard-info">
+        <div class="ecard-plate">${r.placa}</div>
+        <div class="ecard-name" style="font-size:0.9rem;">${r.motorista}</div>
+        <div class="ecard-meta">📍 ${r.destino}</div>
+        <div class="ecard-meta">🕐 Prev.: ${fmtDt(r.tsPrevSaida)}</div>
+      </div>
+      <div class="ecard-right">${statusTagFrota(r.status)}${cancelBtn}</div>
+    </div>`;
+  }).join('');
 }
 
-// Vigilante confirma saída física
+function cancelarAut(id){
+  if(!confirm('Cancelar esta autorização de saída?')) return;
+  FROTA = FROTA.filter(r => r.id !== id);
+  saveFrota(); gistPush();
+  renderGestorLista(); renderVigilante();
+  toast('Autorização cancelada.');
+}
+
+// ══ FROTA: GESTOR — SUCESSO ══
+function showSucAut(r){
+  const msg = `👔 *PORTARIA — SAÍDA AUTORIZADA*\n━━━━━━━━━━━━━━━\n🚗 *Placa:* ${r.placa}\n👤 *Motorista:* ${r.motorista}\n📍 *Destino:* ${r.destino}\n🕐 *Prev. saída:* ${fmtDt(r.tsPrevSaida)}\n✅ *Autorizado por:* ${r.gestor}\n━━━━━━━━━━━━━━━`;
+  const waHref = 'whatsapp://send?text=' + encodeURIComponent(msg);
+  document.getElementById('sucAutBody').innerHTML = `
+    <div class="suc-icon">✅</div>
+    <div class="suc-plate">${r.placa}</div>
+    <div class="suc-name">${r.motorista}</div>
+    <div class="suc-sub">📍 ${r.destino}<br>🕐 Prev.: ${fmtDt(r.tsPrevSaida)}</div>
+    <div class="divider"></div>
+    <div class="wa-lbl">📤 Notificar pelo WhatsApp</div>
+    <div class="wa-prev">${msg.replace(/\*/g,'')}</div>
+    <a href="${waHref}" class="big-btn btn-wa" style="text-decoration:none">${WA_ICO} Enviar pelo WhatsApp</a>
+    <button class="big-btn btn-gray" onclick="closeSucAut()" style="margin-top:9px">Fechar</button>`;
+  document.getElementById('sucAutModal').classList.add('open');
+}
+function closeSucAut(){ document.getElementById('sucAutModal').classList.remove('open'); }
+
+// ══ FROTA: VIGILANTE ══
+function renderVigilante(){
+  const q = (document.getElementById('searchVig1').value || '').toLowerCase();
+
+  // PENDENTES (aguardam confirmação de saída)
+  let pend = FROTA.filter(r => r.status === 'pendente');
+  document.getElementById('vPendCnt').textContent = pend.length + ' veículo(s)';
+  if(q) pend = pend.filter(r => r.placa.toLowerCase().includes(q) || r.motorista.toLowerCase().includes(q));
+  document.getElementById('vListaPendentes').innerHTML = pend.length
+    ? pend.map(r => `<div class="ecard" onclick="showFrotaDetail(${r.id})">
+        <div class="ecard-thumb">🚗</div>
+        <div class="ecard-info">
+          <div class="ecard-plate">${r.placa}</div>
+          <div class="ecard-name" style="font-size:0.9rem;">${r.motorista}</div>
+          <div class="ecard-meta">📍 ${r.destino}</div>
+          <div class="ecard-meta">🕐 Prev.: ${fmtDt(r.tsPrevSaida)}</div>
+          <div class="ecard-meta">✅ Aut.: ${r.gestor}</div>
+        </div>
+        <div class="ecard-right">
+          ${statusTagFrota(r.status)}
+          <button class="act-btn act-ok" onclick="event.stopPropagation();abrirConfSaida(${r.id})">🚪 Saiu</button>
+        </div>
+      </div>`).join('')
+    : emptyState('✅', 'Nenhuma autorização pendente', 'Aguardando o gestor autorizar saídas');
+
+  // FORA (aguardam retorno)
+  let fora = FROTA.filter(r => r.status === 'fora');
+  document.getElementById('vForaCnt').textContent = fora.length + ' veículo(s)';
+  document.getElementById('vListaFora').innerHTML = fora.length
+    ? fora.map(r => `<div class="ecard" onclick="showFrotaDetail(${r.id})">
+        <div class="ecard-thumb">🚗</div>
+        <div class="ecard-info">
+          <div class="ecard-plate">${r.placa}</div>
+          <div class="ecard-name" style="font-size:0.9rem;">${r.motorista}</div>
+          <div class="ecard-meta">📍 ${r.destino}</div>
+          <div class="ecard-meta">🚪 Saiu: ${fmtDt(r.tsSaidaReal)}</div>
+        </div>
+        <div class="ecard-right">
+          ${statusTagFrota(r.status)}
+          <button class="act-btn act-ret" onclick="event.stopPropagation();abrirConfRetorno(${r.id})">🔄 Retornou</button>
+        </div>
+      </div>`).join('')
+    : emptyState('🔄', 'Nenhum veículo fora', 'Todos os veículos estão no pátio');
+}
+
+// Vigilante: confirmar saída
 function abrirConfSaida(id){
-  const r=DB.find(x=>x.id===id);if(!r)return;
-  document.getElementById('saidaModalBody').innerHTML=`
-    <div style="text-align:center;padding:8px 0 16px">
-      <div style="font-size:3rem;margin-bottom:8px">🚪</div>
-      <div class="conf-name">${r.nome}</div>
+  const r = FROTA.find(x => x.id===id); if(!r) return;
+  document.getElementById('confSaidaBody').innerHTML = `
+    <div style="text-align:center;padding:8px 0 16px;">
+      <div style="font-size:3rem;margin-bottom:8px;">🚪</div>
       <div class="conf-plate">${r.placa}</div>
-      <div class="conf-sub">🏢 ${r.empresa}</div>
-      <div style="font-size:0.85rem;color:var(--warn);margin:10px 0;font-weight:700;">Autorizado por ${r.autorizadoPor||'Gestor'}</div>
+      <div class="conf-name">${r.motorista}</div>
+      <div class="conf-sub">📍 ${r.destino}<br>✅ Autorizado por ${r.gestor}</div>
     </div>
-    <button class="big-btn big-btn-red" onclick="confirmarSaidaFisica(${id})">🚪 VEÍCULO SAIU</button>
-    <button class="big-btn big-btn-gray" onclick="closeSaidaModal()" style="margin-top:10px">Cancelar</button>`;
-  document.getElementById('saidaModal').classList.add('open');
+    <button class="big-btn btn-red" onclick="confirmarSaida(${id})">✅ CONFIRMAR — VEÍCULO SAIU</button>
+    <button class="big-btn btn-gray" onclick="closeConfSaida()" style="margin-top:9px;">Cancelar</button>`;
+  document.getElementById('confSaidaModal').classList.add('open');
 }
-function confirmarSaidaFisica(id){
-  const r=DB.find(x=>x.id===id);if(!r)return;
-  r.tsSaida=new Date().toISOString();
-  r.status='fora';
-  saveDB();closeSaidaModal();renderSaida();
-  showSaidaSuccessModal(r);
+function confirmarSaida(id){
+  const r = FROTA.find(x => x.id===id); if(!r) return;
+  r.tsSaidaReal = new Date().toISOString();
+  r.status = 'fora';
+  saveFrota(); gistPush();
+  closeConfSaida(); renderVigilante();
+  toast('🚪 Saída confirmada!');
 }
-function closeSaidaModal(){document.getElementById('saidaModal').classList.remove('open');}
+function closeConfSaida(){ document.getElementById('confSaidaModal').classList.remove('open'); }
 
-// Vigilante confirma retorno
+// Vigilante: confirmar retorno
 function abrirConfRetorno(id){
-  const r=DB.find(x=>x.id===id);if(!r)return;
-  document.getElementById('retornoModalBody').innerHTML=`
-    <div style="text-align:center;padding:8px 0 16px">
-      <div style="font-size:3rem;margin-bottom:8px">🔄</div>
-      <div class="conf-name">${r.nome}</div>
+  const r = FROTA.find(x => x.id===id); if(!r) return;
+  document.getElementById('confRetornoBody').innerHTML = `
+    <div style="text-align:center;padding:8px 0 16px;">
+      <div style="font-size:3rem;margin-bottom:8px;">🔄</div>
       <div class="conf-plate">${r.placa}</div>
-      <div class="conf-sub">🏢 ${r.empresa}</div>
-      <div style="font-size:0.85rem;color:var(--muted);margin:8px 0;">Saiu em ${fmtDt(r.tsSaida)}</div>
+      <div class="conf-name">${r.motorista}</div>
+      <div class="conf-sub">Saiu em ${fmtDt(r.tsSaidaReal)}</div>
     </div>
-    <button class="big-btn big-btn-green" onclick="confirmarRetorno(${id})">✅ RETORNOU — ENCERRAR CICLO</button>
-    <button class="big-btn big-btn-gray" onclick="closeRetornoModal()" style="margin-top:10px">Cancelar</button>`;
-  document.getElementById('retornoModal').classList.add('open');
+    <button class="big-btn btn-green" onclick="confirmarRetorno(${id})">✅ CONFIRMAR RETORNO</button>
+    <button class="big-btn btn-gray" onclick="closeConfRetorno()" style="margin-top:9px;">Cancelar</button>`;
+  document.getElementById('confRetornoModal').classList.add('open');
 }
 function confirmarRetorno(id){
-  const r=DB.find(x=>x.id===id);if(!r)return;
-  r.tsRetorno=new Date().toISOString();
-  r.status='encerrado';
-  saveDB();closeRetornoModal();renderSaida();
-  toast('✅ Retorno confirmado — ciclo encerrado!');
+  const r = FROTA.find(x => x.id===id); if(!r) return;
+  r.tsRetorno = new Date().toISOString();
+  r.status = 'retornou';
+  saveFrota(); gistPush();
+  closeConfRetorno(); renderVigilante();
+  toast('✅ Retorno confirmado!');
 }
-function closeRetornoModal(){document.getElementById('retornoModal').classList.remove('open');}
+function closeConfRetorno(){ document.getElementById('confRetornoModal').classList.remove('open'); }
 
-// ══ GESTOR: PÁTIO ══
-function renderGestorPatio(){
-  const q=(document.getElementById('searchGestor').value||'').toLowerCase();
-  let data=DB.filter(r=>['patioAtivo','autorizado'].includes(r.status));
-  document.getElementById('gestorPatioCnt').textContent=data.length+' veículo(s)';
-  if(q) data=data.filter(r=>matches(r,q));
-  const el=document.getElementById('gestorPatioList');
-  if(!data.length){el.innerHTML=emptyState('🏁','Pátio vazio','Nenhum veículo no momento');return;}
-  el.innerHTML=data.map(r=>{
-    const thumb=r.fotoVeiculo?`<img src="${r.fotoVeiculo}">`:(r.fotoMotorista?`<img src="${r.fotoMotorista}">`:'🚗');
-    const btn = r.status==='patioAtivo'
-      ? `<button class="act-btn act-btn-warn" onclick="event.stopPropagation();abrirAutorizar(${r.id})">✅ Autorizar<br>Saída</button>`
-      : `<button class="act-btn act-btn-gray" onclick="event.stopPropagation();cancelarAutorizacao(${r.id})">❌ Cancelar<br>Autor.</button>`;
-    return `<div class="ecard" onclick="showDetail(${r.id})">
-      <div class="ecard-thumb">${thumb}</div>
-      <div class="ecard-info">
-        <div class="ecard-name">${r.nome}</div>
-        <div class="ecard-plate">${r.placa}</div>
-        <div class="ecard-meta">🏢 ${r.empresa}</div>
-        <div class="ecard-meta">📅 Entrada: ${fmtDt(r.tsEntrada)}</div>
-      </div>
-      <div class="ecard-right">${statusTag(r.status)}${btn}</div>
-    </div>`;
-  }).join('');
-}
-
-function abrirAutorizar(id){
-  const r=DB.find(x=>x.id===id);if(!r)return;
-  document.getElementById('autorizarModalBody').innerHTML=`
-    <div style="text-align:center;padding:8px 0 12px">
-      <div style="font-size:3rem;margin-bottom:8px">✅</div>
-      <div class="conf-name">${r.nome}</div>
-      <div class="conf-plate">${r.placa}</div>
-      <div class="conf-sub">🏢 ${r.empresa}</div>
-    </div>
-    <div class="field" style="margin-bottom:12px;">
-      <div class="field-label" style="font-size:0.9rem;"><span>👔</span> Nome do Gestor *</div>
-      <input type="text" id="inputGestor" placeholder="Seu nome..." style="font-size:1rem;padding:14px;">
-    </div>
-    <div class="field" style="margin-bottom:16px;">
-      <div class="field-label" style="font-size:0.9rem;"><span>📝</span> Observação</div>
-      <textarea id="inputObsAut" rows="2" placeholder="Motivo, destino..." style="font-size:0.95rem;padding:12px;resize:none;"></textarea>
-    </div>
-    <button class="big-btn big-btn-green" onclick="autorizarSaida(${id})">✅ AUTORIZAR SAÍDA</button>
-    <button class="big-btn big-btn-gray" onclick="closeAutorizarModal()" style="margin-top:10px">Cancelar</button>`;
-  document.getElementById('autorizarModal').classList.add('open');
-}
-function autorizarSaida(id){
-  const gestor=document.getElementById('inputGestor').value.trim();
-  if(!gestor){alert('Informe o nome do gestor.');return;}
-  const r=DB.find(x=>x.id===id);if(!r)return;
-  r.status='autorizado';
-  r.tsAutorizado=new Date().toISOString();
-  r.autorizadoPor=gestor;
-  r.obsAutorizacao=document.getElementById('inputObsAut').value.trim();
-  saveDB();
-  closeAutorizarModal();
-  renderGestorPatio();
-  // Notifica via WA
-  const msg=buildWAAutorizacao(r);
-  const waHref='whatsapp://send?text='+encodeURIComponent(msg);
-  if(confirm('Saída autorizada! Deseja notificar pelo WhatsApp?')){
-    location.href=waHref;
-  }
-}
-function cancelarAutorizacao(id){
-  if(!confirm('Cancelar a autorização de saída deste veículo?'))return;
-  const r=DB.find(x=>x.id===id);if(!r)return;
-  r.status='patioAtivo';
-  r.tsAutorizado=null;r.autorizadoPor=null;r.obsAutorizacao=null;
-  saveDB();renderGestorPatio();
-  toast('Autorização cancelada.','warn');
-}
-function closeAutorizarModal(){document.getElementById('autorizarModal').classList.remove('open');}
-
-// ══ GESTOR: HISTÓRICO ══
-function renderHist(){
-  const q=(document.getElementById('searchHist').value||'').toLowerCase();
-  const now=new Date();
-  let data=DB.filter(r=>r.status==='encerrado');
-  if(histFilter==='hoje') data=data.filter(r=>new Date(r.tsEntrada).toDateString()===now.toDateString());
-  else if(histFilter==='semana') data=data.filter(r=>new Date(r.tsEntrada)>=new Date(now-7*24*3600000));
-  if(q) data=data.filter(r=>matches(r,q));
-  const el=document.getElementById('histList');
-  if(!data.length){el.innerHTML=emptyState('📋','Nenhum registro encerrado','');return;}
-  el.innerHTML=data.map(r=>{
-    const thumb=r.fotoMotorista?`<img src="${r.fotoMotorista}">`:(r.fotoVeiculo?`<img src="${r.fotoVeiculo}">`:'👤');
-    return `<div class="ecard" onclick="showDetail(${r.id})">
-      <div class="ecard-thumb">${thumb}</div>
-      <div class="ecard-info">
-        <div class="ecard-name">${r.nome}</div>
-        <div class="ecard-plate">${r.placa}</div>
-        <div class="ecard-meta">🏢 ${r.empresa}</div>
-        <div class="ecard-meta">📅 ${fmtDt(r.tsEntrada)}</div>
-      </div>
-      <div class="ecard-right">${statusTag(r.status)}</div>
-    </div>`;
-  }).join('');
-}
-
-// ══ CONSULTA ══
-function setFilter(mode,el){
-  filterMode=mode;
-  document.querySelectorAll('#panel-consulta .chip').forEach(c=>c.classList.remove('active'));
-  el.classList.add('active');renderConsulta();
-}
-function renderConsulta(){
-  const q=(document.getElementById('searchInput').value||'').toLowerCase();
-  const now=new Date();
-  let data=[...DB];
-  if(filterMode==='hoje')data=data.filter(r=>new Date(r.tsEntrada).toDateString()===now.toDateString());
-  else if(filterMode==='semana')data=data.filter(r=>new Date(r.tsEntrada)>=new Date(now-7*24*3600000));
-  else if(['patioAtivo','autorizado','fora','encerrado'].includes(filterMode))data=data.filter(r=>r.status===filterMode);
-  if(q)data=data.filter(r=>matches(r,q));
-  const el=document.getElementById('consultaList');
-  if(!data.length){el.innerHTML=emptyState('🔍','Nenhum registro','Tente outros termos');return;}
-  el.innerHTML=data.map(r=>{
-    const thumb=r.fotoMotorista?`<img src="${r.fotoMotorista}">`:(r.fotoVeiculo?`<img src="${r.fotoVeiculo}">`:'👤');
-    return `<div class="ecard" onclick="showDetail(${r.id})">
-      <div class="ecard-thumb">${thumb}</div>
-      <div class="ecard-info">
-        <div class="ecard-name">${r.nome}</div>
-        <div class="ecard-plate">${r.placa}</div>
-        <div class="ecard-meta">🏢 ${r.empresa} · ${r.tipo}</div>
-        <div class="ecard-meta">📅 ${fmtDt(r.tsEntrada)}</div>
-      </div>
-      <div class="ecard-right">${statusTag(r.status)}</div>
-    </div>`;
-  }).join('');
-}
-
-// ══ DETALHE ══
-function showDetail(id){
-  const r=DB.find(x=>x.id===id);if(!r)return;
-  document.getElementById('detailTitle').textContent=r.nome;
-  document.getElementById('detailBody').innerHTML=`
-    <div class="dphotos">
-      <div><div style="font-size:0.72rem;color:var(--muted);font-weight:700;margin-bottom:6px">MOTORISTA</div>
-        <div class="dphoto">${r.fotoMotorista?`<img src="${r.fotoMotorista}">`:'🤳'}</div></div>
-      <div><div style="font-size:0.72rem;color:var(--muted);font-weight:700;margin-bottom:6px">VEÍCULO</div>
-        <div class="dphoto">${r.fotoVeiculo?`<img src="${r.fotoVeiculo}">`:'🚗'}</div></div>
-    </div>
-    <div class="drow"><label>Status</label><span>${statusTag(r.status)}</span></div>
-    <div class="drow"><label>Motorista</label><span>${r.nome}</span></div>
-    <div class="drow"><label>Empresa</label><span>${r.empresa}</span></div>
-    <div class="drow"><label>Placa</label><span style="font-family:var(--fm);color:var(--warn);letter-spacing:3px;font-size:1.1rem">${r.placa}</span></div>
-    <div class="drow"><label>Tipo</label><span>${r.tipo}</span></div>
-    <div class="drow"><label>Entrada</label><span>${fmtDt(r.tsEntrada)}</span></div>
-    ${r.tsAutorizado?`<div class="drow"><label>Autorizado por</label><span>${r.autorizadoPor} · ${fmtDt(r.tsAutorizado)}</span></div>`:''}
-    ${r.obsAutorizacao?`<div class="drow"><label>Obs. Autor.</label><span>${r.obsAutorizacao}</span></div>`:''}
-    ${r.tsSaida?`<div class="drow"><label>Saída</label><span>${fmtDt(r.tsSaida)}</span></div>`:''}
+// ══ DETAIL ══
+function showFrotaDetail(id){
+  const r = FROTA.find(x => x.id===id); if(!r) return;
+  document.getElementById('detailTitle').textContent = r.placa + ' — ' + r.motorista;
+  document.getElementById('detailBody').innerHTML = `
+    <div class="drow"><label>Status</label><span>${statusTagFrota(r.status)}</span></div>
+    <div class="drow"><label>Placa</label><span style="font-family:var(--fm);color:var(--warn);letter-spacing:3px;font-size:1.05rem;">${r.placa}</span></div>
+    <div class="drow"><label>Motorista</label><span>${r.motorista}</span></div>
+    <div class="drow"><label>Destino</label><span>${r.destino}</span></div>
+    <div class="drow"><label>Prev. Saída</label><span>${fmtDt(r.tsPrevSaida)}</span></div>
+    <div class="drow"><label>Autorizado por</label><span>${r.gestor} · ${fmtDt(r.tsAutorizacao)}</span></div>
+    ${r.tsSaidaReal?`<div class="drow"><label>Saída real</label><span>${fmtDt(r.tsSaidaReal)}</span></div>`:''}
     ${r.tsRetorno?`<div class="drow"><label>Retorno</label><span>${fmtDt(r.tsRetorno)}</span></div>`:''}
-    ${r.obs?`<div class="drow"><label>Obs.</label><span>${r.obs}</span></div>`:''}
-    <div style="display:flex;gap:8px;margin-top:16px;flex-wrap:wrap;">
-      <button class="big-btn big-btn-gray" onclick="delEntry(${r.id})" style="font-size:0.9rem;flex:1;">🗑 Excluir</button>
-      <button class="big-btn big-btn-gray" onclick="closeDetail()" style="font-size:0.9rem;flex:1;">✕ Fechar</button>
+    <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;">
+      ${r.status==='pendente'?`<button class="big-btn btn-red" onclick="closeDetail();abrirConfSaida(${r.id})" style="flex:1;font-size:0.9rem;">🚪 Confirmar Saída</button>`:''}
+      ${r.status==='fora'?`<button class="big-btn btn-green" onclick="closeDetail();abrirConfRetorno(${r.id})" style="flex:1;font-size:0.9rem;">🔄 Confirmar Retorno</button>`:''}
+      <button class="big-btn btn-gray" onclick="closeDetail()" style="flex:1;font-size:0.9rem;">✕ Fechar</button>
     </div>`;
   document.getElementById('detailModal').classList.add('open');
 }
-function closeDetail(){document.getElementById('detailModal').classList.remove('open');}
-function delEntry(id){
-  if(!confirm('Excluir este registro?'))return;
-  DB=DB.filter(r=>r.id!==id);saveDB();closeDetail();
-  renderConsulta();renderSaida();renderGestorPatio();
-}
+function closeDetail(){ document.getElementById('detailModal').classList.remove('open'); }
 
-// ══ DASHBOARD ══
-function renderDashboard(){
-  const now=new Date();
-  const patio=DB.filter(r=>r.status==='patioAtivo');
-  const aut=DB.filter(r=>r.status==='autorizado');
-  const fora=DB.filter(r=>r.status==='fora');
-  const hoje=DB.filter(r=>new Date(r.tsEntrada).toDateString()===now.toDateString());
-  document.getElementById('statsGrid').innerHTML=`
-    <div class="stat"><div class="stat-n" style="color:var(--accent)">${patio.length}</div><div class="stat-l">No Pátio</div></div>
-    <div class="stat"><div class="stat-n" style="color:var(--warn)">${aut.length}</div><div class="stat-l">Autorizados</div></div>
-    <div class="stat"><div class="stat-n" style="color:var(--red)">${fora.length}</div><div class="stat-l">Fora</div></div>
-    <div class="stat"><div class="stat-n">${hoje.length}</div><div class="stat-l">Hoje</div></div>`;
-  document.getElementById('recentList').innerHTML=DB.slice(0,6).map(r=>`
-    <div class="drow" onclick="showDetail(${r.id})" style="cursor:pointer">
-      <div><div style="font-weight:700;font-size:0.9rem;">${r.nome}</div>
-      <div style="font-size:0.72rem;color:var(--muted);font-family:var(--fm)">${r.placa} · ${r.empresa}</div></div>
-      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;">
-        ${statusTag(r.status)}
-        <div style="font-size:0.68rem;color:var(--muted)">${fmtDt(r.tsEntrada).split(' ')[1]||''}</div>
+// ══ CONSULTA ══
+function setFilter(mode,el){
+  filterMode = mode;
+  document.querySelectorAll('#panel-consulta .chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active'); renderConsulta();
+}
+function renderConsulta(){
+  const q = (document.getElementById('searchConsulta').value || '').toLowerCase();
+  const now = new Date();
+
+  // Combine visitantes + frota into one list
+  const allV = VISITANTES.map(r => ({...r, _src:'visitante'}));
+  const allF = FROTA.map(r => ({...r, _src:'frota'}));
+  let data = [...allV, ...allF].sort((a,b) => {
+    const ta = a.tsEntrada || a.tsAutorizacao || 0;
+    const tb = b.tsEntrada || b.tsAutorizacao || 0;
+    return new Date(tb) - new Date(ta);
+  });
+
+  if(filterMode==='hoje')     data = data.filter(r => { const d=r.tsEntrada||r.tsAutorizacao; return d && new Date(d).toDateString()===now.toDateString(); });
+  else if(filterMode==='semana') data = data.filter(r => { const d=r.tsEntrada||r.tsAutorizacao; return d && new Date(d)>=new Date(now-7*24*3600000); });
+  else if(filterMode==='visitante') data = data.filter(r => r._src==='visitante');
+  else if(filterMode==='pendente')  data = data.filter(r => r.status==='pendente');
+  else if(filterMode==='fora')      data = data.filter(r => r.status==='fora');
+  else if(filterMode==='retornou')  data = data.filter(r => r.status==='retornou');
+
+  if(q) data = data.filter(r =>
+    (r.nome||r.motorista||'').toLowerCase().includes(q) ||
+    (r.empresa||r.destino||'').toLowerCase().includes(q) ||
+    (r.placa||'').toLowerCase().includes(q)
+  );
+
+  const el = document.getElementById('consultaList');
+  if(!data.length){ el.innerHTML = emptyState('🔍','Nenhum registro','Tente outros termos'); return; }
+  el.innerHTML = data.map(r => {
+    const isV = r._src === 'visitante';
+    const title = isV ? r.nome : r.motorista;
+    const sub1  = isV ? '🏢 '+r.empresa : '📍 '+r.destino;
+    const dt    = r.tsEntrada || r.tsAutorizacao;
+    const thumb = r.fotoMotorista ? `<img src="${r.fotoMotorista}">` : (isV ? '👤' : '🚗');
+    const tag   = isV ? '<span class="tag tag-visitante">VISITANTE</span>' : statusTagFrota(r.status);
+    return `<div class="ecard" onclick="${isV?'showVisitanteDetail':'showFrotaDetail'}(${r.id})">
+      <div class="ecard-thumb">${thumb}</div>
+      <div class="ecard-info">
+        <div class="ecard-name">${title}</div>
+        <div class="ecard-plate">${r.placa}</div>
+        <div class="ecard-meta">${sub1}</div>
+        <div class="ecard-meta">📅 ${fmtDt(dt)}</div>
       </div>
-    </div>`).join('')||'<div style="color:var(--muted);padding:12px 0;font-size:0.9rem">Nenhum registro ainda.</div>';
-  const emp={};DB.forEach(r=>{emp[r.empresa]=(emp[r.empresa]||0)+1;});
-  document.getElementById('topEmpresas').innerHTML=Object.entries(emp).sort((a,b)=>b[1]-a[1]).slice(0,5)
-    .map(([e,c])=>`<div class="drow"><span style="font-weight:600">🏢 ${e}</span><span style="color:var(--accent);font-family:var(--fm);font-weight:700">${c}</span></div>`).join('')
-    ||'<div style="color:var(--muted);padding:12px 0;font-size:0.9rem">Nenhuma empresa ainda.</div>';
+      <div class="ecard-right">${tag}</div>
+    </div>`;
+  }).join('');
 }
 
-// ══ UTILS ══
-function emptyState(ico,h,p){
-  return `<div class="empty"><div class="empty-ico">${ico}</div><h3>${h}</h3><p>${p}</p></div>`;
+function showVisitanteDetail(id){
+  const r = VISITANTES.find(x => x.id===id); if(!r) return;
+  document.getElementById('detailTitle').textContent = r.nome;
+  document.getElementById('detailBody').innerHTML = `
+    <div class="dphotos">
+      <div><div style="font-size:0.68rem;color:var(--muted);font-weight:700;margin-bottom:5px;">MOTORISTA</div><div class="dphoto">${r.fotoMotorista?`<img src="${r.fotoMotorista}">`:'🤳'}</div></div>
+      <div><div style="font-size:0.68rem;color:var(--muted);font-weight:700;margin-bottom:5px;">VEÍCULO</div><div class="dphoto">${r.fotoVeiculo?`<img src="${r.fotoVeiculo}">`:'🚗'}</div></div>
+    </div>
+    <div class="drow"><label>Motorista</label><span>${r.nome}</span></div>
+    <div class="drow"><label>Empresa</label><span>${r.empresa}</span></div>
+    <div class="drow"><label>Placa</label><span style="font-family:var(--fm);color:var(--warn);letter-spacing:3px;font-size:1.05rem;">${r.placa}</span></div>
+    <div class="drow"><label>Tipo</label><span>${r.tipo}</span></div>
+    <div class="drow"><label>Entrada</label><span>${fmtDt(r.tsEntrada)}</span></div>
+    ${r.obs?`<div class="drow"><label>Obs.</label><span>${r.obs}</span></div>`:''}
+    <div style="display:flex;gap:8px;margin-top:14px;">
+      <button class="big-btn btn-gray" onclick="delVisitante(${r.id})" style="flex:1;font-size:0.9rem;border-color:var(--red);color:var(--red);">🗑 Excluir</button>
+      <button class="big-btn btn-gray" onclick="closeDetail()" style="flex:1;font-size:0.9rem;">✕ Fechar</button>
+    </div>`;
+  document.getElementById('detailModal').classList.add('open');
+}
+function delVisitante(id){ if(!confirm('Excluir este registro?')) return; VISITANTES=VISITANTES.filter(r=>r.id!==id); saveVisitantes(); gistPush(); closeDetail(); renderConsulta(); }
+
+// ══ HELPERS ══
+function statusTagFrota(s){
+  const map = {pendente:['PENDENTE','tag-pendente'], fora:['FORA','tag-fora'], retornou:['RETORNOU','tag-retornou']};
+  const [lbl,cls] = map[s] || ['—','tag-pendente'];
+  return `<span class="tag ${cls}">${lbl}</span>`;
+}
+function fmtDt(iso){
+  if(!iso) return '—';
+  const d = new Date(iso);
+  return d.toLocaleDateString('pt-BR') + ' ' + d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+}
+function emptyState(ico,h,p){ return `<div class="empty"><div class="empty-ico">${ico}</div><h3>${h}</h3><p>${p}</p></div>`; }
+function esc(s){ return String(s).replace(/'/g,'&#39;').replace(/"/g,'&quot;'); }
+
+let toastTimer;
+function toast(msg,type='ok'){
+  let el = document.getElementById('toastEl');
+  if(!el){ el=document.createElement('div'); el.id='toastEl'; el.style.cssText='position:fixed;bottom:76px;left:50%;transform:translateX(-50%) translateY(60px);background:var(--green);color:#000;font-weight:700;font-size:0.85rem;padding:10px 18px;border-radius:10px;z-index:999;transition:transform .3s;white-space:nowrap;'; document.body.appendChild(el); }
+  el.textContent=msg; el.style.transform='translateX(-50%) translateY(0)';
+  clearTimeout(toastTimer); toastTimer=setTimeout(()=>{ el.style.transform='translateX(-50%) translateY(60px)'; },2800);
 }
 
-// ══ WHATSAPP ══
-const WA_ICO=`<svg class="wa-ico" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>`;
-
-function buildWAEntrada(r){
-  const dt=new Date(r.tsEntrada);
-  const dtStr=dt.toLocaleDateString('pt-BR')+' às '+dt.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
-  return `🛡 *PORTARIA — ENTRADA*\n━━━━━━━━━━━━━━━\n👤 *Motorista:* ${r.nome}\n🏢 *Empresa:* ${r.empresa}\n🚗 *Placa:* ${r.placa}\n🚙 *Tipo:* ${r.tipo}\n🕐 *Entrada:* ${dtStr}${r.obs?'\n📝 *Obs.:* '+r.obs:''}\n━━━━━━━━━━━━━━━`;
-}
-function buildWASaida(r){
-  const dtE=new Date(r.tsEntrada),dtS=new Date(r.tsSaida);
-  return `🛡 *PORTARIA — SAÍDA*\n━━━━━━━━━━━━━━━\n👤 *Motorista:* ${r.nome}\n🏢 *Empresa:* ${r.empresa}\n🚗 *Placa:* ${r.placa}\n🕐 *Entrada:* ${dtE.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}\n🚪 *Saída:* ${dtS.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}\n━━━━━━━━━━━━━━━`;
-}
-function buildWAAutorizacao(r){
-  return `👔 *PORTARIA — SAÍDA AUTORIZADA*\n━━━━━━━━━━━━━━━\n👤 *Motorista:* ${r.nome}\n🏢 *Empresa:* ${r.empresa}\n🚗 *Placa:* ${r.placa}\n✅ *Autorizado por:* ${r.autorizadoPor}\n🕐 *Em:* ${fmtDt(r.tsAutorizado)}${r.obsAutorizacao?'\n📝 *Obs.:* '+r.obsAutorizacao:''}\n━━━━━━━━━━━━━━━`;
-}
-function openWA(msg){
-  // location.href respeita o toque do usuário e não é bloqueado pelo navegador mobile
-  location.href = 'whatsapp://send?text=' + encodeURIComponent(msg);
-}
-
-function showSuccessModal(r){
-  const dt=new Date(r.tsEntrada);
-  const msg=buildWAEntrada(r);
-  const waHref='whatsapp://send?text='+encodeURIComponent(msg);
-  document.getElementById('successBody').innerHTML=`
-    <div class="success-icon">✅</div>
-    <div class="success-name">${r.nome}</div>
-    <div class="success-plate">${r.placa}</div>
-    <div class="success-sub">🏢 ${r.empresa} · ${dt.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}</div>
-    <div class="divider"></div>
-    <div class="wa-label">📤 Mensagem para WhatsApp</div>
-    <div class="wa-preview">${msg.replace(/\*/g,'')}</div>
-    <a href="${waHref}" class="big-btn big-btn-wa" style="text-decoration:none">${WA_ICO} Enviar pelo WhatsApp</a>
-    <button class="big-btn big-btn-gray" onclick="closeSuccessModal()" style="margin-top:10px">Fechar</button>`;
-  document.getElementById('successModal').classList.add('open');
-}
-function closeSuccessModal(){document.getElementById('successModal').classList.remove('open');}
-
-function showSaidaSuccessModal(r){
-  const msg=buildWASaida(r);
-  const m=Math.round((new Date(r.tsSaida)-new Date(r.tsEntrada))/60000);
-  const tempo=m<60?m+' min':Math.floor(m/60)+'h '+String(m%60).padStart(2,'0')+'min';
-  const waHref='whatsapp://send?text='+encodeURIComponent(msg);
-  document.getElementById('saidaSuccessBody').innerHTML=`
-    <div class="success-icon">🚪</div>
-    <div class="success-name">${r.nome}</div>
-    <div class="success-plate">${r.placa}</div>
-    <div class="success-sub">🏢 ${r.empresa} · ⏱ ${tempo}</div>
-    <div class="divider"></div>
-    <div class="wa-label">📤 Mensagem para WhatsApp</div>
-    <div class="wa-preview">${msg.replace(/\*/g,'')}</div>
-    <a href="${waHref}" class="big-btn big-btn-wa" style="text-decoration:none">${WA_ICO} Enviar pelo WhatsApp</a>
-    <button class="big-btn big-btn-gray" onclick="closeSaidaSuccessModal()" style="margin-top:10px">Fechar</button>`;
-  document.getElementById('saidaSuccessModal').classList.add('open');
-}
-function closeSaidaSuccessModal(){document.getElementById('saidaSuccessModal').classList.remove('open');}
-
-// ══════════════════════════════════
-//  FROTA — SAÍDAS DA EMPRESA
-// ══════════════════════════════════
-// ══ UTILS ══
-function esc(s){return String(s).replace(/'/g,'&#39;').replace(/"/g,'&quot;');}
+document.addEventListener('click', e => {
+  if(!e.target.closest('.ac-wrap')) document.querySelectorAll('.ac-list').forEach(l => l.classList.remove('show'));
+});
 
 // ══ INIT ══
-if(!DB.length){
-  const t=Date.now();
-  DB=[
-    {id:t-4,nome:'Carlos Souza',empresa:'Distribuidora ABC',placa:'BRA-2E19',tipo:'Caminhão',obs:'Entrega de materiais',fotoMotorista:null,fotoVeiculo:null,tsEntrada:new Date(t-5400000).toISOString(),tsAutorizado:null,tsSaida:null,tsRetorno:null,autorizadoPor:null,obsAutorizacao:null,status:'patioAtivo'},
-    {id:t-3,nome:'Maria Fernanda',empresa:'Correios',placa:'MNO-3456',tipo:'Van',obs:'',fotoMotorista:null,fotoVeiculo:null,tsEntrada:new Date(t-7200000).toISOString(),tsAutorizado:new Date(t-3600000).toISOString(),tsSaida:null,tsRetorno:null,autorizadoPor:'João Gestor',obsAutorizacao:'',status:'autorizado'},
-    {id:t-2,nome:'Pedro Alves',empresa:'TI Soluções',placa:'ABC-1D34',tipo:'Carro',obs:'',fotoMotorista:null,fotoVeiculo:null,tsEntrada:new Date(t-10000000).toISOString(),tsAutorizado:new Date(t-9000000).toISOString(),tsSaida:new Date(t-8000000).toISOString(),tsRetorno:null,autorizadoPor:'Ana Gestora',obsAutorizacao:'',status:'fora'},
-    {id:t-1,nome:'João Pereira',empresa:'Manutenção Técnica SP',placa:'DEF-7890',tipo:'Carro',obs:'Manutenção do ar-condicionado',fotoMotorista:null,fotoVeiculo:null,tsEntrada:new Date(t-86400000).toISOString(),tsAutorizado:new Date(t-82000000).toISOString(),tsSaida:new Date(t-80000000).toISOString(),tsRetorno:new Date(t-75000000).toISOString(),autorizadoPor:'João Gestor',obsAutorizacao:'',status:'encerrado'},
+// Demo data (only if empty)
+if(!VISITANTES.length && !FROTA.length){
+  const t = Date.now();
+  VISITANTES = [
+    {id:t-2, tipo_registro:'visitante', nome:'Carlos Souza', empresa:'Distribuidora ABC', placa:'BRA-2E19', tipo:'Caminhão', obs:'Entrega', fotoMotorista:null, fotoVeiculo:null, tsEntrada:new Date(t-3600000).toISOString()},
+    {id:t-1, tipo_registro:'visitante', nome:'Maria Fernanda', empresa:'Correios', placa:'MNO-3456', tipo:'Van', obs:'', fotoMotorista:null, fotoVeiculo:null, tsEntrada:new Date(t-7200000).toISOString()},
   ];
-  saveLocal();
+  FROTA = [
+    {id:t-4, tipo_registro:'frota', placa:'EMP-0001', motorista:'José da Silva', destino:'Fornecedor SP', tsPrevSaida:new Date(t+3600000).toISOString(), gestor:'Ana Gestora', tsAutorizacao:new Date(t-1800000).toISOString(), tsSaidaReal:null, tsRetorno:null, status:'pendente'},
+    {id:t-3, tipo_registro:'frota', placa:'EMP-0002', motorista:'Pedro Alves', destino:'Cliente RJ', tsPrevSaida:new Date(t-3600000).toISOString(), gestor:'João Gestor', tsAutorizacao:new Date(t-7200000).toISOString(), tsSaidaReal:new Date(t-3600000).toISOString(), tsRetorno:null, status:'fora'},
+  ];
+  saveVisitantes(); saveFrota();
 }
 
-// Apply saved theme immediately
 initTema();
-
-// Pull from Gist on open (merge remote into local)
 if(GIST_ID && GIST_TOKEN){
   syncDot('syncing');
-  gistPull().then(()=>{ renderSaida(); renderConsulta(); });
+  gistPull().then(() => { renderGestorLista(); renderVigilante(); renderConsulta(); });
 } else {
   syncDot('offline');
 }
-
-renderSaida();
 </script>
 </body>
 </html>
