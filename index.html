@@ -31,7 +31,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 .bnav{
   position:fixed;bottom:0;left:0;right:0;
   background:var(--s1);border-top:2px solid var(--border);
-  display:grid;grid-template-columns:repeat(4,1fr);
+  display:grid;grid-template-columns:repeat(5,1fr);
   height:68px;z-index:100;
 }
 .bnav-btn{
@@ -309,7 +309,7 @@ canvas{display:none;}
 <!-- HEADER -->
 <div class="hdr">
   <div class="hdr-logo">
-    <div class="hdr-dot"></div>
+    <div class="hdr-dot" id="hdrDot" title="Verificando conexão..."></div>
     PortalGuard
   </div>
   <div class="hdr-time" id="hdrTime"></div>
@@ -493,6 +493,67 @@ canvas{display:none;}
   </div>
 </div>
 
+<!-- ════════════════════════════════
+     PANEL: CONFIG
+════════════════════════════════ -->
+<div class="panel" id="panel-config">
+  <div style="font-size:1.1rem;font-weight:800;margin-bottom:6px;">⚙️ Configurações</div>
+  <div style="font-size:0.85rem;color:var(--muted);margin-bottom:20px;">Sincronização via GitHub Gist</div>
+
+  <!-- STATUS -->
+  <div class="card" style="margin-bottom:14px;">
+    <div style="font-size:0.72rem;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">🔄 Status da Sincronização</div>
+    <div id="syncStatusBox"></div>
+    <button class="big-btn big-btn-gray" onclick="sincronizarAgora()" style="margin-top:12px;font-size:0.9rem;">🔄 Sincronizar Agora</button>
+  </div>
+
+  <!-- GIST CONFIG -->
+  <div class="card" style="margin-bottom:14px;">
+    <div style="font-size:0.72rem;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;">🐙 GitHub Gist</div>
+
+    <div style="background:var(--bg);border-radius:10px;padding:14px;margin-bottom:16px;font-size:0.85rem;line-height:2;color:var(--muted);">
+      <div style="color:var(--text);font-weight:700;margin-bottom:6px;">Como configurar:</div>
+      <div>1. Acesse <strong style="color:var(--accent)">gist.github.com</strong></div>
+      <div>2. Crie um novo Gist com o arquivo <strong>portaria_db.json</strong> e conteúdo <strong>[]</strong></div>
+      <div>3. Copie o <strong>ID do Gist</strong> (código na URL)</div>
+      <div>4. Em <strong>github.com → Settings → Developer settings → Personal access tokens → Tokens (classic)</strong></div>
+      <div>5. Gere um token com permissão <strong>gist</strong></div>
+      <div>6. Cole os dois campos abaixo</div>
+    </div>
+
+    <div class="field">
+      <div class="field-label"><span>🔑</span> Gist ID</div>
+      <input type="text" id="cfgGistId" placeholder="abc123def456..." style="font-size:0.9rem;font-family:var(--fm);">
+    </div>
+
+    <div class="field">
+      <div class="field-label"><span>🔐</span> Token GitHub</div>
+      <input type="password" id="cfgToken" placeholder="ghp_xxxxxxxxxxxx..." style="font-size:0.9rem;font-family:var(--fm);">
+    </div>
+
+    <button class="big-btn big-btn-accent" id="btnSalvarCfg" onclick="salvarConfig()">💾 Salvar e Conectar</button>
+  </div>
+
+  <!-- INFO -->
+  <div class="card" style="margin-bottom:14px;">
+    <div style="font-size:0.72rem;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">ℹ️ Como funciona</div>
+    <div style="font-size:0.85rem;color:var(--muted);line-height:1.8;">
+      <div>📱 Cada celular salva localmente <strong style="color:var(--text)">e</strong> envia para o Gist</div>
+      <div>🔄 Ao abrir o app, puxa os dados mais recentes do Gist</div>
+      <div>👥 Todos os vigilantes veem os mesmos dados</div>
+      <div>📸 Fotos ficam salvas só localmente (Gist salva apenas texto)</div>
+    </div>
+  </div>
+
+  <!-- DANGER -->
+  <div class="card" style="margin-bottom:14px;">
+    <div style="font-size:0.72rem;font-weight:700;color:var(--red);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">⚠️ Zona de Perigo</div>
+    <button class="big-btn big-btn-gray" onclick="limparDados()" style="font-size:0.9rem;border-color:var(--red);color:var(--red);">🗑 Limpar dados locais deste celular</button>
+    <div style="font-size:0.75rem;color:var(--muted);margin-top:8px;text-align:center;">Os dados no Gist não serão afetados</div>
+  </div>
+  <div style="height:10px"></div>
+</div>
+
 <!-- BOTTOM NAV -->
 <div class="bnav">
   <button class="bnav-btn active" id="nav-reg" onclick="showPanel('reg')">
@@ -506,6 +567,9 @@ canvas{display:none;}
   </button>
   <button class="bnav-btn" id="nav-dash" onclick="showPanel('dash')">
     <div class="ico">📊</div>Dashboard
+  </button>
+  <button class="bnav-btn" id="nav-config" onclick="showPanel('config')">
+    <div class="ico">⚙️</div>Config
   </button>
 </div>
 
@@ -581,10 +645,14 @@ canvas{display:none;}
 //  STATE
 // ══════════════════════════════════
 let DB = JSON.parse(localStorage.getItem('pg_v4') || 'null') || [];
+let GIST_ID    = localStorage.getItem('pg_gist_id')    || '';
+let GIST_TOKEN = localStorage.getItem('pg_gist_token') || '';
 let photoMoto = null, photoVeic = null;
 let camStream = null, camTarget = null, camFacing = 'environment';
 let filterMode = 'todos';
-function saveDB(){ localStorage.setItem('pg_v4', JSON.stringify(DB)); }
+let isSyncing  = false;
+
+function saveLocal(){ localStorage.setItem('pg_v4', JSON.stringify(DB)); }
 
 // ══ CLOCK ══
 function tick(){
@@ -603,6 +671,172 @@ function showPanel(id){
   if(id==='consulta') renderConsulta();
   if(id==='dash') renderDashboard();
   if(id==='saida') renderSaida();
+  if(id==='config') renderConfig();
+}
+
+// ══════════════════════════════════
+//  GITHUB GIST SYNC
+// ══════════════════════════════════
+const GIST_FILENAME = 'portaria_db.json';
+
+function syncDot(state){
+  // state: 'ok' | 'syncing' | 'offline' | 'error'
+  const dot = document.getElementById('hdrDot');
+  const colors = {
+    ok:      ['var(--green)',  '0 0 8px var(--green)'],
+    syncing: ['var(--accent)', '0 0 8px var(--accent)'],
+    offline: ['var(--warn)',   '0 0 8px var(--warn)'],
+    error:   ['var(--red)',    '0 0 8px var(--red)'],
+  };
+  const [bg, shadow] = colors[state] || colors.offline;
+  dot.style.background  = bg;
+  dot.style.boxShadow   = shadow;
+  const tips = {ok:'Sincronizado com Gist',syncing:'Sincronizando...',offline:'Sem Gist configurado',error:'Erro na sincronização'};
+  dot.title = tips[state]||'';
+}
+
+function gistHeaders(){
+  return {
+    'Authorization': 'token ' + GIST_TOKEN,
+    'Content-Type':  'application/json',
+    'Accept':        'application/vnd.github+json',
+  };
+}
+
+// READ — pull latest DB from Gist
+async function gistPull(){
+  if(!GIST_ID || !GIST_TOKEN) return;
+  try{
+    syncDot('syncing');
+    const res = await fetch(`https://api.github.com/gists/${GIST_ID}`, {
+      headers: gistHeaders()
+    });
+    if(!res.ok) throw new Error('HTTP '+res.status);
+    const gist = await res.json();
+    const content = gist.files[GIST_FILENAME]?.content;
+    if(content){
+      const remote = JSON.parse(content);
+      // Merge: union by id, remote wins on conflict
+      const map = {};
+      DB.forEach(r => map[r.id] = r);
+      remote.forEach(r => map[r.id] = r);         // remote overwrites
+      DB = Object.values(map).sort((a,b)=> b.id - a.id);
+      saveLocal();
+    }
+    syncDot('ok');
+  }catch(e){
+    syncDot('error');
+    console.warn('Gist pull error:', e);
+  }
+}
+
+// WRITE — push DB to Gist
+async function gistPush(){
+  if(!GIST_ID || !GIST_TOKEN) return;
+  if(isSyncing) return;
+  isSyncing = true;
+  syncDot('syncing');
+  try{
+    // Strip base64 photos before saving to Gist (keep only metadata)
+    const slim = DB.map(r =>({
+      ...r,
+      fotoMotorista: r.fotoMotorista ? '📸' : null,
+      fotoVeiculo:   r.fotoVeiculo   ? '📸' : null,
+    }));
+    await fetch(`https://api.github.com/gists/${GIST_ID}`, {
+      method:  'PATCH',
+      headers: gistHeaders(),
+      body: JSON.stringify({
+        files: {
+          [GIST_FILENAME]: { content: JSON.stringify(slim, null, 2) }
+        }
+      })
+    });
+    syncDot('ok');
+  }catch(e){
+    syncDot('error');
+    console.warn('Gist push error:', e);
+  }finally{
+    isSyncing = false;
+  }
+}
+
+// Save locally AND push to Gist
+function saveDB(){
+  saveLocal();
+  gistPush();
+}
+
+// ══ CONFIG PANEL ══
+function renderConfig(){
+  document.getElementById('cfgGistId').value    = GIST_ID;
+  document.getElementById('cfgToken').value     = GIST_TOKEN;
+  renderSyncStatus();
+}
+
+function renderSyncStatus(){
+  const el = document.getElementById('syncStatusBox');
+  if(!el) return;
+  if(!GIST_ID || !GIST_TOKEN){
+    el.innerHTML=`<div style="color:var(--warn);font-weight:700">⚠️ Gist não configurado</div>
+      <div style="font-size:0.8rem;color:var(--muted);margin-top:4px">Configure o Gist ID e o Token abaixo para sincronizar entre celulares.</div>`;
+  } else {
+    el.innerHTML=`<div style="color:var(--green);font-weight:700">✅ Gist configurado</div>
+      <div style="font-size:0.78rem;color:var(--muted);margin-top:4px;font-family:var(--fm);word-break:break-all">${GIST_ID}</div>`;
+  }
+}
+
+async function salvarConfig(){
+  const id    = document.getElementById('cfgGistId').value.trim();
+  const token = document.getElementById('cfgToken').value.trim();
+  if(!id || !token){ alert('Preencha o Gist ID e o Token.'); return; }
+
+  const btn = document.getElementById('btnSalvarCfg');
+  btn.textContent = '🔄 Testando...';
+  btn.disabled = true;
+
+  try{
+    const res = await fetch(`https://api.github.com/gists/${id}`,{
+      headers:{
+        'Authorization':'token '+token,
+        'Accept':'application/vnd.github+json'
+      }
+    });
+    if(!res.ok) throw new Error('HTTP '+res.status);
+
+    GIST_ID = id; GIST_TOKEN = token;
+    localStorage.setItem('pg_gist_id', id);
+    localStorage.setItem('pg_gist_token', token);
+
+    btn.textContent = '✅ Salvo!';
+    syncDot('ok');
+    renderSyncStatus();
+    // Pull remote data immediately
+    await gistPull();
+    renderSaida(); renderConsulta();
+    setTimeout(()=>{ btn.textContent='💾 Salvar e Conectar'; btn.disabled=false; }, 2000);
+  }catch(e){
+    btn.textContent = '❌ Erro — verifique os dados';
+    btn.disabled = false;
+    syncDot('error');
+    console.warn(e);
+    setTimeout(()=>{ btn.textContent='💾 Salvar e Conectar'; }, 3000);
+  }
+}
+
+async function sincronizarAgora(){
+  if(!GIST_ID||!GIST_TOKEN){ alert('Configure o Gist primeiro.'); return; }
+  await gistPull();
+  renderSaida(); renderConsulta(); renderDashboard();
+  renderSyncStatus();
+}
+
+function limparDados(){
+  if(!confirm('Apagar TODOS os dados locais deste celular?\n\nOs dados no Gist NÃO serão apagados.\n\nTem certeza?')) return;
+  DB=[];
+  saveLocal();
+  renderSaida(); renderConsulta();
+  alert('Dados locais apagados.');
 }
 
 // ══ WIZARD ══
@@ -960,6 +1194,46 @@ function formatPlate(input){
   input.value=v;
 }
 
+// ══ GOOGLE SHEETS SYNC ══
+function saveQueue(){ localStorage.setItem('pg_queue', JSON.stringify(syncQueue)); }
+
+function syncStatus(ok){
+  const dot = document.getElementById('hdrDot');
+  if(!dot) return;
+  dot.style.background = ok ? 'var(--green)' : 'var(--warn)';
+  dot.style.boxShadow  = ok ? '0 0 8px var(--green)' : '0 0 8px var(--warn)';
+  dot.title = ok ? 'Conectado ao Google Sheets' : 'Offline — dados salvos localmente';
+}
+
+async function enviarSheets(payload){
+  if(!SHEETS_URL){ syncStatus(false); return false; }
+  try{
+    const res = await fetch(SHEETS_URL, {
+      method:'POST',
+      body: JSON.stringify(payload),
+    });
+    const json = await res.json();
+    if(json.ok){ syncStatus(true); return true; }
+    syncStatus(false); return false;
+  }catch{
+    syncStatus(false); return false;
+  }
+}
+
+async function flushQueue(){
+  if(!SHEETS_URL || !syncQueue.length) return;
+  const pending = [...syncQueue];
+  for(const item of pending){
+    const ok = await enviarSheets(item);
+    if(ok) syncQueue = syncQueue.filter(x => x._qid !== item._qid);
+    else break;
+  }
+  saveQueue();
+}
+
+// Try to flush pending items when app opens
+setTimeout(flushQueue, 3000);
+
 // ══ REGISTRAR ══
 function registrar(){
   const nome=document.getElementById('inputNome').value.trim();
@@ -973,7 +1247,7 @@ function registrar(){
     tsEntrada:new Date().toISOString(),tsSaida:null,status:'dentro'
   };
   DB.unshift(entry);
-  saveDB();
+  saveDB(); // salva local + envia ao Gist
   resetForm();
   showSuccessModal(entry);
 }
@@ -1039,7 +1313,8 @@ function confirmarSaida(id){
 function registrarSaida(id){
   const r=DB.find(x=>x.id===id);if(!r)return;
   r.tsSaida=new Date().toISOString();r.status='saiu';
-  saveDB();closeSaidaModal();renderSaida();
+  saveDB(); // salva local + envia ao Gist
+  closeSaidaModal();renderSaida();
   showSaidaSuccessModal(r);
 }
 function closeSaidaModal(){document.getElementById('saidaModal').classList.remove('open');}
@@ -1203,7 +1478,7 @@ function closeSaidaSuccessModal(){document.getElementById('saidaSuccessModal').c
 // ══ UTILS ══
 function esc(s){return String(s).replace(/'/g,'&#39;').replace(/"/g,'&quot;');}
 
-// ══ DEMO DATA ══
+// ══ INIT ══
 if(!DB.length){
   const t=Date.now();
   DB=[
@@ -1211,8 +1486,17 @@ if(!DB.length){
     {id:t-2,nome:'Maria Fernanda',empresa:'Correios',placa:'MNO-3456',tipo:'Van',obs:'',fotoMotorista:null,fotoVeiculo:null,tsEntrada:new Date(t-7200000).toISOString(),tsSaida:new Date(t-3600000).toISOString(),status:'saiu'},
     {id:t-1,nome:'João Pereira',empresa:'Manutenção Técnica SP',placa:'DEF-7890',tipo:'Carro',obs:'Manutenção do ar-condicionado',fotoMotorista:null,fotoVeiculo:null,tsEntrada:new Date(t-86400000).toISOString(),tsSaida:new Date(t-82800000).toISOString(),status:'saiu'},
   ];
-  saveDB();
+  saveLocal();
 }
+
+// Pull from Gist on open (merge remote into local)
+if(GIST_ID && GIST_TOKEN){
+  syncDot('syncing');
+  gistPull().then(()=>{ renderSaida(); renderConsulta(); });
+} else {
+  syncDot('offline');
+}
+
 renderSaida();
 </script>
 </body>
