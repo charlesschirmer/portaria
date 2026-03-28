@@ -729,7 +729,31 @@ async function startCam(){
 }
 function stopCam(){if(camStream){camStream.getTracks().forEach(t=>t.stop());camStream=null;}}
 function closeCam(){stopCam();document.getElementById('camModal').classList.remove('open');}
-async function flipCam(){camFacing=camFacing==='environment'?'user':'environment';await startCam();}
+
+async function flipCam(){
+  // Toggle facing mode
+  camFacing = camFacing === 'environment' ? 'user' : 'environment';
+  stopCam();
+  try{
+    // Use exact instead of ideal so it actually switches
+    camStream = await navigator.mediaDevices.getUserMedia({
+      video:{ facingMode:{ exact: camFacing }, width:{ideal:1920}, height:{ideal:1080} }
+    });
+    document.getElementById('camVideo').srcObject = camStream;
+  }catch{
+    // exact may fail on devices with only one camera — fall back to ideal
+    try{
+      camStream = await navigator.mediaDevices.getUserMedia({
+        video:{ facingMode: camFacing }
+      });
+      document.getElementById('camVideo').srcObject = camStream;
+    }catch(e){
+      // revert facing if failed
+      camFacing = camFacing === 'environment' ? 'user' : 'environment';
+      alert('Não foi possível virar a câmera. Este dispositivo pode ter apenas uma câmera.');
+    }
+  }
+}
 
 function capturarFoto(){
   const video=document.getElementById('camVideo');
@@ -1006,7 +1030,33 @@ function buildWASaida(r){
   const tempo=m<60?m+' min':Math.floor(m/60)+'h '+String(m%60).padStart(2,'0')+'min';
   return `🛡 *PORTARIA — SAÍDA*\n━━━━━━━━━━━━━━━\n👤 *Motorista:* ${r.nome}\n🏢 *Empresa:* ${r.empresa}\n🚗 *Placa:* ${r.placa}\n🕐 *Entrada:* ${dtE.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}\n🚪 *Saída:* ${dtS.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}\n⏱ *Permanência:* ${tempo}\n━━━━━━━━━━━━━━━`;
 }
-function openWA(msg){window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank');}
+function openWA(msg){
+  const encoded = encodeURIComponent(msg);
+  // Try native WhatsApp app first via deep link
+  // On Android/iOS this opens the WhatsApp app directly
+  const waApp = 'whatsapp://send?text=' + encoded;
+  const waWeb = 'https://api.whatsapp.com/send?text=' + encoded;
+
+  // Create a hidden link and click it — avoids popup blocker
+  const a = document.createElement('a');
+  a.href = waApp;
+  a.target = '_blank';
+  a.rel = 'noopener';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+
+  // Fallback: if app didn't open after 1.5s, open WhatsApp Web
+  setTimeout(()=>{
+    const a2 = document.createElement('a');
+    a2.href = waWeb;
+    a2.target = '_blank';
+    a2.rel = 'noopener';
+    document.body.appendChild(a2);
+    a2.click();
+    document.body.removeChild(a2);
+  }, 1500);
+}
 
 function showSuccessModal(r){
   const dt=new Date(r.tsEntrada);
