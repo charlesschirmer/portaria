@@ -783,41 +783,169 @@ function applyPhoto(url,target){
 }
 
 // ══ OCR ══
+
+// Pre-process image: crop center strip where plate usually is, upscale, grayscale + contrast
+function preprocessPlate(imgData){
+  return new Promise(resolve=>{
+    const img=new Image();
+    img.onload=()=>{
+      const W=img.width, H=img.height;
+
+      // Crop the bottom-center region where plate usually appears (60-90% height, 10-90% width)
+      const cropX=Math.round(W*0.05);
+      const cropY=Math.round(H*0.50);
+      const cropW=Math.round(W*0.90);
+      const cropH=Math.round(H*0.45);
+
+      // Upscale crop 3x for better OCR
+      const scale=3;
+      const c=document.createElement('canvas');
+      c.width=cropW*scale;
+      c.height=cropH*scale;
+      const ctx=c.getContext('2d');
+
+      // Draw cropped & scaled
+      ctx.drawImage(img, cropX, cropY, cropW, cropH, 0, 0, c.width, c.height);
+
+      // Get pixel data and apply grayscale + aggressive contrast
+      const id=ctx.getImageData(0,0,c.width,c.height);
+      const d=id.data;
+      for(let i=0;i<d.length;i+=4){
+        // Grayscale (luminance)
+        let g=0.299*d[i]+0.587*d[i+1]+0.114*d[i+2];
+        // Increase contrast: stretch towards black/white
+        g=((g-128)*2.2)+128;
+        g=Math.max(0,Math.min(255,g));
+        // Threshold: push towards pure B&W
+        const bw=g>140?255:0;
+        d[i]=d[i+1]=d[i+2]=bw;
+        d[i+3]=255;
+      }
+      ctx.putImageData(id,0,0);
+
+      resolve(c.toDataURL('image/png'));
+    };
+    img.src=imgData;
+  });
+}
+
+// Also try inverted (white text on dark bg)
+function invertImage(dataUrl){
+  return new Promise(resolve=>{
+    const img=new Image();
+    img.onload=()=>{
+      const c=document.createElement('canvas');
+      c.width=img.width;c.height=img.height;
+      const ctx=c.getContext('2d');
+      ctx.drawImage(img,0,0);
+      const id=ctx.getImageData(0,0,c.width,c.height);
+      const d=id.data;
+      for(let i=0;i<d.length;i+=4){d[i]=255-d[i];d[i+1]=255-d[i+1];d[i+2]=255-d[i+2];}
+      ctx.putImageData(id,0,0);
+      resolve(c.toDataURL('image/png'));
+    };
+    img.src=dataUrl;
+  });
+}
+
+async function ocrAttempt(worker, imgData, psm){
+  await worker.setParameters({
+    tessedit_char_whitelist:'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789',
+    tessedit_pageseg_mode: String(psm),
+  });
+  const{data}=await worker.recognize(imgData);
+  return {text:data.text, conf:data.confidence};
+}
+
 async function runOCR(imgData){
-  showOCR(true,'Inicializando OCR...',0);
+  showOCR(true,'Preparando imagem...',0);
   document.getElementById('plateFound').classList.remove('show');
   document.getElementById('inputPlaca').value='';
   try{
+    showOCR(true,'Melhorando contraste...',10);
+    const processed = await preprocessPlate(imgData);
+    const inverted  = await invertImage(processed);
+
+    showOCR(true,'Iniciando leitura...',20);
     const worker=await Tesseract.createWorker('eng',1,{
-      logger:m=>{if(m.status==='recognizing text')showOCR(true,'Analisando imagem...',Math.round(m.progress*100));}
+      logger:m=>{
+        if(m.status==='recognizing text')
+          showOCR(true,'Lendo placa...',20+Math.round(m.progress*70));
+      }
     });
-    await worker.setParameters({tessedit_char_whitelist:'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789',tessedit_pageseg_mode:'6'});
-    const{data}=await worker.recognize(imgData);
+
+    // Try 4 combinations: processed+inverted × PSM 7 (single line) + PSM 8 (single word)
+    const attempts=[];
+    for(const img of [processed, inverted]){
+      for(const psm of [7, 8, 13]){
+        const res=await ocrAttempt(worker, img, psm);
+        const raw=res.text.toUpperCase().replace(/[^A-Z0-9]/g,'');
+        const plate=extractPlate(raw);
+        attempts.push({plate, conf:res.conf, raw});
+      }
+    }
     await worker.terminate();
     showOCR(false);
-    const raw=data.text.toUpperCase().replace(/[^A-Z0-9]/g,'');
-    const plate=extractPlate(raw);
-    const conf=Math.round(data.confidence);
-    if(plate){
-      document.getElementById('pfVal').textContent=plate;
-      document.getElementById('pfConf').textContent='Confiança OCR: '+conf+'%';
+
+    // Pick best result: prefer valid plate pattern with highest confidence
+    const valid=attempts.filter(a=>a.plate);
+    const best = valid.length
+      ? valid.sort((a,b)=>b.conf-a.conf)[0]
+      : attempts.sort((a,b)=>b.conf-a.conf)[0];
+
+    if(best.plate){
+      document.getElementById('pfVal').textContent=best.plate;
+      document.getElementById('pfConf').textContent='Confiança: '+Math.round(best.conf)+'%';
       document.getElementById('plateFound').classList.add('show');
-      document.getElementById('inputPlaca').value=plate;
+      document.getElementById('inputPlaca').value=best.plate;
     }else{
-      alert('Placa não identificada automaticamente.\nDigite a placa manualmente no campo abaixo.');
+      document.getElementById('pfVal').textContent='Não lido';
+      document.getElementById('pfConf').textContent='Digite a placa manualmente abaixo';
+      document.getElementById('plateFound').classList.add('show');
     }
   }catch(err){
     showOCR(false);
-    console.warn(err);
+    console.warn('OCR error:',err);
   }
 }
+
 function extractPlate(raw){
-  const pats=[/[A-Z]{3}[0-9]{1}[A-Z]{1}[0-9]{2}/,/[A-Z]{3}[0-9]{4}/];
-  for(let i=0;i<=raw.length-7;i++){
-    const sub=raw.slice(i,i+7);
-    for(const p of pats){if(p.test(sub))return sub.slice(0,3)+'-'+sub.slice(3);}
+  if(!raw||raw.length<6) return null;
+  // Common OCR confusions: 0↔O, 1↔I, 8↔B
+  const fix=raw
+    .replace(/O/g,'0_O').split('_') // keep both variants
+    .join('');
+  const src=raw;
+
+  const pats=[
+    /[A-Z]{3}[0-9][A-Z][0-9]{2}/,   // Mercosul: ABC1D23
+    /[A-Z]{3}[0-9]{4}/,              // Antiga:   ABC1234
+  ];
+
+  // Try original
+  for(let i=0;i<=src.length-7;i++){
+    const sub=src.slice(i,i+7);
+    for(const p of pats) if(p.test(sub)) return sub.slice(0,3)+'-'+sub.slice(3);
   }
-  if(raw.length>=7)return raw.slice(0,3)+'-'+raw.slice(3,7);
+
+  // Try with common substitutions
+  const variants=[
+    src,
+    src.replace(/0/g,'O'),
+    src.replace(/O/g,'0'),
+    src.replace(/1/g,'I'),
+    src.replace(/I/g,'1'),
+    src.replace(/8/g,'B'),
+    src.replace(/B/g,'8'),
+    src.replace(/5/g,'S'),
+    src.replace(/S/g,'5'),
+  ];
+  for(const v of variants){
+    for(let i=0;i<=v.length-7;i++){
+      const sub=v.slice(i,i+7);
+      for(const p of pats) if(p.test(sub)) return sub.slice(0,3)+'-'+sub.slice(3);
+    }
+  }
   return null;
 }
 function showOCR(show,txt='',pct=0){
