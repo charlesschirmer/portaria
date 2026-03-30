@@ -353,13 +353,14 @@ canvas{display:none;}
 
   <!-- MODULE TABS -->
   <div class="mtab-row">
-    <button class="mtab active" id="mtab-gestor" onclick="setMTab('gestor')">👔 Gestor</button>
-    <button class="mtab" id="mtab-vigilante" onclick="setMTab('vigilante')">👷 Vigilante</button>
+    <button class="mtab active" id="mtab-gestor"    onclick="setMTab('gestor')">✅ Autorizar</button>
+    <button class="mtab"        id="mtab-vigilante" onclick="setMTab('vigilante')">👷 Vigilante</button>
+    <button class="mtab"        id="mtab-veiculos"  onclick="setMTab('veiculos')">🚗 Veículos</button>
   </div>
 
   <!-- ── GESTOR: cadastrar autorização ── -->
   <div class="msub active" id="msub-gestor">
-    <div class="sec-label"><div class="sec-num" style="background:var(--warn);color:#000;">G</div>Nova Autorização de Saída</div>
+    <div class="sec-label"><div class="sec-num" style="background:var(--warn);color:#000;">✅</div>Nova Autorização de Saída</div>
 
     <div class="card">
       <div class="card-title">🚗 Veículo da Frota</div>
@@ -371,11 +372,20 @@ canvas{display:none;}
         <div class="ac-list" id="acGPlacaList"></div>
       </div>
       <div class="field ac-wrap">
+        <div class="field-label">🚗 Veículo (Modelo) *</div>
+        <input type="text" id="gModelo" placeholder="Ex: Montana, Toro, HB20..."
+          oninput="acGModelo(this.value)" onfocus="acGModelo(this.value)"
+          autocomplete="off" style="font-size:1rem;font-weight:600;">
+        <div class="ac-list" id="acGModeloList"></div>
+        <div style="font-size:0.72rem;color:var(--muted);margin-top:4px;">Preenchido automaticamente ao digitar a placa</div>
+      </div>
+      <div class="field ac-wrap">
         <div class="field-label">👤 Motorista *</div>
         <input type="text" id="gMotorista" placeholder="Nome do motorista..."
           oninput="acGMoto(this.value)" onfocus="acGMoto(this.value)" autocomplete="off"
           style="font-size:1rem;font-weight:600;">
         <div class="ac-list" id="acGMotoList"></div>
+        <div style="font-size:0.72rem;color:var(--muted);margin-top:4px;">Pode alterar para esta saída se necessário</div>
       </div>
       <div class="field">
         <div class="field-label">📍 Destino / Motivo *</div>
@@ -427,6 +437,130 @@ canvas{display:none;}
     <div id="vListaFora"></div>
 
   </div>
+
+  <!-- ── VEÍCULOS: cadastro da frota ── -->
+  <div class="msub" id="msub-veiculos">
+
+    <div class="sec-label"><div class="sec-num" style="background:var(--green);color:#000;">+</div>Cadastro de Veículos</div>
+
+    <!-- Form de cadastro -->
+    <div class="card" style="margin-bottom:14px;">
+      <div class="card-title">➕ Novo Veículo</div>
+      <div class="field">
+        <div class="field-label">🔢 Placa *</div>
+        <input type="text" id="cvPlaca" class="plate-field" placeholder="ABC-1234"
+          maxlength="8" oninput="formatPlate(this)" autocomplete="off">
+      </div>
+      <div class="field">
+        <div class="field-label">🚗 Modelo *</div>
+        <input type="text" id="cvModelo" placeholder="Ex: Montana, Toro, HB20, S10..."
+          style="font-size:1rem;font-weight:600;" autocomplete="off">
+      </div>
+      <div class="field">
+        <div class="field-label">👤 Motorista padrão <span style="font-weight:400;color:var(--muted);font-size:0.8rem;">(opcional)</span></div>
+        <input type="text" id="cvMotorista" placeholder="Deixe em branco se não tiver fixo"
+          style="font-size:1rem;font-weight:600;" autocomplete="off">
+      </div>
+      <button class="big-btn btn-green" onclick="salvarVeiculo()">💾 SALVAR VEÍCULO</button>
+    </div>
+
+    <!-- Lista de veículos cadastrados -->
+    <div class="list-hdr">
+      <div style="font-size:0.9rem;font-weight:800;">Veículos Cadastrados</div>
+      <div class="list-cnt" id="cvTotalCnt">—</div>
+    </div>
+    <div id="cvLista"></div>
+
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════
+     PANEL: ACESSO
+══════════════════════════════════ -->
+<div class="panel" id="panel-acesso">
+
+  <!-- MODULE TABS -->
+  <div class="mtab-row">
+    <button class="mtab active" id="mtab-ac-autorizar" onclick="setAcTab('autorizar')">✅ Autorizar</button>
+    <button class="mtab"        id="mtab-ac-vigilante" onclick="setAcTab('vigilante')">👷 Vigilante</button>
+  </div>
+
+  <!-- ── AUTORIZAR ── -->
+  <div class="msub active" id="msub-ac-autorizar">
+    <div class="sec-label"><div class="sec-num" style="background:var(--accent);color:#000;">✅</div>Nova Autorização de Acesso</div>
+
+    <div class="card">
+      <div class="card-title">🪪 Dados do Acesso</div>
+
+      <div class="field">
+        <div class="field-label">👤 Autorizado a Acessar *</div>
+        <input type="text" id="acNome" placeholder="Nome completo da pessoa..."
+          style="font-size:1rem;font-weight:600;" autocomplete="off">
+      </div>
+
+      <div class="field">
+        <div class="field-label">🏢 Empresa / Procedência</div>
+        <input type="text" id="acEmpresa" placeholder="Empresa ou de onde vem..."
+          style="font-size:1rem;font-weight:600;" autocomplete="off">
+      </div>
+
+      <div class="field">
+        <div class="field-label">📍 Motivo / Setor a visitar *</div>
+        <input type="text" id="acMotivo" placeholder="Ex: Reunião comercial, Manutenção..."
+          style="font-size:1rem;font-weight:600;">
+      </div>
+
+      <div class="field">
+        <div class="field-label">🕐 Data e Hora Prevista *</div>
+        <input type="datetime-local" id="acDataHora">
+      </div>
+
+      <div class="field">
+        <div class="field-label">👔 Autorizado por *</div>
+        <input type="text" id="acAutorizador" placeholder="Seu nome..."
+          style="font-size:1rem;font-weight:600;" autocomplete="off">
+      </div>
+
+      <div class="field">
+        <div class="field-label">📝 Observações</div>
+        <textarea id="acObs" rows="2" placeholder="Informações adicionais..."
+          style="font-size:0.95rem;resize:none;padding:12px;"></textarea>
+      </div>
+    </div>
+
+    <button class="big-btn btn-accent" onclick="registrarAcesso()">✅ AUTORIZAR ACESSO</button>
+
+    <!-- Lista -->
+    <div class="sec-div"></div>
+    <div class="list-hdr">
+      <div style="font-size:0.9rem;font-weight:800;">Autorizações Cadastradas</div>
+      <div class="list-cnt" id="acTotalCnt">—</div>
+    </div>
+    <div id="acListaAutorizacoes"></div>
+  </div>
+
+  <!-- ── VIGILANTE ── -->
+  <div class="msub" id="msub-ac-vigilante">
+    <div class="list-hdr">
+      <div style="font-size:1rem;font-weight:800;">🪪 Acessos Pendentes</div>
+      <div class="list-cnt" id="acVigCnt">—</div>
+    </div>
+    <div style="font-size:0.8rem;color:var(--muted);margin-bottom:12px;">Toque em OK quando a pessoa entrar na empresa.</div>
+    <div class="search-wrap">
+      <span class="search-ico">🔍</span>
+      <input type="text" id="searchAcesso" placeholder="Nome ou empresa..." oninput="renderAcessoVigilante()">
+    </div>
+    <div id="acListaPendentes"></div>
+
+    <div class="sec-div"></div>
+    <div class="list-hdr">
+      <div style="font-size:1rem;font-weight:800;">✅ Acessos Confirmados Hoje</div>
+      <div class="list-cnt" id="acConfCnt">—</div>
+    </div>
+    <div id="acListaConfirmados"></div>
+  </div>
+
 </div>
 
 <!-- ══════════════════════════════════
@@ -512,11 +646,12 @@ canvas{display:none;}
 </div>
 
 <!-- ══ BOTTOM NAV ══ -->
-<div class="bnav">
+<div class="bnav" style="grid-template-columns:repeat(5,1fr);">
   <button class="bnav-btn active" id="nav-entrada" onclick="showPanel('entrada')"><div class="ico">👤</div>Visitante</button>
-  <button class="bnav-btn" id="nav-frota" onclick="showPanel('frota')"><div class="ico">🚗</div>Frota</button>
+  <button class="bnav-btn" id="nav-frota"   onclick="showPanel('frota')"><div class="ico">🚗</div>Frota</button>
+  <button class="bnav-btn" id="nav-acesso"  onclick="showPanel('acesso')"><div class="ico">🪪</div>Acesso</button>
   <button class="bnav-btn" id="nav-consulta" onclick="showPanel('consulta')"><div class="ico">🔍</div>Consulta</button>
-  <button class="bnav-btn" id="nav-config" onclick="showPanel('config')"><div class="ico">⚙️</div>Config</button>
+  <button class="bnav-btn" id="nav-config"  onclick="showPanel('config')"><div class="ico">⚙️</div>Config</button>
 </div>
 
 <!-- ══ MODAIS ══ -->
@@ -534,6 +669,22 @@ canvas{display:none;}
         <button class="big-btn btn-gray" onclick="flipCam()" style="width:58px;padding:0;">🔄</button>
       </div>
     </div>
+  </div>
+</div>
+
+<!-- Confirmar acesso (vigilante) -->
+<div class="modal-bg" id="confAcessoModal">
+  <div class="modal">
+    <div class="modal-hdr"><div class="modal-title">🪪 Confirmar Acesso</div><button class="modal-close" onclick="closeConfAcesso()">✕</button></div>
+    <div class="modal-body" id="confAcessoBody"></div>
+  </div>
+</div>
+
+<!-- Sucesso autorização acesso + WA -->
+<div class="modal-bg" id="sucAcessoModal">
+  <div class="modal">
+    <div class="modal-hdr"><div class="modal-title">✅ Acesso Autorizado!</div><button class="modal-close" onclick="closeSucAcesso()">✕</button></div>
+    <div class="modal-body" id="sucAcessoBody"></div>
   </div>
 </div>
 
@@ -585,6 +736,15 @@ canvas{display:none;}
 let VISITANTES = JSON.parse(localStorage.getItem('pg_visitantes') || '[]');
 // FROTA: autorizações de saída de veículos da empresa
 let FROTA = JSON.parse(localStorage.getItem('pg_frota') || '[]');
+// VEICULOS_FROTA: cadastro pré-salvo de placa + modelo
+let VEICULOS_FROTA = JSON.parse(localStorage.getItem('pg_veiculos_frota') || '[]');
+// ACESSOS: autorizações de acesso de pessoas à empresa
+let ACESSOS = JSON.parse(localStorage.getItem('pg_acessos') || '[]');
+
+function saveVisitantes(){ localStorage.setItem('pg_visitantes', JSON.stringify(VISITANTES)); }
+function saveFrota(){       localStorage.setItem('pg_frota',      JSON.stringify(FROTA)); }
+function saveVeiculosFrota(){ localStorage.setItem('pg_veiculos_frota', JSON.stringify(VEICULOS_FROTA)); }
+function saveAcessos(){     localStorage.setItem('pg_acessos',    JSON.stringify(ACESSOS)); }
 
 let GIST_ID    = localStorage.getItem('pg_gist_id')    || '';
 let GIST_TOKEN = localStorage.getItem('pg_gist_token') || '';
@@ -595,9 +755,6 @@ let filterMode = 'todos';
 let camStream = null, camTarget = null, camFacing = 'environment';
 // Visitor form photos
 let vPhotoMoto = null, vPhotoVeic = null;
-
-function saveVisitantes(){ localStorage.setItem('pg_visitantes', JSON.stringify(VISITANTES)); }
-function saveFrota(){       localStorage.setItem('pg_frota',      JSON.stringify(FROTA)); }
 
 // ══ CLOCK ══
 function tick(){
@@ -616,6 +773,7 @@ function showPanel(id){
   const nb = document.getElementById('nav-' + id);
   if(nb) nb.classList.add('active');
   if(id === 'frota')   { renderGestorLista(); renderVigilante(); }
+  if(id === 'acesso')  { renderAcessoAutorizarLista(); renderAcessoVigilante(); }
   if(id === 'consulta') renderConsulta();
   if(id === 'config')   renderConfig();
 }
@@ -628,6 +786,73 @@ function setMTab(t){
   document.getElementById('msub-' + t).classList.add('active');
   if(t === 'gestor')    renderGestorLista();
   if(t === 'vigilante') renderVigilante();
+  if(t === 'veiculos')  renderCVLista();
+}
+
+// ══ CADASTRO DE VEÍCULOS ══
+function salvarVeiculo(){
+  const placa    = document.getElementById('cvPlaca').value.trim().toUpperCase();
+  const modelo   = document.getElementById('cvModelo').value.trim();
+  const motorista= document.getElementById('cvMotorista').value.trim();
+  if(placa.replace('-','').length < 7){ alert('Informe a placa (mínimo 7 caracteres).'); return; }
+  if(!modelo){ alert('Informe o modelo do veículo.'); return; }
+
+  const idx = VEICULOS_FROTA.findIndex(v => v.placa === placa);
+  if(idx >= 0){
+    // Atualiza existente
+    VEICULOS_FROTA[idx].modelo    = modelo;
+    VEICULOS_FROTA[idx].motorista = motorista;
+    toast('✅ Veículo atualizado!');
+  } else {
+    VEICULOS_FROTA.unshift({ placa, modelo, motorista });
+    toast('✅ Veículo cadastrado!');
+  }
+  saveVeiculosFrota();
+
+  // Limpa form
+  ['cvPlaca','cvModelo','cvMotorista'].forEach(id => document.getElementById(id).value='');
+  renderCVLista();
+}
+
+function renderCVLista(){
+  const el = document.getElementById('cvLista');
+  document.getElementById('cvTotalCnt').textContent = VEICULOS_FROTA.length + ' veículo(s)';
+  if(!VEICULOS_FROTA.length){
+    el.innerHTML = emptyState('🚗','Nenhum veículo cadastrado','Use o formulário acima para cadastrar');
+    return;
+  }
+  el.innerHTML = VEICULOS_FROTA.map(v => `
+    <div class="ecard" style="cursor:default;">
+      <div class="ecard-thumb" style="font-size:1.8rem;background:var(--s2);">🚗</div>
+      <div class="ecard-info">
+        <div class="ecard-plate">${v.placa}</div>
+        <div class="ecard-name" style="font-size:0.95rem;">${v.modelo}</div>
+        <div class="ecard-meta">${v.motorista ? '👤 '+v.motorista : '👤 Sem motorista fixo'}</div>
+      </div>
+      <div class="ecard-right" style="gap:6px;">
+        <button class="act-btn" style="background:rgba(0,212,255,.12);color:var(--accent);border:1px solid rgba(0,212,255,.3);"
+          onclick="editarVeiculo('${esc(v.placa)}','${esc(v.modelo)}','${esc(v.motorista)}')">✏️ Editar</button>
+        <button class="act-btn act-cancel"
+          onclick="excluirVeiculo('${esc(v.placa)}')">🗑 Excluir</button>
+      </div>
+    </div>`).join('');
+}
+
+function editarVeiculo(placa, modelo, motorista){
+  document.getElementById('cvPlaca').value     = placa;
+  document.getElementById('cvModelo').value    = modelo;
+  document.getElementById('cvMotorista').value = motorista;
+  window.scrollTo(0,0);
+  document.getElementById('cvModelo').focus();
+  toast('✏️ Edite os dados e salve novamente.', 'info');
+}
+
+function excluirVeiculo(placa){
+  if(!confirm(`Excluir o veículo ${placa} do cadastro?`)) return;
+  VEICULOS_FROTA = VEICULOS_FROTA.filter(v => v.placa !== placa);
+  saveVeiculosFrota();
+  renderCVLista();
+  toast('🗑 Veículo removido.');
 }
 
 // ══ TEMA ══
@@ -677,14 +902,17 @@ async function gistPull(){
     if(raw){
       const remote = JSON.parse(raw);
       // Merge visitantes and frota separately
-      const vMap = {}, fMap = {};
+      const vMap = {}, fMap = {}, aMap = {};
       VISITANTES.forEach(r => vMap[r.id] = r);
       FROTA.forEach(r => fMap[r.id] = r);
+      ACESSOS.forEach(r => aMap[r.id] = r);
       (remote.visitantes || []).forEach(r => vMap[r.id] = r);
       (remote.frota || []).forEach(r => fMap[r.id] = r);
+      (remote.acessos || []).forEach(r => aMap[r.id] = r);
       VISITANTES = Object.values(vMap).sort((a,b) => b.id - a.id);
       FROTA      = Object.values(fMap).sort((a,b) => b.id - a.id);
-      saveVisitantes(); saveFrota();
+      ACESSOS    = Object.values(aMap).sort((a,b) => b.id - a.id);
+      saveVisitantes(); saveFrota(); saveAcessos();
     }
     syncDot('ok');
   }catch(e){ syncDot('error'); console.warn('Gist pull:', e); }
@@ -696,7 +924,8 @@ async function gistPush(){
   try{
     const slim = {
       visitantes: VISITANTES.map(r => ({...r, fotoMotorista: r.fotoMotorista ? '📸' : null, fotoVeiculo: r.fotoVeiculo ? '📸' : null})),
-      frota: FROTA
+      frota: FROTA,
+      acessos: ACESSOS
     };
     await fetch('https://api.github.com/gists/' + GIST_ID, {
       method: 'PATCH', headers: gistHdrs(),
@@ -1042,23 +1271,55 @@ function closeSucEntrada(){ document.getElementById('sucEntradaModal').classList
 
 // ══ FROTA: GESTOR — AUTOCOMPLETE ══
 function getFrotaPlacas(){
+  // Merge from VEICULOS_FROTA (cadastro) + historico FROTA
   const m = {};
-  FROTA.forEach(r => { if(!m[r.placa]) m[r.placa]={placa:r.placa,motorista:r.motorista,c:0}; m[r.placa].c++; });
-  return Object.values(m).sort((a,b) => b.c-a.c);
+  // First populate from history (lower priority)
+  FROTA.forEach(r => {
+    if(!m[r.placa]) m[r.placa] = {placa:r.placa, modelo:r.modelo||'', motorista:r.motorista, c:0};
+    m[r.placa].c++;
+  });
+  // Then from VEICULOS_FROTA (higher priority — overwrite modelo/motorista)
+  VEICULOS_FROTA.forEach(v => {
+    if(!m[v.placa]) m[v.placa] = {placa:v.placa, modelo:v.modelo, motorista:v.motorista||'', c:0};
+    else { m[v.placa].modelo = v.modelo; if(v.motorista) m[v.placa].motorista = v.motorista; }
+  });
+  return Object.values(m).sort((a,b) => b.c - a.c);
+}
+function getFrotaModelos(){
+  // All unique models from VEICULOS_FROTA + FROTA history
+  const s = new Set();
+  VEICULOS_FROTA.forEach(v => { if(v.modelo) s.add(v.modelo); });
+  FROTA.forEach(r => { if(r.modelo) s.add(r.modelo); });
+  return [...s].sort();
 }
 function getFrotaMotoristas(){
   const m = {};
   FROTA.forEach(r => { m[r.motorista] = (m[r.motorista]||0)+1; });
   return Object.keys(m).sort((a,b) => m[b]-m[a]);
 }
+
 function acGPlaca(q){
   const list = document.getElementById('acGPlacaList');
   if(!q||q.length<2){ list.classList.remove('show'); return; }
-  const hits = getFrotaPlacas().filter(x => x.placa.includes(q.toUpperCase())).slice(0,5);
+  const hits = getFrotaPlacas().filter(x => x.placa.includes(q.toUpperCase())).slice(0,6);
   if(!hits.length){ list.classList.remove('show'); return; }
-  list.innerHTML = hits.map(x=>`<div class="ac-item" onclick="selGPlaca('${esc(x.placa)}','${esc(x.motorista)}')">${x.placa}<small>👤 ${x.motorista}</small></div>`).join('');
+  list.innerHTML = hits.map(x=>`
+    <div class="ac-item" onclick="selGPlaca('${esc(x.placa)}','${esc(x.modelo)}','${esc(x.motorista)}')">
+      <strong style="font-family:var(--fm);color:var(--warn);letter-spacing:2px;">${x.placa}</strong>
+      <small>${x.modelo ? '🚗 '+x.modelo : ''}${x.motorista ? ' · 👤 '+x.motorista : ''}</small>
+    </div>`).join('');
   list.classList.add('show');
 }
+
+function acGModelo(q){
+  const list = document.getElementById('acGModeloList');
+  if(!q||q.length<1){ list.classList.remove('show'); return; }
+  const hits = getFrotaModelos().filter(m => m.toLowerCase().includes(q.toLowerCase())).slice(0,6);
+  if(!hits.length){ list.classList.remove('show'); return; }
+  list.innerHTML = hits.map(m=>`<div class="ac-item" onclick="selGModelo('${esc(m)}')">🚗 ${m}</div>`).join('');
+  list.classList.add('show');
+}
+
 function acGMoto(q){
   const list = document.getElementById('acGMotoList');
   if(!q||q.length<2){ list.classList.remove('show'); return; }
@@ -1067,36 +1328,57 @@ function acGMoto(q){
   list.innerHTML = hits.map(n=>`<div class="ac-item" onclick="selGMoto('${esc(n)}')">${n}</div>`).join('');
   list.classList.add('show');
 }
-function selGPlaca(p,m){ document.getElementById('gPlaca').value=p; if(m) document.getElementById('gMotorista').value=m; document.querySelectorAll('.ac-list').forEach(l=>l.classList.remove('show')); }
-function selGMoto(n){ document.getElementById('gMotorista').value=n; document.getElementById('acGMotoList').classList.remove('show'); }
+
+function selGPlaca(p, modelo, moto){
+  document.getElementById('gPlaca').value = p;
+  if(modelo) document.getElementById('gModelo').value = modelo;
+  if(moto)   document.getElementById('gMotorista').value = moto;
+  document.querySelectorAll('.ac-list').forEach(l => l.classList.remove('show'));
+}
+function selGModelo(m){ document.getElementById('gModelo').value = m; document.getElementById('acGModeloList').classList.remove('show'); }
+function selGMoto(n){ document.getElementById('gMotorista').value = n; document.getElementById('acGMotoList').classList.remove('show'); }
 
 // ══ FROTA: GESTOR — REGISTRAR AUTORIZAÇÃO ══
 function registrarAutorizacao(){
   const placa     = document.getElementById('gPlaca').value.trim().toUpperCase();
+  const modelo    = document.getElementById('gModelo').value.trim();
   const motorista = document.getElementById('gMotorista').value.trim();
   const destino   = document.getElementById('gDestino').value.trim();
   const dataHora  = document.getElementById('gDataHora').value;
   const gestor    = document.getElementById('gGestor').value.trim();
   if(placa.replace('-','').length < 7){ alert('Informe a placa do veículo.'); return; }
+  if(!modelo){ alert('Informe o modelo do veículo (ex: Montana, Toro...).'); return; }
   if(!motorista){ alert('Informe o nome do motorista.'); return; }
   if(!destino){ alert('Informe o destino/motivo.'); return; }
   if(!dataHora){ alert('Informe a data e hora prevista de saída.'); return; }
   if(!gestor){ alert('Informe seu nome como gestor.'); return; }
 
+  // Auto-save placa + modelo + motorista em VEICULOS_FROTA
+  const idx = VEICULOS_FROTA.findIndex(v => v.placa === placa);
+  if(idx >= 0){
+    // Atualiza registro existente
+    VEICULOS_FROTA[idx].modelo    = modelo;
+    VEICULOS_FROTA[idx].motorista = motorista;
+  } else {
+    // Novo cadastro
+    VEICULOS_FROTA.push({ placa, modelo, motorista });
+  }
+  saveVeiculosFrota();
+
   const auth = {
     id: Date.now(), tipo_registro: 'frota',
-    placa, motorista, destino,
+    placa, modelo, motorista, destino,
     tsPrevSaida: new Date(dataHora).toISOString(),
     gestor, tsAutorizacao: new Date().toISOString(),
     tsSaidaReal: null, tsRetorno: null,
-    status: 'pendente'  // pendente | fora | retornou
+    status: 'pendente'
   };
   FROTA.unshift(auth);
   saveFrota();
   gistPush();
 
   // Reset form
-  ['gPlaca','gMotorista','gDestino','gGestor'].forEach(id => document.getElementById(id).value='');
+  ['gPlaca','gModelo','gMotorista','gDestino','gGestor'].forEach(id => document.getElementById(id).value='');
   document.getElementById('gDataHora').value = '';
 
   renderGestorLista();
@@ -1116,7 +1398,7 @@ function renderGestorLista(){
       <div class="ecard-thumb">🚗</div>
       <div class="ecard-info">
         <div class="ecard-plate">${r.placa}</div>
-        <div class="ecard-name" style="font-size:0.9rem;">${r.motorista}</div>
+        <div class="ecard-name" style="font-size:0.9rem;">${r.modelo ? r.modelo+' · ' : ''}${r.motorista}</div>
         <div class="ecard-meta">📍 ${r.destino}</div>
         <div class="ecard-meta">🕐 Prev.: ${fmtDt(r.tsPrevSaida)}</div>
       </div>
@@ -1135,7 +1417,7 @@ function cancelarAut(id){
 
 // ══ FROTA: GESTOR — SUCESSO ══
 function showSucAut(r){
-  const msg = `👔 *PORTARIA — SAÍDA AUTORIZADA*\n━━━━━━━━━━━━━━━\n🚗 *Placa:* ${r.placa}\n👤 *Motorista:* ${r.motorista}\n📍 *Destino:* ${r.destino}\n🕐 *Prev. saída:* ${fmtDt(r.tsPrevSaida)}\n✅ *Autorizado por:* ${r.gestor}\n━━━━━━━━━━━━━━━`;
+  const msg = `👔 *PORTARIA — SAÍDA AUTORIZADA*\n━━━━━━━━━━━━━━━\n🚗 *Placa:* ${r.placa}${r.modelo?' ('+r.modelo+')':''}\n👤 *Motorista:* ${r.motorista}\n📍 *Destino:* ${r.destino}\n🕐 *Prev. saída:* ${fmtDt(r.tsPrevSaida)}\n✅ *Autorizado por:* ${r.gestor}\n━━━━━━━━━━━━━━━`;
   const waHref = 'whatsapp://send?text=' + encodeURIComponent(msg);
   document.getElementById('sucAutBody').innerHTML = `
     <div class="suc-icon">✅</div>
@@ -1164,7 +1446,7 @@ function renderVigilante(){
         <div class="ecard-thumb">🚗</div>
         <div class="ecard-info">
           <div class="ecard-plate">${r.placa}</div>
-          <div class="ecard-name" style="font-size:0.9rem;">${r.motorista}</div>
+          <div class="ecard-name" style="font-size:0.9rem;">${r.modelo ? r.modelo+' · ' : ''}${r.motorista}</div>
           <div class="ecard-meta">📍 ${r.destino}</div>
           <div class="ecard-meta">🕐 Prev.: ${fmtDt(r.tsPrevSaida)}</div>
           <div class="ecard-meta">✅ Aut.: ${r.gestor}</div>
@@ -1184,7 +1466,7 @@ function renderVigilante(){
         <div class="ecard-thumb">🚗</div>
         <div class="ecard-info">
           <div class="ecard-plate">${r.placa}</div>
-          <div class="ecard-name" style="font-size:0.9rem;">${r.motorista}</div>
+          <div class="ecard-name" style="font-size:0.9rem;">${r.modelo ? r.modelo+' · ' : ''}${r.motorista}</div>
           <div class="ecard-meta">📍 ${r.destino}</div>
           <div class="ecard-meta">🚪 Saiu: ${fmtDt(r.tsSaidaReal)}</div>
         </div>
@@ -1236,7 +1518,7 @@ function confirmarSaida(id){
 }
 
 function buildWASaida(r){
-  return `🚗 *PORTARIA — SAÍDA DE VEÍCULO*\n━━━━━━━━━━━━━━━\n🚗 *Placa:* ${r.placa}\n👤 *Motorista:* ${r.motorista}\n📍 *Destino:* ${r.destino}\n🕐 *Saída:* ${fmtDt(r.tsSaidaReal)}\n🔢 *KM Saída:* ${r.kmSaida} km\n✅ *Autorizado por:* ${r.gestor}\n━━━━━━━━━━━━━━━`;
+  return `🚗 *PORTARIA — SAÍDA DE VEÍCULO*\n━━━━━━━━━━━━━━━\n🚗 *Placa:* ${r.placa}${r.modelo?' ('+r.modelo+')':''}\n👤 *Motorista:* ${r.motorista}\n📍 *Destino:* ${r.destino}\n🕐 *Saída:* ${fmtDt(r.tsSaidaReal)}\n🔢 *KM Saída:* ${r.kmSaida} km\n✅ *Autorizado por:* ${r.gestor}\n━━━━━━━━━━━━━━━`;
 }
 
 function showSucSaida(r, waHref){
@@ -1301,10 +1583,11 @@ function closeConfRetorno(){ document.getElementById('confRetornoModal').classLi
 // ══ DETAIL ══
 function showFrotaDetail(id){
   const r = FROTA.find(x => x.id===id); if(!r) return;
-  document.getElementById('detailTitle').textContent = r.placa + ' — ' + r.motorista;
+  document.getElementById('detailTitle').textContent = r.placa + (r.modelo ? ' · '+r.modelo : '');
   document.getElementById('detailBody').innerHTML = `
     <div class="drow"><label>Status</label><span>${statusTagFrota(r.status)}</span></div>
     <div class="drow"><label>Placa</label><span style="font-family:var(--fm);color:var(--warn);letter-spacing:3px;font-size:1.05rem;">${r.placa}</span></div>
+    ${r.modelo?`<div class="drow"><label>Veículo</label><span style="font-weight:800;">${r.modelo}</span></div>`:''}
     <div class="drow"><label>Motorista</label><span>${r.motorista}</span></div>
     <div class="drow"><label>Destino</label><span>${r.destino}</span></div>
     <div class="drow"><label>Prev. Saída</label><span>${fmtDt(r.tsPrevSaida)}</span></div>
@@ -1314,6 +1597,7 @@ function showFrotaDetail(id){
     ${r.tsRetorno?`<div class="drow"><label>Retorno</label><span>${fmtDt(r.tsRetorno)}</span></div>`:''}
     ${r.kmRetorno?`<div class="drow"><label>KM Retorno</label><span style="font-family:var(--fm);font-weight:700;">${r.kmRetorno} km</span></div>`:''}
     ${(r.kmSaida&&r.kmRetorno)?`<div class="drow"><label>KM Percorrida</label><span style="font-family:var(--fm);color:var(--accent);font-weight:700;">${parseInt(r.kmRetorno)-parseInt(r.kmSaida)} km</span></div>`:''}
+    <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;">
       ${r.status==='pendente'?`<button class="big-btn btn-red" onclick="closeDetail();abrirConfSaida(${r.id})" style="flex:1;font-size:0.9rem;">🚪 Confirmar Saída</button>`:''}
       ${r.status==='fora'?`<button class="big-btn btn-green" onclick="closeDetail();abrirConfRetorno(${r.id})" style="flex:1;font-size:0.9rem;">🔄 Confirmar Retorno</button>`:''}
       <button class="big-btn btn-gray" onclick="closeDetail()" style="flex:1;font-size:0.9rem;">✕ Fechar</button>
@@ -1321,6 +1605,199 @@ function showFrotaDetail(id){
   document.getElementById('detailModal').classList.add('open');
 }
 function closeDetail(){ document.getElementById('detailModal').classList.remove('open'); }
+
+// ══ ACESSO ══
+function setAcTab(t){
+  document.querySelectorAll('[id^="mtab-ac-"]').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('[id^="msub-ac-"]').forEach(s => s.classList.remove('active'));
+  document.getElementById('mtab-ac-' + t).classList.add('active');
+  document.getElementById('msub-ac-' + t).classList.add('active');
+  if(t === 'autorizar') renderAcessoAutorizarLista();
+  if(t === 'vigilante') renderAcessoVigilante();
+}
+
+function registrarAcesso(){
+  const nome       = document.getElementById('acNome').value.trim();
+  const empresa    = document.getElementById('acEmpresa').value.trim();
+  const motivo     = document.getElementById('acMotivo').value.trim();
+  const dataHora   = document.getElementById('acDataHora').value;
+  const autorizador= document.getElementById('acAutorizador').value.trim();
+  const obs        = document.getElementById('acObs').value.trim();
+
+  if(!nome)       { alert('Informe o nome da pessoa autorizada.'); return; }
+  if(!motivo)     { alert('Informe o motivo / setor.'); return; }
+  if(!dataHora)   { alert('Informe a data e hora prevista.'); return; }
+  if(!autorizador){ alert('Informe quem está autorizando.'); return; }
+
+  const auth = {
+    id: Date.now(), tipo_registro: 'acesso',
+    nome, empresa, motivo, obs, autorizador,
+    tsPrevista: new Date(dataHora).toISOString(),
+    tsAutorizacao: new Date().toISOString(),
+    tsAcesso: null,   // preenchido pelo vigilante
+    status: 'pendente' // pendente | acessou
+  };
+  ACESSOS.unshift(auth);
+  saveAcessos();
+  gistPush();
+
+  // Reset form
+  ['acNome','acEmpresa','acMotivo','acAutorizador','acObs'].forEach(id => document.getElementById(id).value='');
+  document.getElementById('acDataHora').value = '';
+
+  renderAcessoAutorizarLista();
+  showSucAcesso(auth);
+}
+
+// ── Lista do autorizador ──
+function renderAcessoAutorizarLista(){
+  const el = document.getElementById('acListaAutorizacoes');
+  document.getElementById('acTotalCnt').textContent = ACESSOS.length + ' registro(s)';
+  if(!ACESSOS.length){ el.innerHTML = emptyState('🪪','Nenhuma autorização','Use o formulário acima para autorizar um acesso'); return; }
+  el.innerHTML = ACESSOS.map(r => {
+    const isPend = r.status === 'pendente';
+    const cancelBtn = isPend
+      ? `<button class="act-btn act-cancel" onclick="event.stopPropagation();cancelarAcesso(${r.id})">✕</button>`
+      : '';
+    return `<div class="ecard" onclick="showAcessoDetail(${r.id})">
+      <div class="ecard-thumb" style="font-size:1.6rem;background:var(--s2);">🪪</div>
+      <div class="ecard-info">
+        <div class="ecard-name">${r.nome}</div>
+        <div class="ecard-meta">${r.empresa ? '🏢 '+r.empresa : ''}${r.empresa && r.motivo ? ' · ' : ''}${r.motivo ? '📍 '+r.motivo : ''}</div>
+        <div class="ecard-meta">🕐 ${fmtDt(r.tsPrevista)}</div>
+        <div class="ecard-meta">✅ ${r.autorizador}</div>
+      </div>
+      <div class="ecard-right">${statusTagAcesso(r.status)}${cancelBtn}</div>
+    </div>`;
+  }).join('');
+}
+
+function cancelarAcesso(id){
+  if(!confirm('Cancelar esta autorização de acesso?')) return;
+  ACESSOS = ACESSOS.filter(r => r.id !== id);
+  saveAcessos(); gistPush();
+  renderAcessoAutorizarLista(); renderAcessoVigilante();
+  toast('Autorização cancelada.');
+}
+
+// ── Vigilante ──
+function renderAcessoVigilante(){
+  const q = (document.getElementById('searchAcesso')?.value || '').toLowerCase();
+  const hoje = new Date().toDateString();
+
+  // Pendentes
+  let pend = ACESSOS.filter(r => r.status === 'pendente');
+  document.getElementById('acVigCnt').textContent = pend.length + ' pendente(s)';
+  if(q) pend = pend.filter(r => r.nome.toLowerCase().includes(q) || (r.empresa||'').toLowerCase().includes(q));
+  document.getElementById('acListaPendentes').innerHTML = pend.length
+    ? pend.map(r => `<div class="ecard" onclick="showAcessoDetail(${r.id})">
+        <div class="ecard-thumb" style="font-size:1.6rem;background:var(--s2);">🪪</div>
+        <div class="ecard-info">
+          <div class="ecard-name">${r.nome}</div>
+          <div class="ecard-meta">${r.empresa ? '🏢 '+r.empresa : ''}</div>
+          <div class="ecard-meta">📍 ${r.motivo}</div>
+          <div class="ecard-meta">🕐 Prev.: ${fmtDt(r.tsPrevista)}</div>
+          <div class="ecard-meta">✅ Aut.: ${r.autorizador}</div>
+        </div>
+        <div class="ecard-right">
+          ${statusTagAcesso(r.status)}
+          <button class="act-btn act-ok" onclick="event.stopPropagation();abrirConfAcesso(${r.id})">✅ OK</button>
+        </div>
+      </div>`).join('')
+    : emptyState('🪪','Nenhum acesso pendente','Aguardando autorização do responsável');
+
+  // Confirmados hoje
+  let conf = ACESSOS.filter(r => r.status === 'acessou' && r.tsAcesso && new Date(r.tsAcesso).toDateString() === hoje);
+  document.getElementById('acConfCnt').textContent = conf.length + ' hoje';
+  document.getElementById('acListaConfirmados').innerHTML = conf.length
+    ? conf.map(r => `<div class="ecard" onclick="showAcessoDetail(${r.id})">
+        <div class="ecard-thumb" style="font-size:1.6rem;background:var(--s2);">✅</div>
+        <div class="ecard-info">
+          <div class="ecard-name">${r.nome}</div>
+          <div class="ecard-meta">${r.empresa ? '🏢 '+r.empresa : ''}</div>
+          <div class="ecard-meta">📍 ${r.motivo}</div>
+          <div class="ecard-meta">🚪 Acessou: ${fmtDt(r.tsAcesso)}</div>
+        </div>
+        <div class="ecard-right">${statusTagAcesso(r.status)}</div>
+      </div>`).join('')
+    : emptyState('✅','Nenhum acesso confirmado hoje','');
+}
+
+function abrirConfAcesso(id){
+  const r = ACESSOS.find(x => x.id===id); if(!r) return;
+  document.getElementById('confAcessoBody').innerHTML = `
+    <div style="text-align:center;padding:8px 0 16px;">
+      <div style="font-size:3rem;margin-bottom:8px;">🪪</div>
+      <div class="conf-name">${r.nome}</div>
+      <div class="conf-sub">${r.empresa ? '🏢 '+r.empresa+'<br>' : ''}📍 ${r.motivo}<br>✅ Autorizado por ${r.autorizador}</div>
+    </div>
+    <button class="big-btn btn-green" onclick="confirmarAcesso(${id})">✅ CONFIRMAR ACESSO</button>
+    <button class="big-btn btn-gray" onclick="closeConfAcesso()" style="margin-top:9px;">Cancelar</button>`;
+  document.getElementById('confAcessoModal').classList.add('open');
+}
+
+function confirmarAcesso(id){
+  const r = ACESSOS.find(x => x.id===id); if(!r) return;
+  r.tsAcesso = new Date().toISOString();
+  r.status = 'acessou';
+  saveAcessos(); gistPush();
+  closeConfAcesso(); renderAcessoVigilante();
+  toast('✅ Acesso confirmado!');
+}
+function closeConfAcesso(){ document.getElementById('confAcessoModal').classList.remove('open'); }
+
+// ── Sucesso + WA ──
+function showSucAcesso(r){
+  const msg = buildWAAcesso(r);
+  const waHref = 'whatsapp://send?text=' + encodeURIComponent(msg);
+  document.getElementById('sucAcessoBody').innerHTML = `
+    <div style="text-align:center;padding:8px 0 14px;">
+      <div style="font-size:3rem;margin-bottom:8px;">🪪</div>
+      <div class="suc-name">${r.nome}</div>
+      ${r.empresa?`<div class="suc-sub">🏢 ${r.empresa}</div>`:''}
+      <div class="suc-sub">📍 ${r.motivo}<br>🕐 ${fmtDt(r.tsPrevista)}</div>
+    </div>
+    <div class="divider"></div>
+    <div class="wa-lbl">📤 Notificar pelo WhatsApp</div>
+    <div class="wa-prev">${msg.replace(/\*/g,'')}</div>
+    <a href="${waHref}" class="big-btn btn-wa" style="text-decoration:none;">
+      ${WA_ICO} Enviar pelo WhatsApp
+    </a>
+    <button class="big-btn btn-gray" onclick="closeSucAcesso()" style="margin-top:9px;">Fechar</button>`;
+  document.getElementById('sucAcessoModal').classList.add('open');
+}
+function closeSucAcesso(){ document.getElementById('sucAcessoModal').classList.remove('open'); }
+
+function buildWAAcesso(r){
+  return `🪪 *PORTARIA — ACESSO AUTORIZADO*\n━━━━━━━━━━━━━━━\n👤 *Pessoa:* ${r.nome}${r.empresa?'\n🏢 *Empresa:* '+r.empresa:''}\n📍 *Motivo:* ${r.motivo}\n🕐 *Data/Hora:* ${fmtDt(r.tsPrevista)}\n✅ *Autorizado por:* ${r.autorizador}${r.obs?'\n📝 *Obs.:* '+r.obs:''}\n━━━━━━━━━━━━━━━`;
+}
+
+// ── Detalhe Acesso ──
+function showAcessoDetail(id){
+  const r = ACESSOS.find(x => x.id===id); if(!r) return;
+  document.getElementById('detailTitle').textContent = r.nome;
+  document.getElementById('detailBody').innerHTML = `
+    <div class="drow"><label>Status</label><span>${statusTagAcesso(r.status)}</span></div>
+    <div class="drow"><label>Pessoa</label><span>${r.nome}</span></div>
+    ${r.empresa?`<div class="drow"><label>Empresa</label><span>${r.empresa}</span></div>`:''}
+    <div class="drow"><label>Motivo</label><span>${r.motivo}</span></div>
+    <div class="drow"><label>Prev. Acesso</label><span>${fmtDt(r.tsPrevista)}</span></div>
+    <div class="drow"><label>Autorizado por</label><span>${r.autorizador} · ${fmtDt(r.tsAutorizacao)}</span></div>
+    ${r.tsAcesso?`<div class="drow"><label>Acessou em</label><span>${fmtDt(r.tsAcesso)}</span></div>`:''}
+    ${r.obs?`<div class="drow"><label>Obs.</label><span>${r.obs}</span></div>`:''}
+    <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;">
+      ${r.status==='pendente'?`<button class="big-btn btn-green" onclick="closeDetail();abrirConfAcesso(${r.id})" style="flex:1;font-size:0.9rem;">✅ Confirmar Acesso</button>`:''}
+      <button class="big-btn btn-gray" onclick="closeDetail()" style="flex:1;font-size:0.9rem;">✕ Fechar</button>
+    </div>`;
+  document.getElementById('detailModal').classList.add('open');
+}
+
+// ── Status Tag ──
+function statusTagAcesso(s){
+  const map = { pendente:['PENDENTE','tag-pendente'], acessou:['ACESSOU','tag-retornou'] };
+  const [lbl, cls] = map[s] || ['—','tag-pendente'];
+  return `<span class="tag ${cls}">${lbl}</span>`;
+}
 
 // ══ CONSULTA ══
 function setFilter(mode,el){
@@ -1413,11 +1890,21 @@ function emptyState(ico,h,p){ return `<div class="empty"><div class="empty-ico">
 function esc(s){ return String(s).replace(/'/g,'&#39;').replace(/"/g,'&quot;'); }
 
 let toastTimer;
-function toast(msg,type='ok'){
+function toast(msg, type='ok'){
   let el = document.getElementById('toastEl');
-  if(!el){ el=document.createElement('div'); el.id='toastEl'; el.style.cssText='position:fixed;bottom:76px;left:50%;transform:translateX(-50%) translateY(60px);background:var(--green);color:#000;font-weight:700;font-size:0.85rem;padding:10px 18px;border-radius:10px;z-index:999;transition:transform .3s;white-space:nowrap;'; document.body.appendChild(el); }
-  el.textContent=msg; el.style.transform='translateX(-50%) translateY(0)';
-  clearTimeout(toastTimer); toastTimer=setTimeout(()=>{ el.style.transform='translateX(-50%) translateY(60px)'; },2800);
+  if(!el){
+    el = document.createElement('div'); el.id = 'toastEl';
+    el.style.cssText = 'position:fixed;bottom:76px;left:50%;transform:translateX(-50%) translateY(60px);font-weight:700;font-size:0.85rem;padding:10px 18px;border-radius:10px;z-index:999;transition:transform .3s;white-space:nowrap;';
+    document.body.appendChild(el);
+  }
+  const colors = { ok:'var(--green)', warn:'var(--warn)', danger:'var(--red)', info:'var(--accent)' };
+  const fgColors = { ok:'#000', warn:'#000', danger:'#fff', info:'#000' };
+  el.style.background = colors[type] || colors.ok;
+  el.style.color = fgColors[type] || '#000';
+  el.textContent = msg;
+  el.style.transform = 'translateX(-50%) translateY(0)';
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { el.style.transform = 'translateX(-50%) translateY(60px)'; }, 2800);
 }
 
 document.addEventListener('click', e => {
