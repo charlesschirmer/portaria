@@ -547,6 +547,12 @@ canvas{display:none;}
   </div>
 
   <div class="card" style="margin-bottom:12px;">
+    <div class="card-title">🔔 Notificações</div>
+    <div id="notifStatus" style="font-size:0.88rem;margin-bottom:12px;"></div>
+    <button class="big-btn btn-accent" onclick="pedirPermissao()" id="btnNotif" style="font-size:0.9rem;">🔔 Ativar Notificações</button>
+  </div>
+
+  <div class="card" style="margin-bottom:12px;">
     <div class="card-title">🐙 GitHub Gist</div>
     <div id="syncStatusBox" style="margin-bottom:12px;"></div>
     <div class="field">
@@ -754,7 +760,23 @@ function renderConfig(){
   const dia=localStorage.getItem('pg_tema')==='dia';
   const n=document.getElementById('btnTemaNight'),d=document.getElementById('btnTemaDia');
   if(n&&d){n.style.border=dia?'3px solid transparent':'3px solid var(--accent)';d.style.border=dia?'3px solid var(--accent)':'3px solid transparent';}
-  // limpar campos visitante após renderConfig
+  // Status notificações
+  const ns = document.getElementById('notifStatus');
+  const btn = document.getElementById('btnNotif');
+  if(ns && btn && 'Notification' in window){
+    const p = Notification.permission;
+    if(p === 'granted'){
+      ns.innerHTML = '<span style="color:var(--green);font-weight:700;">✅ Notificações ativas</span> — você será avisado de novos cadastros.';
+      btn.style.display = 'none';
+    } else if(p === 'denied'){
+      ns.innerHTML = '<span style="color:var(--red);font-weight:700;">❌ Notificações bloqueadas</span> — ative nas configurações do seu browser.';
+      btn.style.display = 'none';
+    } else {
+      ns.innerHTML = '<span style="color:var(--warn);font-weight:700;">⚠️ Notificações não ativadas</span>';
+      btn.style.display = '';
+    }
+  }
+  // limpar campos visitante após renderConfig (evita autofill do Chrome)
   setTimeout(()=>{ ['eNome','eEmpresa','eMotivo','eObs'].forEach(id=>{const el=document.getElementById(id);if(el&&!el.dataset.t)el.value='';}); },100);
 }
 async function salvarConfig(){
@@ -776,7 +798,7 @@ async function salvarConfig(){
 }
 async function sincronizarAgora(){
   if(!GIST_ID||!GIST_TOKEN){alert('Configure o Gist primeiro.');return;}
-  await gistPull(); renderAll();
+  await gistPull(); renderAll(); swAtualizarIds();
 }
 async function diagnosticarGist(){
   const box=document.getElementById('diagBox');box.style.display='block';box.innerHTML='🔄 Consultando...';
@@ -1454,13 +1476,184 @@ function toast(msg,type='ok'){
 }
 function dismissToast(){const el=document.getElementById('toastEl');if(el){clearTimeout(toastTimer);el.style.transform='translateX(-50%) translateY(120px)';}}
 
+// ═══════════ NOTIFICAÇÕES ═══════════
+// Service Worker injetado via Blob (single-file trick)
+const SW_CODE = `
+const CACHE = 'stgate-v1';
+self.addEventListener('install', e => self.skipWaiting());
+self.addEventListener('activate', e => self.clients.claim());
+self.addEventListener('message', e => {
+  if(e.data && e.data.type === 'NOTIFY'){
+    self.registration.showNotification(e.data.title, {
+      body: e.data.body,
+      icon: e.data.icon || '',
+      badge: e.data.icon || '',
+      tag: e.data.tag || 'stgate',
+      renotify: true,
+      data: { url: e.data.url || self.location.origin }
+    });
+  }
+});
+self.addEventListener('notificationclick', e => {
+  e.notification.close();
+  e.waitUntil(clients.matchAll({type:'window'}).then(cs => {
+    if(cs.length) cs[0].focus();
+    else clients.openWindow(e.notification.data.url);
+  }));
+});
+// Polling do Gist a cada 30s para detectar novos registros
+let lastIds = { entradas: new Set(), saidas: new Set() };
+let gistId = '', gistToken = '', polling = false;
+
+self.addEventListener('message', e => {
+  if(e.data && e.data.type === 'INIT_POLL'){
+    gistId = e.data.gistId;
+    gistToken = e.data.gistToken;
+    lastIds.entradas = new Set(e.data.knownEntradas || []);
+    lastIds.saidas   = new Set(e.data.knownSaidas   || []);
+    if(!polling && gistId && gistToken){ polling = true; startPolling(); }
+  }
+  if(e.data && e.data.type === 'STOP_POLL'){ polling = false; }
+  if(e.data && e.data.type === 'UPDATE_IDS'){
+    if(e.data.entradas) e.data.entradas.forEach(id => lastIds.entradas.add(id));
+    if(e.data.saidas)   e.data.saidas.forEach(id => lastIds.saidas.add(id));
+  }
+});
+
+async function startPolling(){
+  while(polling){
+    await new Promise(r => setTimeout(r, 30000));
+    if(!polling) break;
+    try{
+      const res = await fetch('https://api.github.com/gists/' + gistId, {
+        headers: { 'Authorization': 'token ' + gistToken, 'Accept': 'application/vnd.github+json' },
+        cache: 'no-store'
+      });
+      if(!res.ok) continue;
+      const gist = await res.json();
+      const raw = (Object.values(gist.files)[0] || {}).content;
+      if(!raw) continue;
+      const data = JSON.parse(raw);
+
+      // Detectar novas entradas
+      (data.entradas || []).forEach(r => {
+        if(!lastIds.entradas.has(r.id)){
+          lastIds.entradas.add(r.id);
+          self.registration.showNotification('🚪 Nova Entrada — STGate', {
+            body: r.nome + (r.empresa ? ' · ' + r.empresa : '') + '\\n📍 ' + r.motivo,
+            tag: 'entrada-' + r.id, renotify: true,
+            data: { url: self.location.origin }
+          });
+        }
+      });
+
+      // Detectar novas saídas
+      (data.saidas || []).forEach(r => {
+        if(!lastIds.saidas.has(r.id)){
+          lastIds.saidas.add(r.id);
+          self.registration.showNotification('🚗 Nova Saída — STGate', {
+            body: r.placa + ' · ' + r.motorista + '\\n📍 ' + r.destino,
+            tag: 'saida-' + r.id, renotify: true,
+            data: { url: self.location.origin }
+          });
+        }
+      });
+    } catch(e){ console.warn('SW poll error:', e); }
+  }
+}
+`;
+
+let swReg = null;
+
+async function initNotificacoes(){
+  if(!('serviceWorker' in navigator && 'Notification' in window)) return;
+
+  // Registra SW via Blob
+  try{
+    const blob = new Blob([SW_CODE], {type:'application/javascript'});
+    const swUrl = URL.createObjectURL(blob);
+    swReg = await navigator.serviceWorker.register(swUrl, {scope:'/'});
+    console.log('STGate SW registrado');
+  } catch(e){
+    // Blob SW pode falhar em alguns browsers — tenta URL normal como fallback
+    console.warn('SW Blob falhou:', e);
+    return;
+  }
+
+  // Pede permissão se ainda não foi concedida
+  if(Notification.permission === 'default'){
+    mostrarBannerNotificacao();
+  } else if(Notification.permission === 'granted'){
+    iniciarPolling();
+  }
+}
+
+function mostrarBannerNotificacao(){
+  const b = document.createElement('div');
+  b.id = 'notifBanner';
+  b.style.cssText = `position:fixed;top:60px;left:0;right:0;z-index:500;background:var(--accent);color:#000;
+    padding:12px 16px;display:flex;align-items:center;gap:12px;font-size:0.88rem;font-weight:700;
+    box-shadow:0 4px 16px rgba(0,0,0,.3);`;
+  b.innerHTML = `
+    <span style="font-size:1.3rem;">🔔</span>
+    <span style="flex:1;">Ativar notificações para ser avisado de novos cadastros?</span>
+    <button onclick="pedirPermissao()" style="background:#000;color:#fff;border:none;border-radius:8px;padding:8px 16px;font-family:var(--f);font-weight:800;cursor:pointer;font-size:0.85rem;">Ativar</button>
+    <button onclick="document.getElementById('notifBanner').remove()" style="background:rgba(0,0,0,.2);border:none;border-radius:8px;padding:8px 12px;font-family:var(--f);font-weight:700;cursor:pointer;font-size:0.85rem;">Agora não</button>`;
+  document.body.appendChild(b);
+}
+
+async function pedirPermissao(){
+  const banner = document.getElementById('notifBanner');
+  if(banner) banner.remove();
+  const perm = await Notification.requestPermission();
+  if(perm === 'granted'){
+    toast('🔔 Notificações ativadas!');
+    iniciarPolling();
+  } else {
+    toast('Notificações bloqueadas. Ative nas configurações do browser.','warn');
+  }
+}
+
+function iniciarPolling(){
+  if(!swReg || !GIST_ID || !GIST_TOKEN) return;
+  navigator.serviceWorker.ready.then(reg => {
+    reg.active?.postMessage({
+      type: 'INIT_POLL',
+      gistId: GIST_ID,
+      gistToken: GIST_TOKEN,
+      knownEntradas: ENTRADAS.map(r => r.id),
+      knownSaidas:   SAIDAS.map(r => r.id)
+    });
+  });
+}
+
+function notificarSW(titulo, corpo, tag){
+  if(!swReg || Notification.permission !== 'granted') return;
+  navigator.serviceWorker.ready.then(reg => {
+    reg.active?.postMessage({ type:'NOTIFY', title:titulo, body:corpo, tag });
+  });
+}
+
+// Atualiza IDs conhecidos no SW após cada pull para evitar re-notificar
+function swAtualizarIds(){
+  if(!swReg) return;
+  navigator.serviceWorker.ready.then(reg => {
+    reg.active?.postMessage({
+      type: 'UPDATE_IDS',
+      entradas: ENTRADAS.map(r => r.id),
+      saidas:   SAIDAS.map(r => r.id)
+    });
+  });
+}
+
 // ═══════════ INIT ═══════════
 // Limpa autofill do browser
 ['eNome','eEmpresa','eMotivo','eObs','sPlaca','sModelo','sMotorista','sDestino','cvPlaca','cvModelo','cvMotorista'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
 
 initTema();
-if(GIST_ID&&GIST_TOKEN){syncDot('syncing');gistPull().then(()=>renderAll());}
+if(GIST_ID&&GIST_TOKEN){syncDot('syncing');gistPull().then(()=>{renderAll();swAtualizarIds();});}
 else syncDot('offline');
+initNotificacoes();
 </script>
 </body>
 </html>
